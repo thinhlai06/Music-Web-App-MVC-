@@ -1,0 +1,50 @@
+@model MusicWeb.Models.ViewModels.SearchResultsViewModel
+
+<div id="search-results-view" class="content-padding hidden">
+    <div class="section-title" style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 24px;">Kết quả tìm kiếm</span>
+        <button onclick="switchView('home')" class="btn" style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Về trang chủ</span>
+        </button>
+    </div>
+    <div id="search-term-display" style="font-size: 14px; color: var(--text-secondary); margin-bottom: 30px;">
+        <!-- Search term will be displayed here by JavaScript -->
+    </div>
+
+    <!-- Search results container - will be filled by JavaScript -->
+    <div id="search-results-container">
+        <div id="search-empty-state" class="hidden" style="text-align: center; padding: 60px 20px; color: var(--text-secondary);">
+            <i class="fa-solid fa-magnifying-glass" style="font-size: 64px; margin-bottom: 20px; opacity: 0.3;"></i>
+            <h3>Không tìm thấy kết quả</h3>
+            <p>Hãy thử tìm kiếm với từ khóa khác</p>
+        </div>
+
+        <!-- Songs Section -->
+        <div id="songs-section" class="search-section hidden" style="margin-bottom: 40px;">
+            <h3 style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-music"></i>
+                <span id="songs-count">Bài hát</span>
+            </h3>
+            <div id="songs-results" class="search-results-grid"></div>
+        </div>
+
+        <!-- Artists Section -->
+        <div id="artists-section" class="search-section hidden" style="margin-bottom: 40px;">
+            <h3 style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-microphone"></i>
+                <span id="artists-count">Nghệ sĩ</span>
+            </h3>
+            <div id="artists-results" class="artist-results-grid"></div>
+        </div>
+
+        <!-- Users Section -->
+        <div id="users-section" class="search-section hidden" style="margin-bottom: 40px;">
+            <h3 style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-user"></i>
+                <span id="users-count">Người dùng</span>
+            </h3>
+            <div id="users-results" class="user-results-grid"></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,44 @@
+﻿@model MusicWeb.Models.ViewModels.HomeViewModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "MusicWave";
+    var jsonOptions = new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
+    var serializedModel = JsonSerializer.Serialize(Model, jsonOptions);
+    var isAuthenticated = User.Identity?.IsAuthenticated == true;
+}
+
+<partial name="_Modals" model="Model" />
+
+<div class="app-container" data-user="@Model.CurrentUser?.UserId">
+    <partial name="_Sidebar" model="Model" />
+
+    <main class="main-view">
+        <partial name="_Header" model="Model" />
+
+        <partial name="_HomeSection" model="Model" />
+        <partial name="_LibrarySection" model="Model" />
+        <partial name="_ProfileSection" model="Model" />
+
+        <partial name="_AllSongsSection" model="Model" />
+        <partial name="_AllGenresSection" model="Model" />
+        <partial name="_SearchResultsSection" model="new MusicWeb.Models.ViewModels.SearchResultsViewModel()" />
+        <partial name="_UploadSection" model="Model" />
+        <div id="playlist-view-container" class="hidden"></div>
+        <div id="genre-view-container" class="hidden"></div>
+    </main>
+</div>
+
+<partial name="_PlayerBar" />
+<partial name="_FullScreenPlayer" />
+
+<div class="toast" id="toast"></div>
+
+@section Scripts {
+<script>
+    window.musicModel = @Html.Raw(serializedModel);
+    window.isAuthenticated = @(isAuthenticated.ToString().ToLower());
+</script>
+}

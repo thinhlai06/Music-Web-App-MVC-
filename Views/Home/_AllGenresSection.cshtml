@@ -1,0 +1,27 @@
+@model MusicWeb.Models.ViewModels.HomeViewModel
+
+<div id="all-genres-view" class="content-padding hidden">
+    <div class="section-title" style="margin-top: 10px;">
+        <span style="font-size: 24px;">Tất cả Chủ đề & Thể loại</span>
+    </div>
+    <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 30px;">
+        Khám phá âm nhạc phù hợp với tâm trạng và sở thích của bạn.
+    </div>
+
+    <div class="genre-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 24px;">
+        @foreach (var genre in Model.Genres)
+        {
+            var image = string.IsNullOrWhiteSpace(genre.ImageUrl) ? $"https://picsum.photos/seed/genre-{genre.Id}/400/200" : genre.ImageUrl;
+            <div class="genre-card" style="height: 140px; border-radius: 8px; overflow: hidden; position: relative; cursor: pointer;" onclick="loadGenre(@genre.Id)">
+                <img src="@image" alt="@genre.Title" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;">
+                <div class="genre-overlay" style="position: absolute; inset: 0; background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%); display: flex; align-items: flex-end; padding: 15px; font-weight: 700; font-size: 18px; text-transform: capitalize;">@genre.Title</div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .genre-card:hover img {
+        transform: scale(1.1);
+    }
+</style>

@@ -1,0 +1,54 @@
+@model MusicWeb.Controllers.AdminController.CreateSongViewModel
+
+<div class="content-padding">
+    <div class="section-title">
+        <span>Thêm Bài Hát Mới</span>
+        <a href="/admin" class="btn" style="border: 1px solid #fff; padding: 5px 15px; border-radius: 4px; font-size: 14px; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+            <i class="fa-solid fa-arrow-left"></i> Trở về
+        </a>
+    </div>
+
+    <form asp-action="CreateSong" method="post" enctype="multipart/form-data" style="max-width: 600px; margin-top: 20px;">
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">Tên bài hát</label>
+            <input type="text" asp-for="Title" required style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">Nghệ sĩ</label>
+            <input type="text" asp-for="ArtistName" required style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff;" placeholder="Ví dụ: Sơn Tùng M-TP">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">Thể loại</label>
+            <select asp-for="GenreId" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); background: #1a1a1a; color: #fff;">
+                <option value="">-- Chọn thể loại --</option>
+                @foreach (var genre in ViewBag.Genres as List<MusicWeb.Models.Entities.Genre>)
+                {
+                    <option value="@genre.Id">@genre.Name</option>
+                }
+            </select>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">Thời lượng (giây)</label>
+            <input type="number" asp-for="DurationSeconds" value="180" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">File Nhạc (Audio/MP3)</label>
+            <input type="file" asp-for="AudioFile" accept="audio/*" style="color: #fff; margin-bottom: 5px;">
+            <div style="font-size: 12px; margin-bottom: 5px; color: var(--text-secondary);">Hoặc nhập URL:</div>
+            <input type="text" asp-for="AudioUrlInput" placeholder="https://..." style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff;">
+        </div>
+
+        <div style="margin-bottom: 25px;">
+            <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">Ảnh Bìa</label>
+            <input type="file" asp-for="CoverFile" accept="image/*" style="color: #fff; margin-bottom: 5px;">
+            <div style="font-size: 12px; margin-bottom: 5px; color: var(--text-secondary);">Hoặc nhập URL:</div>
+            <input type="text" asp-for="CoverUrlInput" placeholder="https://..." style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff;">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="padding: 10px 30px; font-size: 16px;">Lưu Bài Hát</button>
+    </form>
+</div>

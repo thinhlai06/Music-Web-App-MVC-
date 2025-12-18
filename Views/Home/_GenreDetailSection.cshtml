@@ -1,0 +1,323 @@
+@model MusicWeb.Models.ViewModels.GenreDetailViewModel
+@using System.Text.Json
+@{
+    var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = null };
+    var songData = JsonSerializer.Serialize(Model.Songs.Select(s => new {
+        id = s.Id,
+        title = s.Title,
+        artist = s.Artist,
+        cover = s.CoverUrl,
+        audio = s.AudioUrl,
+        durationLabel = s.Duration,
+        isFavorite = s.IsFavorite
+    }), jsonOptions);
+}
+
+<div id="genre-view-detail" class="spotify-album-view" data-genre-songs='@Html.Raw(songData)'>
+    <!-- Header Section -->
+    <div class="genre-header-section" style="position: relative; height: 300px; display: flex; align-items: flex-end; padding: 0 40px 40px 40px; background-image: url('@Model.ImageUrl'); background-size: cover; background-position: center;">
+        <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 1;"></div>
+        <div style="position: absolute; inset: 0; background: linear-gradient(to top, #121212 0%, transparent 100%); z-index: 2;"></div>
+        
+        <a href="#" onclick="event.preventDefault(); switchView('all-genres');" class="back-btn" style="z-index: 10;">
+            <i class="fa-solid fa-chevron-left"></i>
+        </a>
+
+        <div class="header-content" style="position: relative; z-index: 3; width: 100%;">
+            <div class="info-col">
+                <span class="type-label" style="font-size: 14px; font-weight: 700; margin-bottom: 10px;">Thể Loại</span>
+                <h1 class="album-title" style="font-size: 80px; margin: 0; line-height: 1;">@Model.Title</h1>
+                <div class="meta-row" style="margin-top: 15px;">
+                    <span class="song-count">@Model.Songs.Count bài hát tuyển chọn</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Bar -->
+    <div class="action-bar" style="padding: 24px 40px;">
+        <button class="big-green-play-btn" onclick="playGenreAll()">
+            <i class="fa-solid fa-play"></i>
+        </button>
+    </div>
+
+    <!-- Song List -->
+    <div class="album-songs-container" style="padding: 0 40px;">
+        <div class="songs-header-row">
+            <div class="col-idx">#</div>
+            <div class="col-title">Tiêu đề</div>
+            <div class="col-duration"><i class="fa-regular fa-clock"></i></div>
+        </div>
+        
+        <div class="songs-list-body">
+            @if (Model.Songs.Any())
+            {
+                int index = 1;
+                foreach (var song in Model.Songs)
+                {
+                    <div class="song-row" data-song-id="@song.Id">
+                        <div class="col-idx">
+                            <span class="idx-num">@index</span>
+                            <i class="fa-solid fa-play idx-play"></i>
+                        </div>
+                        <div class="col-title">
+                            <div class="song-name">@song.Title</div>
+                            <div class="song-artist">@song.Artist</div>
+                        </div>
+                        <div class="col-duration">
+                            <button class="row-heart @(song.IsFavorite ? "active" : "")" onclick="event.stopPropagation(); toggleFavorite(@song.Id, this)">
+                                <i class="@(song.IsFavorite ? "fa-solid" : "fa-regular") fa-heart"></i>
+                            </button>
+                            <span class="time">@song.Duration</span>
+                            <button class="row-remove" onclick="event.stopPropagation(); openPlaylistModal(@song.Id)" title="Thêm vào playlist">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    index++;
+                }
+            }
+            else
+            {
+                <div style="padding: 40px; text-align: center; color: #b3b3b3;">Chưa có bài hát nào trong thể loại này.</div>
+            }
+        </div>
+    </div>
+</div>
+
+</style>
+
+<style>
+    /* Scoped Styles for Spotify Look (Shared with Album/Playlist) */
+    .spotify-album-view {
+        position: relative;
+        color: #fff;
+        padding-bottom: 50px;
+        font-family: 'Circular', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Gradients */
+    .bg-gradient {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 400px;
+        background: linear-gradient(180deg, rgba(30, 50, 100, 0.8) 0%, rgba(18, 18, 18, 1) 100%);
+        z-index: -1;
+    }
+    .genre-header-section {
+        display: flex;
+        align-items: flex-end;
+        padding: 60px 40px 40px 40px;
+        background: transparent;
+        position: relative;
+        z-index: 1;
+        background-size: cover;
+        background-position: center;
+        height: 340px;
+    }
+
+    /* Back Button */
+    .back-btn {
+        position: absolute;
+        top: 20px;
+        left: 30px;
+        width: 32px;
+        height: 32px;
+        background: rgba(0,0,0,0.7);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        text-decoration: none;
+        font-size: 16px;
+        cursor: pointer;
+        z-index: 20;
+    }
+
+    /* Header Layout */
+    .header-content {
+        display: flex;
+        gap: 24px;
+        width: 100%;
+        align-items: flex-end;
+        position: relative;
+        z-index: 5;
+    }
+    .info-col {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .type-label {
+        font-size: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 0px;
+    }
+    .album-title {
+        font-size: 72px;
+        font-weight: 900;
+        margin: 0;
+        line-height: normal;
+        letter-spacing: -1px;
+        padding-bottom: 10px;
+        text-shadow: 0 4px 60px rgba(0,0,0,0.5);
+    }
+    .meta-row {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        font-weight: 500;
+        gap: 6px;
+    }
+    .song-count {
+        color: rgba(255,255,255,0.9);
+    }
+
+    /* Action Bar */
+    .action-bar {
+        padding: 24px 30px;
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, #121212 100%);
+    }
+    .big-green-play-btn {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background-color: #1ed760;
+        border: none;
+        color: #000;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: transform 0.1s, background-color 0.1s;
+        box-shadow: 0 8px 8px rgba(0,0,0,0.3);
+    }
+    .big-green-play-btn:hover {
+        transform: scale(1.05);
+        background-color: #1fdf64;
+    }
+    .big-green-play-btn:active {
+        transform: scale(1.0);
+        background-color: #169c46;
+    }
+
+    /* Song List table */
+    .album-songs-container {
+        padding: 0 30px;
+        background: #121212;
+    }
+    .songs-header-row {
+        display: flex;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        padding: 0 16px 8px 16px;
+        margin-bottom: 16px;
+        color: #b3b3b3;
+        font-size: 14px;
+        align-items: center;
+    }
+    .col-idx { flex: 0 0 40px; text-align: center; justify-content: center; display: flex;}
+    .col-title { flex: 1; }
+    .col-duration { flex: 0 0 100px; text-align: right; justify-content: flex-end; display: flex; align-items: center; gap: 15px;}
+    
+    .song-row {
+        display: flex;
+        padding: 8px 16px;
+        border-radius: 4px;
+        align-items: center;
+        color: #fff;
+        font-size: 14px;
+        margin-bottom: 2px;
+    }
+    .song-row:hover {
+        background-color: rgba(255,255,255,0.1);
+        cursor: pointer;
+    }
+    .idx-num { display: block; color: #b3b3b3; font-size: 16px; }
+    .idx-play { display: none; font-size: 14px; color: #fff; }
+    
+    .song-row:hover .idx-num { display: none; }
+    .song-row:hover .idx-play { display: block; }
+    
+    .song-name {
+        font-size: 16px;
+        font-weight: 500;
+        color: #fff;
+        margin-bottom: 2px;
+    }
+    .song-artist {
+        font-size: 14px;
+        color: #b3b3b3;
+    }
+    .song-row:hover .song-artist { color: #fff; }
+    
+    .time {
+        color: #b3b3b3;
+        font-variant-numeric: tabular-nums;
+        font-size: 14px;
+    }
+    
+    .row-heart {
+        background: transparent;
+        border: none;
+        color: #b3b3b3;
+        cursor: pointer;
+        opacity: 0;
+        font-size: 16px;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+    }
+    .row-heart.active {
+        color: #1ed760;
+        opacity: 1;
+    }
+    .song-row:hover .row-heart {
+        opacity: 1;
+    }
+    .row-heart:hover {
+        color: #fff;
+    }
+
+    /* Playlist Add Button */
+    .row-remove {
+        background: transparent;
+        border: none;
+        color: #b3b3b3;
+        cursor: pointer;
+        opacity: 0;
+        font-size: 14px;
+        padding: 5px;
+        margin-left: 10px;
+    }
+    .row-remove:hover { color: #fff; }
+    .song-row:hover .row-remove { opacity: 1; }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .genre-header-section {
+            height: 250px;
+            padding: 20px;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .header-content {
+            flex-direction: column;
+            align-items: center;
+        }
+        .album-title {
+            font-size: 40px;
+        }
+        .info-col {
+            align-items: center;
+        }
+    }
+</style>

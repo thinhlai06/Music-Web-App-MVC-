@@ -1,0 +1,48 @@
+@model List<MusicWeb.Models.Entities.Song>
+
+<div class="content-padding">
+    <div class="section-title">
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <a href="/" class="btn" style="border: 1px solid #fff; padding: 5px 15px; border-radius: 4px; font-size: 14px; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+                <i class="fa-solid fa-house"></i> Trang chủ
+            </a>
+            <span>Quản lý Bài hát</span>
+        </div>
+        <a href="/Admin/CreateSong" class="btn btn-primary" style="text-decoration: none;">+ Thêm bài hát</a>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        <thead>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); text-align: left;">
+                <th style="padding: 10px;">ID</th>
+                <th style="padding: 10px;">Bài hát</th>
+                <th style="padding: 10px;">Nghệ sĩ</th>
+                <th style="padding: 10px;">Thể loại</th>
+                <th style="padding: 10px;">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var song in Model)
+            {
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 10px;">@song.Id</td>
+                    <td style="padding: 10px;">
+                        <div style="display: flex; align-items: center;">
+                            <img src="@(song.CoverUrl ?? "https://picsum.photos/50")" style="width: 40px; height: 40px; border-radius: 4px; margin-right: 10px;">
+                            @song.Title
+                        </div>
+                    </td>
+                    <td style="padding: 10px;">@song.Artist.Name</td>
+                    <td style="padding: 10px;">@(song.SongGenres.FirstOrDefault()?.Genre.Name ?? "-")</td>
+                    <td style="padding: 10px;">
+                        <a href="/Admin/EditSong/@song.Id" style="color: var(--purple-primary); text-decoration: none; margin-right: 10px; font-weight: 500;">Sửa</a>
+                        <form asp-action="DeleteSong" method="post" onsubmit="return confirm('Bạn chắc chắn muốn xóa?');" style="display: inline;">
+                            <input type="hidden" name="id" value="@song.Id" />
+                            <button type="submit" style="color: #ff4d4d; background: none; border: none; cursor: pointer;">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

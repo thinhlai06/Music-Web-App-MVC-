@@ -1,0 +1,59 @@
+@model List<MusicWeb.Models.Entities.ApplicationUser>
+
+<div class="content-padding">
+    <div class="section-title">
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <a href="/" class="btn" style="border: 1px solid #fff; padding: 5px 15px; border-radius: 4px; font-size: 14px; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+                <i class="fa-solid fa-house"></i> Trang chủ
+            </a>
+            <span>Quản lý Tài khoản</span>
+        </div>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        <thead>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); text-align: left;">
+                <th style="padding: 10px;">Email</th>
+                <th style="padding: 10px;">Tên hiển thị</th>
+                <th style="padding: 10px;">Trạng thái</th>
+                <th style="padding: 10px;">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                var isLocked = user.LockoutEnd.HasValue && user.LockoutEnd.Value > DateTimeOffset.UtcNow;
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 10px;">@user.Email</td>
+                    <td style="padding: 10px;">
+                        <div style="display: flex; align-items: center;">
+                            <img src="@(user.AvatarUrl ?? "https://ui-avatars.com/api/?name=U")" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">
+                            @user.DisplayName
+                        </div>
+                    </td>
+                    <td style="padding: 10px;">
+                        @if (isLocked)
+                        {
+                            <span style="color: #ff4d4d;">Đã khóa</span>
+                        }
+                        else
+                        {
+                            <span style="color: #4dff88;">Hoạt động</span>
+                        }
+                    </td>
+                    <td style="padding: 10px;">
+                        @if (User.Identity.Name != user.UserName) // Prevent self-lock
+                        {
+                            <form asp-action="ToggleUserStatus" method="post" style="display: inline;">
+                                <input type="hidden" name="userId" value="@user.Id" />
+                                <button type="submit" style="color: var(--text-primary); background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 4px; border: none; cursor: pointer;">
+                                    @(isLocked ? "Mở khóa" : "Khóa")
+                                </button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

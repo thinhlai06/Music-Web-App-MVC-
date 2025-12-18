@@ -1,0 +1,61 @@
+<div id="full-player" class="full-player-overlay hidden">
+    <div class="full-player-bg" id="fp-bg"></div>
+    <div class="full-player-backdrop"></div>
+    
+    <button class="fp-close-btn" id="fp-close-btn"><i class="fa-solid fa-chevron-down"></i></button>
+
+    <div class="fp-container">
+        <!-- Left: CD & Info -->
+        <div class="fp-left">
+            <div class="fp-cd-wrapper">
+                <img src="" id="fp-img" class="fp-cd-img" alt="CD Cover">
+            </div>
+            <div class="fp-info">
+                <h2 id="fp-title">Tên bài hát</h2>
+                <p id="fp-artist">Nghệ sĩ</p>
+            </div>
+            <div class="fp-actions">
+                <button class="circle-btn favorite-toggle" id="fp-favorite" style="width: 40px; height: 40px;"><i class="fa-regular fa-heart"></i></button>
+                <button class="circle-btn" style="width: 40px; height: 40px;"><i class="fa-solid fa-ellipsis"></i></button>
+            </div>
+            <div class="fp-rating">
+                <div class="rating-label">Đánh giá của bạn:</div>
+                <div class="star-rating" id="fp-star-rating">
+                    <i class="fa-regular fa-star" data-rating="1"></i>
+                    <i class="fa-regular fa-star" data-rating="2"></i>
+                    <i class="fa-regular fa-star" data-rating="3"></i>
+                    <i class="fa-regular fa-star" data-rating="4"></i>
+                    <i class="fa-regular fa-star" data-rating="5"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Lyrics or Playlist (giữ đơn giản trước là Lyrics/Visual) -->
+        <div class="fp-right">
+             <div class="fp-lyrics-container" id="fp-lyrics">
+                 <p class="lyric-line active">Lời bài hát sẽ hiện tại đây...</p>
+                 <p class="lyric-line">Chọn bài hát để bắt đầu.</p>
+             </div>
+        </div>
+    </div>
+
+    <!-- Bottom: Controls -->
+    <div class="fp-bottom">
+        <div class="progress-container">
+            <span id="fp-current">0:00</span>
+            <div class="progress-bar" id="fp-progress">
+                <div class="progress-fill" id="fp-progress-fill"></div>
+            </div>
+            <span id="fp-duration">0:00</span>
+        </div>
+        <div class="player-controls" style="margin-top: 20px;">
+             <button class="ctrl-btn" id="fp-shuffle"><i class="fa-solid fa-shuffle"></i></button>
+            <button class="ctrl-btn" id="fp-prev" style="font-size: 24px;"><i class="fa-solid fa-backward-step"></i></button>
+            <button class="ctrl-btn play-pause" id="fp-play" style="width: 60px; height: 60px; font-size: 32px;">
+                <i class="fa-regular fa-circle-play" id="fp-play-icon"></i>
+            </button>
+            <button class="ctrl-btn" id="fp-next" style="font-size: 24px;"><i class="fa-solid fa-forward-step"></i></button>
+            <button class="ctrl-btn" id="fp-repeat"><i class="fa-solid fa-repeat"></i></button>
+        </div>
+    </div>
+</div>

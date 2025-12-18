@@ -1,0 +1,86 @@
+@model MusicWeb.Models.ViewModels.HomeViewModel
+
+<div id="all-songs-view" class="content-padding hidden">
+    <div class="section-title">
+        <span style="font-size: 24px;">Tất cả bài hát</span>
+    </div>
+    <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">
+        Khám phá kho nhạc phong phú.
+    </div>
+
+    <!-- Sort Controls -->
+    <div class="sort-controls" style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+        <span style="color: var(--text-secondary); font-size: 14px;">Sắp xếp theo:</span>
+        <select id="sort-select" style="padding: 8px 12px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff; cursor: pointer;">
+            <option value="releaseDate-desc">Ngày phát hành (Mới nhất)</option>
+            <option value="releaseDate-asc">Ngày phát hành (Cũ nhất)</option>
+            <option value="viewCount-desc">Lượt xem (Cao → Thấp)</option>
+            <option value="viewCount-asc">Lượt xem (Thấp → Cao)</option>
+            <option value="rating-desc">Điểm đánh giá (Cao → Thấp)</option>
+            <option value="rating-asc">Điểm đánh giá (Thấp → Cao)</option>
+            <option value="title-asc">Tên bài hát (A → Z)</option>
+            <option value="title-desc">Tên bài hát (Z → A)</option>
+        </select>
+        <button id="reset-sort" class="circle-btn" title="Đặt lại" style="margin-left: auto;">
+            <i class="fa-solid fa-rotate-right"></i>
+        </button>
+    </div>
+
+    <!-- Song List Header -->
+    <div class="song-list-header" style="display: flex; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); font-size: 12px; text-transform: uppercase;">
+        <div style="width: 30%;">Bài hát</div>
+        <div style="width: 18%;">Nghệ sĩ</div>
+        <div style="width: 15%;">Thể loại</div>
+        <div style="width: 12%;">Ngày phát hành</div>
+        <div style="width: 8%;">Thời gian</div>
+        <div style="width: 17%; text-align: right;">Tùy chọn</div>
+    </div>
+
+    <div class="all-songs-list" style="margin-top: 10px;">
+        @foreach (var song in Model.NewReleases)
+        {
+             var cover = string.IsNullOrWhiteSpace(song.CoverUrl) ? $"https://picsum.photos/seed/{song.Id}/50/50" : song.CoverUrl;
+             var releaseDate = song.ReleaseDate?.ToString("dd/MM/yyyy") ?? "N/A";
+             var releaseDateSort = song.ReleaseDate?.ToString("yyyy-MM-dd") ?? "1900-01-01";
+             var avgRating = song.AverageRating?.ToString("F1") ?? "0";
+             
+             <div class="playlist-item song-card" 
+                  data-song-id="@song.Id" 
+                  data-title="@song.Title" 
+                  data-artist="@song.Artist"
+                  data-cover="@cover" 
+                  data-audio="@song.AudioUrl" 
+                  data-duration="@song.Duration" 
+                  data-favorite="@song.IsFavorite"
+                  data-view-count="@song.ViewCount"
+                  data-average-rating="@avgRating"
+                  data-release-date="@releaseDateSort">
+                
+                <div style="width: 30%; display: flex; align-items: center;">
+                    <img src="@cover" style="width: 40px; height: 40px; border-radius: 4px; object-fit: cover; margin-right: 15px;">
+                    <div>
+                        <div style="font-weight: 500;">@song.Title</div>
+                    </div>
+                </div>
+                <div style="width: 18%; color: var(--text-secondary);">@song.Artist</div>
+                <div style="width: 15%; color: var(--text-secondary);">@song.Genre</div>
+                <div style="width: 12%; color: var(--text-secondary);">@releaseDate</div>
+                <div style="width: 8%; color: var(--text-secondary);">@song.Duration</div>
+                <div style="width: 17%; text-align: right;">
+                    <button class="circle-btn favorite-toggle @(song.IsFavorite ? "active" : string.Empty)" title="Yêu thích" style="margin-right: 2px;">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
+                    <button class="circle-btn playlist-add" title="Thêm playlist" style="margin-right: 2px;">
+                         <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <a href="@song.AudioUrl" download class="circle-btn download-btn" title="Tải xuống" target="_blank" style="margin-right: 2px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                         <i class="fa-solid fa-download"></i>
+                    </a>
+                    <button class="circle-btn share-btn" title="Chia sẻ">
+                         <i class="fa-solid fa-share-nodes"></i>
+                    </button>
+                </div>
+             </div>
+        }
+    </div>
+</div>

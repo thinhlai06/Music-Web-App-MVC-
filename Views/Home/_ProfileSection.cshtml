@@ -1,0 +1,185 @@
+@model MusicWeb.Models.ViewModels.HomeViewModel
+@{
+    var avatarUrl = Model.CurrentUser?.AvatarUrl ?? "https://ui-avatars.com/api/?name=User&background=9b4de0&color=fff";
+}
+
+<div id="profile-view" class="content-padding hidden">
+    <div class="profile-header">
+        <img src="@avatarUrl" class="profile-avatar-xl" alt="Avatar người dùng">
+        <div class="profile-info">
+            <h2>@(Model.CurrentUser?.DisplayName ?? "Khách")</h2>
+            <div style="display: flex; gap: 10px;">
+                <span style="color: var(--text-secondary);">@(Model.CurrentUser?.Email ?? "Chưa đăng nhập")</span>
+            </div>
+            <div class="profile-actions">
+                <button class="pill-btn" id="profile-edit-btn"><i class="fa-solid fa-pen"></i> Chỉnh sửa</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-nav-tabs">
+        <div class="tab-item active">Tổng quan</div>
+        <div class="tab-item">Bài hát</div>
+        <div class="tab-item">Playlist</div>
+        <div class="tab-item">Nghệ sĩ</div>        
+    </div>
+
+    <!-- Tab Content: Tổng quan -->
+    <div class="profile-tab-content active" data-tab="0">
+        <div class="section-title" style="margin-top: 0;">
+            <span>Playlist Cá Nhân</span>
+            <a href="#" id="profile-open-playlist">Tạo mới</a>
+        </div>
+        <div class="music-grid" id="profile-playlists-grid">
+            <div class="card" id="create-playlist-card">
+                <div class="card-img-wrapper" style="border: 1px dashed rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05);">
+                    <i class="fa-solid fa-plus" style="font-size: 40px; color: var(--purple-primary);"></i>
+                </div>
+                <div class="card-title" style="text-align: center;">Tạo Playlist mới</div>
+            </div>
+            @foreach (var playlist in Model.PersonalPlaylists)
+            {
+                var cover = string.IsNullOrWhiteSpace(playlist.CoverUrl) ? $"https://picsum.photos/seed/user-playlist-{playlist.Id}/300/300" : playlist.CoverUrl;
+                <div class="card" data-playlist-id="@playlist.Id">
+                    <div class="card-img-wrapper">
+                        <img src="@cover" class="card-img" alt="@playlist.Title">
+                        <div class="card-overlay">
+                            <div class="play-btn-circle"><i class="fa-solid fa-play"></i></div>
+                        </div>
+                    </div>
+                    <div class="card-title">@playlist.Title</div>
+                    <div class="card-subtitle">@playlist.Subtitle</div>
+                </div>
+            }
+        </div>
+
+        <div class="section-title">
+            <span>Bài hát yêu thích</span>
+        </div>
+        <div class="music-grid" id="favorite-songs-grid">
+            @foreach (var song in Model.FavoriteSongs)
+            {
+                var cover = string.IsNullOrWhiteSpace(song.CoverUrl) ? $"https://picsum.photos/seed/fav-{song.Id}/300/300" : song.CoverUrl;
+                <div class="card song-card" data-song-id="@song.Id" data-title="@song.Title" data-artist="@song.Artist"
+                     data-cover="@cover" data-audio="@song.AudioUrl" data-duration="@song.Duration" data-favorite="true">
+                    <div class="card-actions">
+                        <button class="circle-btn favorite-toggle active"><i class="fa-solid fa-heart"></i></button>
+                        <button class="circle-btn playlist-add"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                    <div class="card-img-wrapper">
+                        <img src="@cover" class="card-img" alt="@song.Title">
+                        <div class="card-overlay">
+                            <div class="play-btn-circle"><i class="fa-solid fa-play"></i></div>
+                        </div>
+                    </div>
+                    <div class="card-title">@song.Title</div>
+                    <div class="card-subtitle">@song.Artist</div>
+                </div>
+            }
+        </div>
+
+        <div class="section-title">
+            <span>Lịch sử nghe gần đây</span>
+        </div>
+        <div class="music-grid" id="recent-songs-grid">
+            @foreach (var song in Model.RecentlyPlayed)
+            {
+                var cover = string.IsNullOrWhiteSpace(song.CoverUrl) ? $"https://picsum.photos/seed/history-{song.Id}/300/300" : song.CoverUrl;
+                <div class="card song-card" data-song-id="@song.Id" data-title="@song.Title" data-artist="@song.Artist"
+                     data-cover="@cover" data-audio="@song.AudioUrl" data-duration="@song.Duration" data-favorite="@song.IsFavorite">
+                    <div class="card-actions">
+                        <button class="circle-btn favorite-toggle @(song.IsFavorite ? "active" : string.Empty)"><i class="fa-solid fa-heart"></i></button>
+                        <button class="circle-btn playlist-add"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                    <div class="card-img-wrapper">
+                        <img src="@cover" class="card-img" alt="@song.Title">
+                        <div class="card-overlay">
+                            <div class="play-btn-circle"><i class="fa-solid fa-play"></i></div>
+                        </div>
+                    </div>
+                    <div class="card-title">@song.Title</div>
+                    <div class="card-subtitle">@song.Artist</div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Tab Content: Bài hát -->
+    <div class="profile-tab-content" data-tab="1">
+        <div class="section-title" style="margin-top: 0;">
+            <span>Bài hát đã đăng tải</span>
+        </div>
+        <div class="music-grid" id="uploaded-songs-grid">
+            @if (Model.UploadedSongs.Any())
+            {
+                @foreach (var song in Model.UploadedSongs)
+                {
+                    var cover = string.IsNullOrWhiteSpace(song.CoverUrl) ? $"https://picsum.photos/seed/uploaded-{song.Id}/300/300" : song.CoverUrl;
+                    <div class="card song-card" data-song-id="@song.Id" data-title="@song.Title" data-artist="@song.Artist"
+                         data-cover="@cover" data-audio="@song.AudioUrl" data-duration="@song.Duration" data-favorite="@song.IsFavorite">
+                        <div class="card-actions">
+                            <button class="circle-btn favorite-toggle @(song.IsFavorite ? "active" : string.Empty)"><i class="fa-solid fa-heart"></i></button>
+                            <button class="circle-btn playlist-add"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                        <div class="card-img-wrapper">
+                            <img src="@cover" class="card-img" alt="@song.Title">
+                            <div class="card-overlay">
+                                <div class="play-btn-circle"><i class="fa-solid fa-play"></i></div>
+                            </div>
+                        </div>
+                        <div class="card-title">@song.Title</div>
+                        <div class="card-subtitle">@song.Artist</div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-secondary);">
+                    <i class="fa-solid fa-music" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+                    <p>Bạn chưa đăng tải bài hát nào</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Tab Content: Playlist -->
+    <div class="profile-tab-content" data-tab="2">
+        <div class="section-title" style="margin-top: 0;">
+            <span>Playlist Cá Nhân</span>
+            <a href="#" id="profile-open-playlist-tab">Tạo mới</a>
+        </div>
+        <div class="music-grid">
+            <div class="card" id="create-playlist-card-tab">
+                <div class="card-img-wrapper" style="border: 1px dashed rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05);">
+                    <i class="fa-solid fa-plus" style="font-size: 40px; color: var(--purple-primary);"></i>
+                </div>
+                <div class="card-title" style="text-align: center;">Tạo Playlist mới</div>
+            </div>
+            @foreach (var playlist in Model.PersonalPlaylists)
+            {
+                var cover = string.IsNullOrWhiteSpace(playlist.CoverUrl) ? $"https://picsum.photos/seed/user-playlist-{playlist.Id}/300/300" : playlist.CoverUrl;
+                <div class="card" data-playlist-id="@playlist.Id">
+                    <div class="card-img-wrapper">
+                        <img src="@cover" class="card-img" alt="@playlist.Title">
+                        <div class="card-overlay">
+                            <div class="play-btn-circle"><i class="fa-solid fa-play"></i></div>
+                        </div>
+                    </div>
+                    <div class="card-title">@playlist.Title</div>
+                    <div class="card-subtitle">@playlist.Subtitle</div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Tab Content: Nghệ sĩ -->
+    <div class="profile-tab-content" data-tab="3">
+        <div class="section-title" style="margin-top: 0;">
+            <span>Nghệ sĩ theo dõi</span>
+        </div>
+        <div style="padding: 40px; text-align: center; color: var(--text-secondary);">
+            <i class="fa-solid fa-user-music" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+            <p>Tính năng đang phát triển</p>
+        </div>
+    </div>
+</div>

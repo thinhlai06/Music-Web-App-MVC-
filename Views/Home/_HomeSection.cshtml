@@ -1,0 +1,137 @@
+@model MusicWeb.Models.ViewModels.HomeViewModel
+
+<div id="home-view" class="content-padding">
+    <div class="section-title" style="margin-top: 10px;">
+        <span style="font-size: 24px;">Gợi ý dành riêng cho bạn</span>
+    </div>
+    <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">
+        Nghe lại những bài hát yêu thích và khám phá âm nhạc mới.
+    </div>
+
+    <div class="hero-banner">
+        <div class="banner-item">
+            <img src="https://picsum.photos/id/111/400/200" alt="Banner 1">
+        </div>
+        <div class="banner-item">
+            <img src="https://picsum.photos/id/123/400/200" alt="Banner 2">
+        </div>
+        <div class="banner-item">
+            <img src="https://picsum.photos/id/145/400/200" alt="Banner 3">
+        </div>
+    </div>
+
+    <div class="section-title">
+        <span>Mới Phát Hành</span>
+        <a href="#" onclick="event.preventDefault(); switchView('all-songs');">Tất cả <i class="fa-solid fa-chevron-right"></i></a>
+    </div>
+    <div class="music-grid">
+        @foreach (var song in Model.NewReleases)
+        {
+            var cover = string.IsNullOrWhiteSpace(song.CoverUrl) ? $"https://picsum.photos/seed/{song.Id}/300/300" : song.CoverUrl;
+            <div class="card song-card" data-song-id="@song.Id" data-title="@song.Title" data-artist="@song.Artist"
+                 data-cover="@cover" data-audio="@song.AudioUrl" data-duration="@song.Duration" data-favorite="@song.IsFavorite">
+                <div class="card-actions">
+                    <button class="circle-btn favorite-toggle @(song.IsFavorite ? "active" : string.Empty)" title="Yêu thích">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
+                    <button class="circle-btn playlist-add" title="Thêm playlist">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
+                <div class="card-img-wrapper">
+                    <img src="@cover" class="card-img" alt="@song.Title">
+                    <div class="card-overlay">
+                        <div class="play-btn-circle"><i class="fa-solid fa-play"></i></div>
+                    </div>
+                </div>
+                <div class="card-title">@song.Title</div>
+                <div class="card-subtitle">@song.Artist</div>
+            </div>
+        }
+    </div>
+
+    <div class="chart-section">
+        <div class="chart-header">#zingchart <i class="fa-solid fa-circle-play" style="font-size: 24px; color: #fff; margin-left: 10px;"></i></div>
+        <div class="chart-list">
+            @foreach (var item in Model.Chart)
+            {
+                var cover = string.IsNullOrWhiteSpace(item.CoverUrl) ? $"https://picsum.photos/seed/chart-{item.SongId}/300/300" : item.CoverUrl;
+                var rankClass = item.Rank switch
+                {
+                    1 => "n1",
+                    2 => "n2",
+                    3 => "n3",
+                    _ => string.Empty
+                };
+                <div class="chart-item song-card" data-song-id="@item.SongId" data-title="@item.Title" data-artist="@item.Artist"
+                     data-cover="@cover" data-audio="@Model.NewReleases.FirstOrDefault(s => s.Id == item.SongId)?.AudioUrl" data-duration="00:00">
+                    <div class="chart-number @rankClass">@item.Rank</div>
+                    <img src="@cover" class="current-song-img" alt="@item.Title">
+                    <div class="song-info">
+                        <h4>@item.Title</h4>
+                        <p>@item.Artist • @item.ViewCount lượt nghe</p>
+                    </div>
+                    <div class="chart-percent">@((int)(item.Percentage * 100))%</div>
+                </div>
+            }
+        </div>
+        <div style="text-align: center; margin-top: 15px;">
+            <a href="#" onclick="event.preventDefault(); switchView('library');" style="padding: 8px 25px; border: 1px solid #fff; border-radius: 20px; font-size: 14px;">Xem thêm</a>
+        </div>
+    </div>
+
+    <div class="section-title">
+        <span>Playlist Thịnh Hành</span>
+    </div>
+    <div class="music-grid">
+        @foreach (var playlist in Model.TrendingPlaylists)
+        {
+            var cover = string.IsNullOrWhiteSpace(playlist.CoverUrl) ? $"https://picsum.photos/seed/playlist-{playlist.Id}/300/300" : playlist.CoverUrl;
+            <div class="card" onclick="loadPlaylist(@playlist.Id)">
+                <div class="card-img-wrapper">
+                    <img src="@cover" class="card-img" alt="@playlist.Title">
+                    <div class="card-overlay">
+                        <div class="play-btn-circle"><i class="fa-solid fa-play"></i></div>
+                    </div>
+                </div>
+                <div class="card-title">@playlist.Title</div>
+                <div class="card-subtitle">@playlist.Subtitle</div>
+            </div>
+        }
+    </div>
+
+    <div class="section-title">
+        <span>Album Hot</span>
+    </div>
+    <div class="music-grid">
+        @foreach (var album in Model.Albums)
+        {
+            var cover = string.IsNullOrWhiteSpace(album.CoverUrl) ? $"https://picsum.photos/seed/album-{album.Id}/300/300" : album.CoverUrl;
+            <div class="card" onclick="loadAlbum(@album.Id)">
+                <div class="card-img-wrapper">
+                    <img src="@cover" class="card-img" alt="@album.Title">
+                    <div class="card-overlay">
+                        <div class="play-btn-circle"><i class="fa-solid fa-play"></i></div>
+                    </div>
+                </div>
+                <div class="card-title">@album.Title</div>
+                <div class="card-subtitle">@album.ArtistName</div>
+            </div>
+        }
+    </div>
+
+    <div class="section-title">
+        <span>Thể Loại & Tâm Trạng</span>
+        <a href="#" onclick="event.preventDefault(); switchView('all-genres');">Tất cả <i class="fa-solid fa-chevron-right"></i></a>
+    </div>
+    <div class="genre-grid">
+        @foreach (var genre in Model.Genres.Take(6))
+        {
+            var image = string.IsNullOrWhiteSpace(genre.ImageUrl) ? $"https://picsum.photos/seed/genre-{genre.Id}/400/200" : genre.ImageUrl;
+            <div class="genre-card" onclick="loadGenre(@genre.Id)" style="cursor: pointer;">
+                <img src="@image" alt="@genre.Title">
+                <div class="genre-overlay">@genre.Title</div>
+            </div>
+        }
+    </div>
+</div>

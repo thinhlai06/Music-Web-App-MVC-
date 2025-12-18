@@ -1,0 +1,48 @@
+@model List<MusicWeb.Models.Entities.Album>
+
+<div class="content-padding">
+    <div class="section-title">
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <a href="/Admin" class="btn" style="border: 1px solid #fff; padding: 5px 15px; border-radius: 4px; font-size: 14px; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+                <i class="fa-solid fa-arrow-left"></i> QL Bài hát
+            </a>
+            <span>Quản lý Album</span>
+        </div>
+        <a href="/Admin/CreateAlbum" class="btn btn-primary" style="text-decoration: none;">+ Thêm Album</a>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        <thead>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); text-align: left;">
+                <th style="padding: 10px;">ID</th>
+                <th style="padding: 10px;">Album</th>
+                <th style="padding: 10px;">Nghệ sĩ</th>
+                <th style="padding: 10px;">Số bài hát</th>
+                <th style="padding: 10px;">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var album in Model)
+            {
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 10px;">@album.Id</td>
+                    <td style="padding: 10px;">
+                        <div style="display: flex; align-items: center;">
+                            <img src="@(album.CoverUrl ?? "https://picsum.photos/50")" style="width: 40px; height: 40px; border-radius: 4px; margin-right: 10px;">
+                            @album.Title
+                        </div>
+                    </td>
+                    <td style="padding: 10px;">@album.Artist.Name</td>
+                    <td style="padding: 10px;">@album.Songs.Count</td>
+                    <td style="padding: 10px;">
+                        <a href="/Admin/EditAlbum/@album.Id" style="color: var(--purple-primary); text-decoration: none; margin-right: 10px; font-weight: 500;">Sửa</a>
+                        <form asp-action="DeleteAlbum" method="post" onsubmit="return confirm('Bạn chắc chắn muốn xóa album này?');" style="display: inline;">
+                            <input type="hidden" name="id" value="@album.Id" />
+                            <button type="submit" style="color: #ff4d4d; background: none; border: none; cursor: pointer;">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

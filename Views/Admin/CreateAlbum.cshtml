@@ -1,0 +1,41 @@
+@model MusicWeb.Controllers.AdminController.CreateAlbumViewModel
+
+<div class="content-padding">
+    <div class="section-title">
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <a href="/Admin/Albums" class="btn" style="border: 1px solid #fff; padding: 5px 15px; border-radius: 4px; font-size: 14px; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+                <i class="fa-solid fa-arrow-left"></i> Quay lại
+            </a>
+            <span>Thêm Album Mới</span>
+        </div>
+    </div>
+
+    <form asp-action="CreateAlbum" method="post" enctype="multipart/form-data" style="max-width: 600px; margin-top: 20px;">
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px;">Tên Album</label>
+            <input asp-for="Title" class="form-control" required style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #444; background: #222; color: #fff;" />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px;">Nghệ sĩ</label>
+            <input asp-for="ArtistName" class="form-control" required style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #444; background: #222; color: #fff;" />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px;">Ảnh bìa (Tải lên)</label>
+            <input asp-for="CoverFile" type="file" accept="image/*" class="form-control" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #444; background: #222; color: #fff;" />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px;">Hoặc Link Ảnh bìa (URL)</label>
+            <input asp-for="CoverUrlInput" class="form-control" placeholder="https://example.com/image.jpg" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #444; background: #222; color: #fff;" />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px;">Ngày phát hành</label>
+            <input asp-for="ReleaseDate" type="date" class="form-control" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #444; background: #222; color: #fff;" />
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="padding: 10px 20px; border: none; border-radius: 4px; background: var(--purple-primary); color: #fff; cursor: pointer;">Tạo Album</button>
+    </form>
+</div>

@@ -1,0 +1,44 @@
+<footer class="player-bar">
+    <div class="player-left">
+        <img src="https://picsum.photos/id/40/300/300" class="current-song-img" id="player-img" alt="Bìa bài hát">
+        <div class="song-info">
+            <h4 id="player-title">Chọn bài hát để phát</h4>
+            <p id="player-artist">MusicWave</p>
+        </div>
+        <div style="margin-left: 20px;">
+            <button class="ctrl-btn favorite-toggle" id="player-favorite"><i class="fa-regular fa-heart"></i></button>
+        </div>
+    </div>
+
+    <div class="player-center">
+        <div class="player-controls">
+            <button class="ctrl-btn" id="btn-shuffle"><i class="fa-solid fa-shuffle"></i></button>
+            <button class="ctrl-btn" id="btn-prev"><i class="fa-solid fa-backward-step"></i></button>
+            <button class="ctrl-btn play-pause" id="btn-play">
+                <i class="fa-regular fa-circle-play" id="play-icon"></i>
+            </button>
+            <button class="ctrl-btn" id="btn-next"><i class="fa-solid fa-forward-step"></i></button>
+            <button class="ctrl-btn" id="btn-repeat"><i class="fa-solid fa-repeat"></i></button>
+        </div>
+        <div class="progress-container">
+            <span id="player-current">0:00</span>
+            <div class="progress-bar" id="player-progress">
+                <div class="progress-fill" id="player-progress-fill"></div>
+            </div>
+            <span id="player-duration">0:00</span>
+        </div>
+    </div>
+
+    <div class="player-right">
+        <button class="ctrl-btn" onclick="toggleLyrics()" title="Xem lời bài hát">
+            <i class="fa-solid fa-microphone-lines"></i>
+        </button>
+        <button class="ctrl-btn" id="btn-speed" style="font-size: 14px; font-weight: bold; width: 40px;">1x</button>
+        <button class="ctrl-btn" id="btn-full-player"><i class="fa-regular fa-window-restore"></i></button>
+        <button class="ctrl-btn" id="volume-icon"><i class="fa-solid fa-volume-high"></i></button>
+        <div class="progress-bar" style="width: 120px;" id="volume-bar">
+            <div class="progress-fill" style="width: 70%;" id="volume-fill"></div>
+        </div>
+    </div>
+    <audio id="audio-player" preload="metadata"></audio>
+</footer>

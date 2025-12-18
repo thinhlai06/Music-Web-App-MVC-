@@ -1,0 +1,386 @@
+@model MusicWeb.Models.ViewModels.AlbumDetailViewModel
+@using System.Text.Json
+@{
+    var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = null }; // Use PascalCase or match C# props
+    var songData = JsonSerializer.Serialize(Model.Songs.Select(s => new {
+        id = s.Id,
+        title = s.Title,
+        artist = s.Artist,
+        cover = s.CoverUrl,
+        audio = s.AudioUrl,
+        durationLabel = s.Duration,
+        isFavorite = s.IsFavorite
+    }), jsonOptions);
+
+    // Calculate total duration
+    var totalSeconds = Model.Songs.Sum(s => 
+        TimeSpan.TryParseExact(s.Duration, "m\\:ss", null, out var ts) ? ts.TotalSeconds : 0);
+    var totalSpan = TimeSpan.FromSeconds(totalSeconds);
+    var durationString = totalSpan.Hours > 0 
+        ? $"{totalSpan.Hours} giờ {totalSpan.Minutes} phút" 
+        : $"{totalSpan.Minutes} phút {totalSpan.Seconds} giây";
+
+    var artistAvatar = !string.IsNullOrEmpty(Model.ArtistAvatar) ? Model.ArtistAvatar : "https://ui-avatars.com/api/?name=" + Model.ArtistName;
+}
+
+<div id="album-view" class="spotify-album-view" data-album-songs='@Html.Raw(songData)'>
+    <!-- Header Section with Gradient -->
+    <div class="album-header-section">
+        <!-- Back Button (Absolute) -->
+        <a href="#" onclick="event.preventDefault(); switchView('home');" class="back-btn">
+            <i class="fa-solid fa-chevron-left"></i>
+        </a>
+
+        <div class="header-content">
+            <div class="cover-shadow">
+                <img src="@Model.CoverUrl" alt="@Model.Title" class="main-cover">
+            </div>
+            <div class="info-col">
+                <span class="type-label">Album</span>
+                <h1 class="album-title">@Model.Title</h1>
+                <div class="meta-row">
+                    <img src="@artistAvatar" class="artist-mini-avatar" alt="@Model.ArtistName">
+                    <span class="artist-name">@Model.ArtistName</span>
+                    <span class="dot">•</span>
+                    <span class="release-year">@Model.ReleaseYear</span>
+                    <span class="dot">•</span>
+                    <span class="song-count">@Model.Songs.Count bài hát,</span>
+                    <span class="duration">@durationString</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background Gradient Overlay -->
+    <div class="bg-gradient"></div>
+
+    <!-- Action Bar -->
+    <div class="action-bar">
+        <button class="big-green-play-btn" onclick="playAlbumAll()">
+            <i class="fa-solid fa-play"></i>
+        </button>
+        <button class="action-icon-btn"><i class="fa-regular fa-heart"></i></button>
+        <button class="action-icon-btn"><i class="fa-solid fa-circle-down"></i></button>
+        <button class="action-icon-btn"><i class="fa-solid fa-ellipsis"></i></button>
+    </div>
+
+    <!-- Song List (Table Style) -->
+    <div class="album-songs-container">
+        <div class="songs-header-row">
+            <div class="col-idx">#</div>
+            <div class="col-title">Tiêu đề</div>
+            <div class="col-duration"><i class="fa-regular fa-clock"></i></div>
+        </div>
+        
+        <div class="songs-list-body">
+            @if (Model.Songs.Any())
+            {
+                int index = 1;
+                foreach (var song in Model.Songs)
+                {
+                    <div class="song-row" 
+                         data-song-id="@song.Id">
+                        <div class="col-idx">
+                            <span class="idx-num">@index</span>
+                            <i class="fa-solid fa-play idx-play"></i>
+                        </div>
+                        <div class="col-title">
+                            <div class="song-name">@song.Title</div>
+                            <div class="song-artist">@song.Artist</div>
+                        </div>
+                        <div class="col-duration">
+                            <button class="row-heart @(song.IsFavorite ? "active" : "")" onclick="event.stopPropagation(); toggleFavorite(@song.Id, this)">
+                                <i class="@(song.IsFavorite ? "fa-solid" : "fa-regular") fa-heart"></i>
+                            </button>
+                            <span class="time">@song.Duration</span>
+                        </div>
+                    </div>
+                    index++;
+                }
+            }
+            else
+            {
+                <div style="padding: 40px; text-align: center; color: #b3b3b3;">Chưa có bài hát nào</div>
+            }
+        </div>
+        
+        <div class="copyright-footer">
+            <div class="date">@Model.ReleaseDate.ToString("dd 'tháng' MM, yyyy")</div>            
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Scoped Styles for Spotify Look */
+    .spotify-album-view {
+        position: relative;
+        color: #fff;
+        padding-bottom: 50px;
+        font-family: 'Circular', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fallback fonts */
+    }
+
+    /* Gradients */
+    .bg-gradient {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 400px;
+        background: linear-gradient(180deg, rgba(30, 50, 100, 0.8) 0%, rgba(18, 18, 18, 1) 100%);
+        z-index: -1;
+    }
+    .album-header-section {
+        display: flex;
+        align-items: flex-end;
+        padding: 60px 30px 24px 30px; /* Top padding for Back Button */
+        background: transparent;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Back Button */
+    .back-btn {
+        position: absolute;
+        top: 20px;
+        left: 30px;
+        width: 32px;
+        height: 32px;
+        background: rgba(0,0,0,0.7);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        text-decoration: none;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    /* Header Layout */
+    .header-content {
+        display: flex;
+        gap: 24px;
+        width: 100%;
+        align-items: flex-end;
+    }
+    .cover-shadow {
+        box-shadow: 0 4px 60px rgba(0,0,0,0.5);
+        flex-shrink: 0;
+    }
+    .main-cover {
+        width: 232px;
+        height: 232px;
+        object-fit: cover;
+        display: block; /* Remove inline gap */
+        border-radius: 4px; /* Slight round */
+    }
+    .info-col {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .type-label {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 0px; /* Tighten up */
+    }
+    .album-title {
+        font-size: 72px; /* Huge title */
+        font-weight: 900;
+        margin: 0;
+        line-height: normal; /* Fix spacing */
+        letter-spacing: -1px;
+        padding-bottom: 10px;
+    }
+    .meta-row {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        font-weight: 500;
+        gap: 6px;
+    }
+    .artist-mini-avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    .artist-name {
+        font-weight: 700;
+        color: #fff;
+    }
+    .dot {
+        font-size: 8px; /* Smaller dot */
+    }
+    .song-count, .duration, .release-year {
+        color: rgba(255,255,255,0.7);
+    }
+
+    /* Action Bar */
+    .action-bar {
+        padding: 24px 30px;
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, #121212 100%); /* Fade to black */
+    }
+    .big-green-play-btn {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background-color: #1ed760;
+        border: none;
+        color: #000;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: transform 0.1s, background-color 0.1s;
+        box-shadow: 0 8px 8px rgba(0,0,0,0.3);
+    }
+    .big-green-play-btn:hover {
+        transform: scale(1.05);
+        background-color: #1fdf64;
+    }
+    .big-green-play-btn:active {
+        transform: scale(1.0);
+        background-color: #169c46;
+    }
+    .action-icon-btn {
+        background: transparent;
+        border: none;
+        color: #b3b3b3;
+        font-size: 32px; /* Bigger icons */
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
+    .action-icon-btn:hover {
+        color: #fff;
+    }
+    .action-icon-btn .fa-ellipsis {
+        font-size: 24px; /* Dots smaller */
+    }
+
+    /* Song List table */
+    .album-songs-container {
+        padding: 0 30px;
+        background: #121212; /* Ensure solid bg */
+    }
+    .songs-header-row {
+        display: flex;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        padding: 0 16px 8px 16px;
+        margin-bottom: 16px;
+        color: #b3b3b3;
+        font-size: 14px;
+        align-items: center;
+    }
+    .col-idx { flex: 0 0 40px; text-align: center; justify-content: center; display: flex;}
+    .col-title { flex: 1; }
+    .col-duration { flex: 0 0 100px; text-align: right; justify-content: flex-end; display: flex; align-items: center; gap: 15px;}
+    
+    .song-row {
+        display: flex;
+        padding: 8px 16px;
+        border-radius: 4px;
+        align-items: center;
+        color: #fff;
+        font-size: 14px;
+        margin-bottom: 2px; /* Tiny gap */
+    }
+    .song-row:hover {
+        background-color: rgba(255,255,255,0.1);
+        cursor: pointer;
+    }
+    .idx-num { display: block; color: #b3b3b3; font-size: 16px; }
+    .idx-play { display: none; font-size: 14px; color: #fff; }
+    
+    .song-row:hover .idx-num { display: none; }
+    .song-row:hover .idx-play { display: block; }
+    
+    .song-name {
+        font-size: 16px;
+        font-weight: 500;
+        color: #fff;
+        margin-bottom: 2px;
+    }
+    .song-artist {
+        font-size: 14px;
+        color: #b3b3b3;
+    }
+    .song-row:hover .song-artist { color: #fff; }
+    
+    .time {
+        color: #b3b3b3;
+        font-variant-numeric: tabular-nums;
+        font-size: 14px;
+    }
+    
+    .row-heart {
+        background: transparent;
+        border: none;
+        color: #b3b3b3;
+        cursor: pointer;
+        opacity: 0;
+        font-size: 16px;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+    }
+    .row-heart.active {
+        color: #1ed760; /* Spotify Green Heart */
+        opacity: 1;
+    }
+    .song-row:hover .row-heart {
+        opacity: 1;
+    }
+    .row-heart:hover {
+        color: #fff;
+    }
+    .row-heart.active:hover {
+        color: #1ed760;
+    }
+
+    .copyright-footer {
+        margin-top: 32px;
+        padding-bottom: 40px;
+        font-size: 12px;
+        color: #b3b3b3;
+    }
+    .copyright-footer .date {
+        margin-bottom: 4px;
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 768px) {
+        .album-header-section {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding-top: 50px;
+        }
+        .header-content {
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        .album-title {
+            font-size: 32px;
+        }
+        .main-cover {
+            width: 180px;
+            height: 180px;
+        }
+        .meta-row {
+            justify-content: center;
+        }
+        .action-bar {
+            justify-content: center;
+        }
+    }
+</style>
+
+

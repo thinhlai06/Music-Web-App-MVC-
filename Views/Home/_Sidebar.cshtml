@@ -1,0 +1,37 @@
+@model MusicWeb.Models.ViewModels.HomeViewModel
+
+<aside class="sidebar">
+    <div class="brand-logo" onclick="switchView('home')">
+        <i class="fa-solid fa-wave-square"></i> MusicWave
+    </div>
+    <nav class="nav-menu">
+        <div class="nav-item active" data-view="home" onclick="switchView('home')">
+            <i class="fa-solid fa-bullseye"></i> Khám Phá
+        </div>
+        <div class="nav-item" data-view="library" onclick="switchView('library')">
+            <i class="fa-solid fa-chart-line"></i> #zingchart
+        </div>
+        <div class="nav-item" data-view="profile" onclick="switchView('profile')">
+            <i class="fa-solid fa-user"></i> Cá nhân
+        </div>
+        @if (Model.IsAdmin)
+        {
+            <div class="nav-item" onclick="window.location.href='/admin'">
+                <i class="fa-solid fa-music"></i> QL Bài Hát
+            </div>
+            <div class="nav-item" onclick="window.location.href='/admin/albums'">
+                <i class="fa-solid fa-compact-disc"></i> QL Album
+            </div>
+            <div class="nav-item" onclick="window.location.href='/admin/users'">
+                <i class="fa-solid fa-users"></i> QL Tài Khoản
+            </div>
+        }
+        <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;"></div>
+        <div class="nav-item" id="open-playlist-modal">
+            <i class="fa-solid fa-plus"></i> Tạo Playlist Mới
+        </div>
+        <div class="nav-item" onclick="switchView('profile')">
+            <i class="fa-solid fa-heart"></i> Bài hát yêu thích
+        </div>
+    </nav>
+</aside>

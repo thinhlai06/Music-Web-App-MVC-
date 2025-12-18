@@ -1,0 +1,88 @@
+@model MusicWeb.Controllers.AdminController.EditSongViewModel
+
+<div class="content-padding">
+    <div class="section-title">
+        <span>Chỉnh sửa Bài Hát</span>
+        <a href="/admin" class="btn" style="border: 1px solid #fff; padding: 5px 15px; border-radius: 4px; font-size: 14px; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+            <i class="fa-solid fa-arrow-left"></i> Trở về
+        </a>
+    </div>
+
+    @if (TempData["Message"] != null)
+    {
+        <div style="background: rgba(0,255,0,0.1); border: 1px solid #00ff00; color: #00ff00; padding: 10px; border-radius: 4px; margin-bottom: 20px;">
+            @TempData["Message"]
+        </div>
+    }
+
+    <form asp-action="EditSong" method="post" enctype="multipart/form-data" style="max-width: 600px; margin-top: 20px;">
+        <input type="hidden" asp-for="Id" />
+
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">Tên bài hát</label>
+            <input type="text" asp-for="Title" required style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">Nghệ sĩ</label>
+            <input type="text" asp-for="ArtistName" required style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff;">
+        </div>
+
+        <div style="display: flex; gap: 20px; margin-bottom: 15px;">
+            <div style="flex: 1;">
+                <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">Thể loại</label>
+                <select asp-for="GenreId" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); background: #1a1a1a; color: #fff;">
+                    <option value="0">-- Chọn thể loại --</option>
+                    @foreach (var genre in ViewBag.Genres as List<MusicWeb.Models.Entities.Genre>)
+                    {
+                        <option value="@genre.Id">@genre.Name</option>
+                    }
+                </select>
+            </div>
+            <div style="flex: 1;">
+                <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">Album</label>
+                <select asp-for="AlbumId" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); background: #1a1a1a; color: #fff;">
+                    <option value="">-- Không có --</option>
+                    @foreach (var album in ViewBag.Albums as List<MusicWeb.Models.Entities.Album>)
+                    {
+                        <option value="@album.Id">@album.Title</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 20px; margin-bottom: 15px;">
+            <div style="flex: 1;">
+                <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">Thời lượng (giây)</label>
+                <input type="number" asp-for="DurationSeconds" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff;">
+            </div>
+            <div style="flex: 1;">
+                <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">Ngày phát hành</label>
+                <input type="date" asp-for="ReleaseDate" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff;">
+            </div>
+        </div>
+
+        <div style="margin-bottom: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+            <label style="display: block; margin-bottom: 5px; color: var(--purple-primary); font-weight: bold;">File Nhạc (Thay đổi)</label>
+            <input type="file" asp-for="AudioFile" accept="audio/*" style="color: #fff; margin-bottom: 5px;">
+            <div style="font-size: 12px; margin-bottom: 5px; color: var(--text-secondary);">Hoặc URL mới:</div>
+            <input type="text" asp-for="AudioUrlInput" placeholder="https://..." style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff;">
+        </div>
+
+        <div style="margin-bottom: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+             <label style="display: block; margin-bottom: 5px; color: var(--purple-primary); font-weight: bold;">Ảnh Bìa (Thay đổi)</label>
+            <input type="file" asp-for="CoverFile" accept="image/*" style="color: #fff; margin-bottom: 5px;">
+             <div style="font-size: 12px; margin-bottom: 5px; color: var(--text-secondary);">Hoặc URL mới:</div>
+            <input type="text" asp-for="CoverUrlInput" placeholder="https://..." style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff;">
+        </div>
+
+        <div style="margin-bottom: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+            <label style="display: block; margin-bottom: 5px; color: var(--purple-primary); font-weight: bold;">Lyrics (Lời bài hát)</label>
+            <input type="file" asp-for="LyricsFile" accept=".txt,.lrc" style="color: #fff; margin-bottom: 5px;">
+            <div style="font-size: 12px; margin-bottom: 5px; color: var(--text-secondary);">Hoặc URL file lyrics:</div>
+            <input type="text" asp-for="LyricsUrlInput" placeholder="https://..." style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff;">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="padding: 10px 30px; font-size: 16px;">Lưu Thay Đổi</button>
+    </form>
+</div>
