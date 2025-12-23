@@ -284,7 +284,7 @@ public class MusicService : IMusicService
         return model;
     }
 
-    public async Task<(IEnumerable<string> Lyrics, string SongTitle, string Artist)> GetLyricsAsync(int songId)
+    public async Task<(IEnumerable<LyricLineViewModel> Lyrics, string SongTitle, string Artist)> GetLyricsAsync(int songId)
     {
         var song = await _context.Songs
             .Include(s => s.Artist)
@@ -293,34 +293,68 @@ public class MusicService : IMusicService
 
         if (song is null)
         {
-            return (Array.Empty<string>(), "Không tìm thấy", string.Empty);
+            return (Array.Empty<LyricLineViewModel>(), "Không tìm thấy", string.Empty);
         }
 
-        IEnumerable<string> lines = Array.Empty<string>();
+        var lyrics = new List<LyricLineViewModel>();
 
+        // 1. Try fetching and parsing LRC from URL
         if (!string.IsNullOrWhiteSpace(song.LyricsUrl))
         {
             try
             {
                 var client = _httpClientFactory.CreateClient();
+                // Some storage providers/CDNs block requests without a User-Agent
+                client.DefaultRequestHeaders.Add("User-Agent", "MusicWeb/1.0");
+                
                 var content = await client.GetStringAsync(song.LyricsUrl);
-                lines = content
-                    .Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+                
+                // Debug logging (will show in console)
+                Console.WriteLine($"[Lyrics] Fetched {song.LyricsUrl}. Length: {content.Length}");
+
+                var lines = content.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var line in lines)
+                {
+                    // Basic LRC Parser: [mm:ss.xx]Text, forgiving whitespace
+                    var match = System.Text.RegularExpressions.Regex.Match(line, @"\[(\d+):(\d+(\.\d+)?)\](.*)");
+                    if (match.Success)
+                    {
+                        var min = double.Parse(match.Groups[1].Value);
+                        var sec = double.Parse(match.Groups[2].Value);
+                        var text = match.Groups[4].Value.Trim();
+                        lyrics.Add(new LyricLineViewModel(min * 60 + sec, text));
+                    }
+                }
+                // Fallback: If no LRC timestamps were found, treat as plain text (unsynced)
+                if (lyrics.Count == 0 && lines.Length > 0)
+                {
+                    foreach (var line in lines)
+                    {
+                        if (!string.IsNullOrWhiteSpace(line))
+                        {
+                            // Use a very large timestamp to prevent auto-scroll logic from picking it up
+                            lyrics.Add(new LyricLineViewModel(999999, line.Trim()));
+                        }
+                    }
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                // fallback bên dưới nếu đọc URL thất bại
+                Console.WriteLine($"[Lyrics] Error fetching URL {song.LyricsUrl}: {ex.Message}");
+                // Fallback to database
             }
         }
 
-        if (!lines.Any())
+        // 2. If no LRC found or empty, use Database LyricLines
+        if (!lyrics.Any() && song.Lyrics.Any())
         {
-            lines = song.Lyrics
+            lyrics = song.Lyrics
                 .OrderBy(l => l.TimestampSeconds)
-                .Select(l => l.Content);
+                .Select(l => new LyricLineViewModel(l.TimestampSeconds, l.Content))
+                .ToList();
         }
 
-        return (lines, song.Title, song.Artist.Name);
+        return (lyrics, song.Title, song.Artist.Name);
     }
 
     public async Task<bool> ToggleFavoriteAsync(int songId, string userId)

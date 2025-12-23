@@ -7,7 +7,7 @@ public interface IMusicService
 {
     Task<HomeViewModel> BuildHomeAsync(string? userId);
     Task<SearchResultsViewModel> SearchAsync(string term, string? userId);
-    Task<(IEnumerable<string> Lyrics, string SongTitle, string Artist)> GetLyricsAsync(int songId);
+    Task<(IEnumerable<LyricLineViewModel> Lyrics, string SongTitle, string Artist)> GetLyricsAsync(int songId);
     Task<List<SongCardViewModel>> GetSongsByGenreAsync(int genreId, string userId);
     Task<bool> ToggleFavoriteAsync(int songId, string userId);
     Task<Playlist> CreatePlaylistAsync(string name, string userId);
@@ -27,3 +27,5 @@ public interface IMusicService
     Task<List<UserResultViewModel>> GetFollowingAsync(string userId, string? currentUserId);
     Task<bool> RemoveFollowerAsync(string userId, string followerId);
 }
+
+public record LyricLineViewModel(double Time, string Text);

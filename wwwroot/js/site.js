@@ -389,6 +389,9 @@
         els.lyricsOverlay.classList.toggle('open');
         if (els.lyricsOverlay.classList.contains('open')) {
             loadLyrics(state.currentSong.id);
+            els.audio.addEventListener('timeupdate', syncLyrics);
+        } else {
+            els.audio.removeEventListener('timeupdate', syncLyrics);
         }
     }
 
@@ -400,13 +403,75 @@
                 document.getElementById('lyrics-song-title').textContent = data.data.title;
                 document.getElementById('lyrics-artist').textContent = data.data.artist;
                 els.lyricsContent.innerHTML = '';
-                data.data.lyrics.forEach((line, idx) => {
+
+                // data.data.lyrics is now [{ time: 12.5, text: "..." }, ...]
+                const lyrics = data.data.lyrics || [];
+
+                if (lyrics.length === 0) {
+                    els.lyricsContent.innerHTML = '<p class="lyric-line">Chưa có lời bài hát.</p>';
+                    return;
+                }
+
+                lyrics.forEach((line, idx) => {
                     const p = document.createElement('p');
-                    p.className = 'lyric-line' + (idx === 1 ? ' active' : '');
-                    p.textContent = line;
+                    p.className = 'lyric-line';
+                    // Handle both object format (new) and string format (legacy fallback)
+                    // Also handle potential PascalCase from .NET Default Serializer if not configured for camelCase
+                    const text = line.text || line.Text || line;
+                    const time = line.time || line.Time || 0;
+
+                    p.innerHTML = text === "" ? "&nbsp;" : text; // Handle empty lines
+                    p.dataset.time = time;
+
+                    // Allow clicking a line to seek to that time
+                    p.addEventListener('click', () => {
+                        if (els.audio) {
+                            els.audio.currentTime = time;
+                            els.audio.play();
+                        }
+                    });
+
                     els.lyricsContent.appendChild(p);
                 });
+
+                // Initial sync
+                syncLyrics();
             });
+    }
+
+    function syncLyrics() {
+        if (!els.audio || !els.lyricsOverlay.classList.contains('open')) return;
+
+        const currentTime = els.audio.currentTime;
+        const lines = document.querySelectorAll('.lyric-line');
+        let activeFound = false;
+
+        // Find the last line that has time <= currentTime
+        let activeIndex = -1;
+
+        for (let i = 0; i < lines.length; i++) {
+            const lineTime = parseFloat(lines[i].dataset.time);
+            if (lineTime <= currentTime) {
+                activeIndex = i;
+            } else {
+                // Since lines are sorted by time, we can break early once we pass currentTime
+                break;
+            }
+        }
+
+        if (activeIndex !== -1) {
+            lines.forEach((line, index) => {
+                if (index === activeIndex) {
+                    if (!line.classList.contains('active')) {
+                        line.classList.add('active');
+                        // Smooth scroll to center
+                        line.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                } else {
+                    line.classList.remove('active');
+                }
+            });
+        }
     }
 
     function bindEditProfile() {

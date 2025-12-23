@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "E:\\project cuoi ki\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|e:\\project cuoi ki\\services\\musicservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:services\\musicservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|e:\\project cuoi ki\\controllers\\uploadcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:controllers\\uploadcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -43,19 +47,32 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "MusicService.cs",
+              "DocumentMoniker": "E:\\project cuoi ki\\Services\\MusicService.cs",
+              "RelativeDocumentMoniker": "Services\\MusicService.cs",
+              "ToolTip": "E:\\project cuoi ki\\Services\\MusicService.cs",
+              "RelativeToolTip": "Services\\MusicService.cs",
+              "ViewState": "AgIAADsBAAAAAAAAAAAuwEwBAAA9AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-23T08:46:43.943Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "UploadController.cs",
               "DocumentMoniker": "E:\\project cuoi ki\\Controllers\\UploadController.cs",
               "RelativeDocumentMoniker": "Controllers\\UploadController.cs",
               "ToolTip": "E:\\project cuoi ki\\Controllers\\UploadController.cs",
               "RelativeToolTip": "Controllers\\UploadController.cs",
-              "ViewState": "AgIAAJAAAAAAAAAAAAAxwJMAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAJAAAAAAAAAAAABAwJMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-19T08:33:56.705Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "CloudflareStorageService.cs",
               "DocumentMoniker": "E:\\project cuoi ki\\Services\\CloudflareStorageService.cs",
               "RelativeDocumentMoniker": "Services\\CloudflareStorageService.cs",
@@ -63,12 +80,11 @@
               "RelativeToolTip": "Services\\CloudflareStorageService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAADMAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-19T08:29:17.653Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-19T08:29:17.653Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "SearchResultsViewModel.cs",
               "DocumentMoniker": "E:\\project cuoi ki\\Models\\ViewModels\\SearchResultsViewModel.cs",
               "RelativeDocumentMoniker": "Models\\ViewModels\\SearchResultsViewModel.cs",
@@ -76,12 +92,11 @@
               "RelativeToolTip": "Models\\ViewModels\\SearchResultsViewModel.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-19T07:26:38.375Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-19T07:26:38.375Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "ApplicationDbContext.cs",
               "DocumentMoniker": "E:\\project cuoi ki\\Data\\ApplicationDbContext.cs",
               "RelativeDocumentMoniker": "Data\\ApplicationDbContext.cs",
@@ -93,7 +108,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "appsettings.json",
               "DocumentMoniker": "E:\\project cuoi ki\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
