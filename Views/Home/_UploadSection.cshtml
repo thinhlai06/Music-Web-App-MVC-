@@ -41,6 +41,35 @@
                 </div>
             </div>
 
+            <!-- Genre Selection -->
+            <div class="row mb-4">
+                <div class="col-12">
+                     <label class="form-label">Chọn thể loại (Có thể chọn nhiều)</label>
+                     <div class="genre-selector-container script-scroll">
+                        @foreach (var genre in Model.Genres)
+                        {
+                            <div class="genre-checkbox-item">
+                                <input type="checkbox" id="genre-@genre.Id" name="GenreIds" value="@genre.Id">
+                                <label for="genre-@genre.Id">@genre.Title</label>
+                            </div>
+                        }
+                     </div>
+                </div>
+            </div>
+
+            <!-- Public/Private Setting -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="form-check form-switch" style="display: flex; align-items: center; gap: 10px;">
+                        <input class="form-check-input" type="checkbox" id="isPublicCheck" name="IsPublic" value="true" checked style="width: 40px; height: 20px; cursor: pointer; accent-color: var(--purple-primary);">
+                         <input type="hidden" name="IsPublic" value="false">
+                        <label class="form-check-label" for="isPublicCheck" style="color: var(--text-secondary); cursor: pointer;">
+                            Công khai bài hát này (Mọi người đều có thể nghe)
+                        </label>
+                    </div>
+                </div>
+            </div>
+
             <div class="upload-actions">
                 <button type="button" class="btn btn-outline-secondary" onclick="switchView('home')">Hủy bỏ</button>
                 <button type="submit" class="pill-btn upload-submit-btn">

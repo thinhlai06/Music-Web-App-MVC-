@@ -14,4 +14,4 @@ public record ArtistResultViewModel(int Id, string Name, string? AvatarUrl, stri
 
 public record AlbumResultViewModel(int Id, string Title, string ArtistName, string? CoverUrl);
 
-public record UserResultViewModel(string Id, string DisplayName, string? Email, string? AvatarUrl);
+

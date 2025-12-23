@@ -836,20 +836,72 @@
                 const avatar = user.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName)}&size=200&background=random`;
                 const userCard = document.createElement('div');
                 userCard.className = 'user-card';
-                userCard.style.cssText = 'display: flex; align-items: center; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; cursor: pointer; transition: all 0.3s;';
+                userCard.style.cssText = 'display: flex; align-items: center; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; cursor: pointer; transition: all 0.3s; justify-content: space-between;';
+
+                const followBtnHtml = user.isFollowing
+                    ? `<button class="pill-btn active" onclick="toggleFollow(event, '${user.userId}', this)" style="padding: 5px 15px; font-size: 12px;">Đang theo dõi</button>`
+                    : `<button class="pill-btn" onclick="toggleFollow(event, '${user.userId}', this)" style="padding: 5px 15px; font-size: 12px; background: transparent; border: 1px solid rgba(255,255,255,0.2);">Theo dõi</button>`;
 
                 userCard.innerHTML = `
-                    <img src="${avatar}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin-right: 15px;">
-                    <div>
-                        <div style="font-weight: 500; margin-bottom: 4px;">${user.displayName}</div>
-                        ${user.email ? `<div style="font-size: 13px; color: var(--text-secondary);">${user.email}</div>` : ''}
+                    <div style="display: flex; align-items: center;">
+                        <img src="${avatar}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin-right: 15px;">
+                        <div>
+                            <div style="font-weight: 500; margin-bottom: 4px;">${user.displayName}</div>
+                            ${user.email ? `<div style="font-size: 13px; color: var(--text-secondary);">${user.email}</div>` : ''}
+                        </div>
                     </div>
+                    ${followBtnHtml}
                 `;
                 usersResults.appendChild(userCard);
             });
         } else {
             usersSection.classList.add('hidden');
         }
+    }
+
+    window.toggleFollow = function (event, userId, btn) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        const isFollowing = btn.classList.contains('active');
+        const url = isFollowing ? `/unfollow/${userId}` : `/follow/${userId}`;
+
+        // Optimistic UI
+        if (isFollowing) {
+            btn.classList.remove('active');
+            btn.textContent = 'Theo dõi';
+            btn.style.background = 'transparent';
+            btn.style.border = '1px solid rgba(255,255,255,0.2)';
+        } else {
+            btn.classList.add('active');
+            btn.textContent = 'Đang theo dõi';
+            btn.style.background = 'var(--purple-primary)';
+            btn.style.border = 'none';
+        }
+
+        fetch(url, { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.success) {
+                    showToast('Có lỗi xảy ra');
+                    // Revert
+                    if (isFollowing) {
+                        btn.classList.add('active');
+                        btn.textContent = 'Đang theo dõi';
+                        btn.style.background = 'var(--purple-primary)';
+                        btn.style.border = 'none';
+                    } else {
+                        btn.classList.remove('active');
+                        btn.textContent = 'Theo dõi';
+                        btn.style.background = 'transparent';
+                        btn.style.border = '1px solid rgba(255,255,255,0.2)';
+                    }
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                showToast('Lỗi kết nối');
+            });
     }
 
     function renderSongResult(song) {
@@ -1829,6 +1881,102 @@
             playQueue(state.contextQueue, 0);
         }
     };
+
+    // USER LIST MODAL
+    window.openUserListModal = function (type, userId) {
+        const modal = document.getElementById('user-list-modal');
+        const title = document.getElementById('user-list-title');
+        const content = document.getElementById('user-list-content');
+
+        if (!modal) return;
+
+        // Reset
+        content.innerHTML = '<div style="text-align:center; padding: 20px;"><i class="fa-solid fa-spinner fa-spin"></i></div>';
+        modal.classList.add('visible');
+
+        if (type === 'followers') {
+            title.textContent = 'Người theo dõi';
+        } else {
+            title.textContent = 'Đang theo dõi';
+        }
+
+        fetchUserList(type, userId);
+    };
+
+    window.closeUserListModal = function () {
+        const modal = document.getElementById('user-list-modal');
+        if (modal) modal.classList.remove('visible');
+    };
+
+    function fetchUserList(type, userId) {
+        fetch(`/follow/list/${type}/${userId}`)
+            .then(res => res.json())
+            .then(data => {
+                renderUserList(data.data, type);
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('user-list-content').innerHTML = '<p style="text-align:center; color: #ff7b7b;">Có lỗi xảy ra</p>';
+            });
+    }
+
+    function renderUserList(users, type) {
+        const content = document.getElementById('user-list-content');
+        content.innerHTML = '';
+
+        if (!users || users.length === 0) {
+            content.innerHTML = '<p style="text-align:center; color: var(--text-secondary); margin-top: 20px;">Không có ai</p>';
+            return;
+        }
+
+        users.forEach(user => {
+            const row = document.createElement('div');
+            row.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);';
+            const avatar = user.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName)}&size=200&background=random`;
+
+            let btnHtml = '';
+            // If type is 'followers' -> Show 'Remove' (Xóa)
+            // If type is 'following' -> Show 'Unfollow' (Đang theo dõi -> Theo dõi)
+
+            if (type === 'followers') {
+                // Action: Remove this user from my followers
+                btnHtml = `<button class="pill-btn" onclick="removeFollower(event, '${user.userId}', this)" style="padding: 5px 15px; font-size: 12px; background: rgba(255,255,255,0.1); border: none;">Xóa</button>`;
+            } else {
+                // Looking at who I am following.
+                // Action: Unfollow this user.
+                btnHtml = `<button class="pill-btn active" onclick="toggleFollow(event, '${user.userId}', this)" style="padding: 5px 15px; font-size: 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">Đang theo dõi</button>`;
+            }
+
+            row.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img src="${avatar}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                    <div>
+                        <div style="font-weight: 500; font-size: 14px;">${user.displayName}</div>
+                        <div style="font-size: 12px; color: var(--text-secondary);">${user.email || ''}</div>
+                    </div>
+                </div>
+                ${btnHtml}
+            `;
+            content.appendChild(row);
+        });
+    }
+
+    window.removeFollower = function (event, followerId, btn) {
+        event.preventDefault();
+        if (!confirm('Bạn có chắc muốn xóa người này khỏi danh sách theo dõi?')) return;
+
+        fetch(`/follow/remove/${followerId}`, { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    btn.closest('div').remove(); // Remove row
+                    // Update stats counter? 
+                    // Ideally reload profile or decrement counter in DOM
+                } else {
+                    showToast('Có lỗi xảy ra');
+                }
+            });
+    }
 
     document.addEventListener('DOMContentLoaded', init);
 })();

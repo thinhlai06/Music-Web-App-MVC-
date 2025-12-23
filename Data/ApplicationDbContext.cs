@@ -22,6 +22,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<ChartEntry> ChartEntries => Set<ChartEntry>();
     public DbSet<PlayHistory> PlayHistories => Set<PlayHistory>();
     public DbSet<UserSongRating> UserSongRatings => Set<UserSongRating>();
+    public DbSet<UserFollow> UserFollows => Set<UserFollow>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -78,6 +79,22 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .HasOne(x => x.Song)
             .WithMany(x => x.UserRatings)
             .HasForeignKey(x => x.SongId);
+
+        builder.Entity<UserFollow>()
+            .HasKey(x => new { x.FollowerId, x.FolloweeId });
+
+        builder.Entity<UserFollow>()
+            .HasOne(x => x.Follower)
+            .WithMany(x => x.Following)
+            .HasForeignKey(x => x.FollowerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<UserFollow>()
+            .HasOne(x => x.Followee)
+            .WithMany(x => x.Followers)
+            .HasForeignKey(x => x.FolloweeId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
+
 

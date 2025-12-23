@@ -54,13 +54,38 @@ Project sử dụng 2 cách hiển thị dữ liệu song song:
     *   Playlist-Song là quan hệ nhiều-nhiều (1 Playlist có nhiều bài, 1 bài nằm trong nhiều Playlist).
 *   **Flow**: User bấm "Thêm vào playlist" -> JS gọi API -> Server thêm record vào bảng `PlaylistSongs` -> Trả về Success -> JS báo Toast "Thành công".
 
-### D. Tích hợp Cloudflare R2 (Storage)
-*   **Mục đích**: Lưu trữ file nhạc, ảnh bìa, lời bài hát tách biệt khỏi Web Server. Giúp web load nhanh hơn, giảm tải cho server chính và dễ dàng mở rộng.
-*   **Component**: `CloudflareStorageService`, `AdminController`.
-*   **Logic**: Sử dụng thư viện `AWSSDK.S3` (vì R2 tương thích chuẩn S3 của Amazon).
-*   **Flow**: Admin upload file -> Server nhận Stream -> Gửi sang R2 -> R2 trả về Public URL -> Server lưu URL vào Database.
+### D. Tích hợp Cloudflare R2 (Deep Dive)
+*   **Mục đích**: Tận dụng Storage giá rẻ, băng thông không giới hạn của Cloudflare R2 (S3-compatible) để chứa media.
+*   **Thư viện**: `AWSSDK.S3` (Do R2 tương thích API S3 của Amazon).
+*   **Kết nối (`Program.cs`)**:
+    *   Đăng ký `IAmazonS3` Client dạng Singleton.
+    *   Cấu hình `ServiceURL` trỏ tới Endpoint của R2.
+    *   **Quan trọng**: `DisablePayloadSigning = true` (trong `CloudflareStorageService.cs`) để tương thích tốt nhất với R2, tránh lỗi signature mismatch.
+*   **Cơ chế Đặt tên & Tổ chức Folder**:
+    *   Để tránh trùng lặp và dễ quản lý, file không lưu lộn xộn mà theo cấu trúc:
+        `{loại_file}/{tên_user}-{id_user}/{guid}_{tên_file_gốc}`
+    *   *Ví dụ*: `music/thinhlai-01/a1b2..._bai-hat-1.mp3`
+    *   **Guid**: Đảm bảo 2 file cùng tên up lên không đè nhau.
+    *   **User Folder**: Giúp dễ dàng cleanup, backup dữ liệu của từng user.
+*   **Quy trình Upload**:
+    1.  `UploadController` nhận file từ Form.
+    2.  Tạo "Safe Folder Name" từ Username + ID.
+    3.  Gọi `UploadFileAsync` của Service.
+    4.  Service dùng `TransferUtility` để bắn stream file lên R2.
+    5.  Ghép `PublicDomain` cấu hình sẵn (ví dụ: `https://pub-xxx.r2.dev`) + `Key` để tạo thành URL public lưu vào DB.
 
-### E. Lời bài hát (Lyrics) & Thuật toán Fallback
+### E. Player Logic (Shuffle & Loop)
+*   **Mục đích**: Tăng trải nghiệm nghe nhạc với các chế độ phát ngẫu nhiên và lặp lại.
+*   **Shuffle (Xáo trộn)**:
+    *   **Thuật toán**: Sử dụng **Fisher-Yates Shuffle** để đảm bảo tính ngẫu nhiên công bằng.
+    *   **Logic**: Khi bật Shuffle, `queue` hiện tại được sao lưu vào `state.originalQueue`. Một bản sao của `queue` được trộn và gán lại cho `state.queue`. Khi tắt, khôi phục từ `originalQueue`.
+*   **Loop (Lặp lại)**:
+    *   **Cơ chế**: State Machine 3 trạng thái (`off` -> `all` -> `one`).
+    *   **Loop One**: Khi bài hát kết thúc (sự kiện `ended` hoặc hàm `playNext`), logic kiểm tra `state.loopMode === 'one'`. Nếu đúng, đặt thời gian bài hát về 0 (`currentTime = 0`) và phát lại ngay lập tức.
+    *   **Loop All**: Khi danh sách phát đi đến bài cuối cùng (`index >= length`), nếu `loopMode === 'all'`, chỉ số bài hát (`queueIndex`) được reset về 0 để phát lại từ đầu.
+    *   **Loop Off**: Nếu đến cuối danh sách mà không bật Loop, trình phát sẽ dừng lại.
+
+### F. Lời bài hát (Lyrics) & Thuật toán Fallback
 *   **Mục đích**: Hiển thị lời bài hát cho người dùng.
 *   **Logic (MusicService.GetLyricsAsync)**:
     1.  Ưu tiên 1: Kiểm tra `LyricsUrl` (Link file .txt từ R2). Dùng `HttpClient` tải nội dung text về và cắt dòng (`Split`).
@@ -71,6 +96,21 @@ Project sử dụng 2 cách hiển thị dữ liệu song song:
 *   **Quản lý Album**: Thêm/Xóa bài hát trong Album, Upload ảnh bìa mới.
 *   **Quản lý User**: Khóa (Lockout) hoặc Mở khóa tài khoản người dùng vi phạm.
 *   **Xóa dọn dẹp**: Khi xóa bài hát (`DeleteSong`), hệ thống tự động gọi API của R2 để xóa file vật lý trên cloud, tránh rác dữ liệu.
+
+### G. Mạng Xã Hội & Tương Tác (Mới)
+*   **Mục đích**: Tăng tính kết nối giữa người dùng (Follow/Unfollow).
+*   **Component**: `FollowController`, `UserFollows` Table.
+*   **Logic**:
+    *   Quan hệ N-N giữa User và User (thông qua bảng `UserFollows`).
+    *   Hệ thống đếm số lượng Followers/Following để hiển thị trên Profile.
+    *   Danh sách User được hiển thị trong Modal (`_Modals.cshtml`) và kết quả tìm kiếm.
+*   **Flow**: User bấm "Follow" -> JS gọi API `/follow/{id}` -> Server kiểm tra và tạo record -> UI cập nhật nút thành "Đang theo dõi" (Optimistic Update).
+
+### H. Quản lý Hiển thị (Private/Public)
+*   **Mục đích**: Cho phép upload bài hát ở chế độ riêng tư (chỉ mình nghe) hoặc công khai.
+*   **Logic**:
+    *   Cột `IsPublic` (bit) trong bảng `Songs`.
+    *   User click icon "Mắt" trong tab "Bài hát đã đăng" -> Gọi API `/upload/toggle/{id}` -> Server đảo giá trị -> UI cập nhật icon/badge "Riêng tư".
 
 ---
 
@@ -145,13 +185,22 @@ Các API chạy trên cùng server với web (Internal API).
 | `POST` | `/playlists/{id}/songs` | Thêm bài hát vào playlist. | Owner |
 | `DELETE` | `/playlists/{id}/songs/{sid}` | Xóa bài khỏi playlist. | Owner |
 
-### 4. Upload & Admin (Quản trị)
+### 4. Social & Follow (Mạng xã hội)
+| Method | Route | Chức năng | Auth |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/follow/{userId}` | Theo dõi người dùng. | User |
+| `POST` | `/unfollow/{userId}` | Hủy theo dõi. | User |
+| `GET` | `/follow/list/followers/{id}` | Lấy danh sách người theo dõi. | Public |
+| `GET` | `/follow/list/following/{id}` | Lấy danh sách đang theo dõi. | Public |
+
+### 5. Upload & Admin (Quản trị)
 | Method | Route | Chức năng | Role |
 | :--- | :--- | :--- | :--- |
 | `POST` | `/upload` | Upload bài hát (User/Artist). | User |
 | `POST` | `/admin/createsong` | Admin đăng bài hát mới. | Admin |
 | `POST` | `/admin/toggleuserstatus` | Khóa/Mở khóa User. | Admin |
 | `DELETE` | `/admin/deletealbum/{id}` | Xóa Album. | Admin |
+| `POST` | `/upload/toggle/{id}` | Bật/Tắt chế độ Công khai/Riêng tư. | Owner |
 
 
 ---
@@ -172,6 +221,7 @@ Các API chạy trên cùng server với web (Internal API).
 
 ### Cập nhật Schema Mới:
 *   **Songs**: Thêm cột `LyricsUrl` (Nvarchar) để lưu link file lời.
+*   **UserFollows**: Bảng mới quan hệ N-N (FollowerId, FolloweeId) để lưu trữ theo dõi.
 *   **PlaylistSongs**: Thêm cột `Order` (Int) để cho phép user sắp xếp lại thứ tự bài hát trong playlist.
 
 ---

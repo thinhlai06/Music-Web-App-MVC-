@@ -88,3 +88,17 @@
     </div>
     <div class="lyrics-content" id="lyrics-content"></div>
 </div>
+
+<!-- USER LIST MODAL -->
+<div class="modal-overlay" id="user-list-modal">
+    <div class="auth-box" style="max-height: 80vh; display: flex; flex-direction: column;">
+        <div class="auth-close" onclick="closeUserListModal()"><i class="fa-solid fa-xmark"></i></div>
+        <h2 style="margin-bottom: 20px;" id="user-list-title">Danh sách</h2>
+        <div style="text-align: left; margin-bottom: 15px;">
+             <input type="text" id="user-list-search" class="auth-input" placeholder="Tìm kiếm" style="margin-bottom: 0;">
+        </div>
+        <div id="user-list-content" style="overflow-y: auto; flex: 1; padding-right: 5px;">
+            <!-- Users populated by JS -->
+        </div>
+    </div>
+</div>

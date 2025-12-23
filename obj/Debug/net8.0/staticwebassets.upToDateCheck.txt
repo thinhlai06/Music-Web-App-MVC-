@@ -1,5 +1,6 @@
 wwwroot\css\site.css
 wwwroot\favicon.ico
+wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css
@@ -59,4 +60,3 @@ wwwroot\lib\jquery\dist\jquery.min.map
 wwwroot\lib\jquery\LICENSE.txt
 wwwroot\uploads\albums\d2004da4-b5ce-4752-a138-62b7fa955f9f_duongdomic.jpg
 wwwroot\uploads\playlists\293d1e97-8294-4702-9a7b-59acdb9247d0_5fdfa98001a201aed81d5119d0456915.jpg
-wwwroot\js\site.js

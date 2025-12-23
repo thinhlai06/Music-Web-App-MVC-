@@ -16,7 +16,9 @@ public class HomeViewModel
     public bool IsAdmin { get; set; }
 }
 
-public record UserProfileViewModel(string DisplayName, string Email, string? AvatarUrl, string UserId);
+public record UserProfileViewModel(string DisplayName, string Email, string? AvatarUrl, string UserId, int FollowersCount = 0, int FollowingCount = 0, int PublicSongCount = 0, bool IsFollowing = false);
+
+public record UserResultViewModel(string UserId, string DisplayName, string Email, string? AvatarUrl, bool IsFollowing = false);
 
 public record SongCardViewModel(
     int Id,
@@ -30,7 +32,8 @@ public record SongCardViewModel(
     string Genre = "",
     DateTime? ReleaseDate = null,
     int ViewCount = 0,
-    decimal? AverageRating = null);
+    decimal? AverageRating = null,
+    bool IsPublic = true);
 
 public record ChartItemViewModel(int SongId, string Title, string Artist, string CoverUrl, int Rank, double Percentage, int ViewCount);
 

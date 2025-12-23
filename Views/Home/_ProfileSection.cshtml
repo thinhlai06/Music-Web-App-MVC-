@@ -7,12 +7,27 @@
     <div class="profile-header">
         <img src="@avatarUrl" class="profile-avatar-xl" alt="Avatar người dùng">
         <div class="profile-info">
-            <h2>@(Model.CurrentUser?.DisplayName ?? "Khách")</h2>
+            <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 15px;">
+                <h2 style="margin: 0;">@(Model.CurrentUser?.DisplayName ?? "Khách")</h2>
+                <div class="profile-actions">
+                    <button class="pill-btn" id="profile-edit-btn"><i class="fa-solid fa-pen"></i> Chỉnh sửa</button>
+                </div>
+            </div>
+            
+            <div class="profile-stats" style="display: flex; gap: 40px; margin-bottom: 15px; font-size: 16px;">
+                <div class="stat-item">
+                    <span style="font-weight: bold; color: #fff;">@Model.CurrentUser?.PublicSongCount</span> bài hát
+                </div>
+                <div class="stat-item" onclick="openUserListModal('followers', '@Model.CurrentUser?.UserId')" style="cursor: pointer;">
+                    <span style="font-weight: bold; color: #fff;">@Model.CurrentUser?.FollowersCount</span> người theo dõi
+                </div>
+                <div class="stat-item" onclick="openUserListModal('following', '@Model.CurrentUser?.UserId')" style="cursor: pointer;">
+                    <span style="font-weight: bold; color: #fff;">@Model.CurrentUser?.FollowingCount</span> đang theo dõi
+                </div>
+            </div>
+
             <div style="display: flex; gap: 10px;">
                 <span style="color: var(--text-secondary);">@(Model.CurrentUser?.Email ?? "Chưa đăng nhập")</span>
-            </div>
-            <div class="profile-actions">
-                <button class="pill-btn" id="profile-edit-btn"><i class="fa-solid fa-pen"></i> Chỉnh sửa</button>
             </div>
         </div>
     </div>
@@ -118,11 +133,23 @@
                     <div class="card song-card" data-song-id="@song.Id" data-title="@song.Title" data-artist="@song.Artist"
                          data-cover="@cover" data-audio="@song.AudioUrl" data-duration="@song.Duration" data-favorite="@song.IsFavorite">
                         <div class="card-actions">
+                            @{
+                                var eyeIcon = song.IsPublic ? "fa-eye" : "fa-eye-slash";
+                                var eyeTitle = song.IsPublic ? "Đang công khai" : "Đang riêng tư";
+                                var eyeClass = song.IsPublic ? "active" : "";
+                            }
+                            <button class="circle-btn visibility-toggle @eyeClass" title="@eyeTitle" onclick="toggleVisibility(event, @song.Id, this)">
+                                <i class="fa-solid @eyeIcon"></i>
+                            </button>
                             <button class="circle-btn favorite-toggle @(song.IsFavorite ? "active" : string.Empty)"><i class="fa-solid fa-heart"></i></button>
                             <button class="circle-btn playlist-add"><i class="fa-solid fa-plus"></i></button>
                         </div>
                         <div class="card-img-wrapper">
                             <img src="@cover" class="card-img" alt="@song.Title">
+                            @if (!song.IsPublic)
+                            {
+                                <div class="private-badge"><i class="fa-solid fa-lock"></i> Riêng tư</div>
+                            }
                             <div class="card-overlay">
                                 <div class="play-btn-circle"><i class="fa-solid fa-play"></i></div>
                             </div>
@@ -183,3 +210,68 @@
         </div>
     </div>
 </div>
+
+<script>
+    async function toggleVisibility(event, songId, btn) {
+        event.stopPropagation(); // Prevent card click
+        event.preventDefault();
+
+        // Optimistic UI update
+        const icon = btn.querySelector('i');
+        const isCurrentlyPublic = icon.classList.contains('fa-eye');
+        
+        // Toggle UI
+        const card = btn.closest('.card');
+        const imgWrapper = card.querySelector('.card-img-wrapper');
+        let badge = imgWrapper.querySelector('.private-badge');
+
+        if (isCurrentlyPublic) {
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+            btn.classList.remove('active');
+            btn.title = "Đang riêng tư";
+            
+            // Add badge if not exists
+            if (!badge) {
+                badge = document.createElement('div');
+                badge.className = 'private-badge';
+                badge.innerHTML = '<i class="fa-solid fa-lock"></i> Riêng tư';
+                imgWrapper.insertBefore(badge, imgWrapper.firstChild); // Insert at top
+            }
+        } else {
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+            btn.classList.add('active');
+            btn.title = "Đang công khai";
+            
+            // Remove badge
+            if (badge) badge.remove();
+        }
+
+        try {
+            const response = await fetch(`/upload/toggle/${songId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                 throw new Error("Failed");
+            }
+        } catch (error) {
+            console.error('Error toggling visibility:', error);
+            // Revert UI on error
+             if (isCurrentlyPublic) {
+                icon.classList.add('fa-eye');
+                icon.classList.remove('fa-eye-slash');
+                btn.classList.add('active');
+            } else {
+                icon.classList.add('fa-eye-slash');
+                icon.classList.remove('fa-eye');
+                btn.classList.remove('active');
+            }
+            alert('Có lỗi xảy ra khi thay đổi trạng thái');
+        }
+    }
+</script>

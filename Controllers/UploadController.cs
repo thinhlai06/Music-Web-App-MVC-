@@ -14,15 +14,18 @@ public class UploadController : Controller
     private readonly IStorageService _storageService;
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IMusicService _musicService;
 
     public UploadController(
         IStorageService storageService,
         ApplicationDbContext context,
-        UserManager<ApplicationUser> userManager)
+        UserManager<ApplicationUser> userManager,
+        IMusicService musicService)
     {
         _storageService = storageService;
         _context = context;
         _userManager = userManager;
+        _musicService = musicService;
     }
 
     [HttpGet]
@@ -39,7 +42,6 @@ public class UploadController : Controller
         var user = await _userManager.GetUserAsync(User);
         if (user == null) return Unauthorized();
 
-        // 1. Ensure Artist Profile exists for this User (Sync Logic)
         var artist = await _context.Artists.FirstOrDefaultAsync(a => a.UserId == user.Id);
         if (artist == null)
         {
@@ -53,18 +55,15 @@ public class UploadController : Controller
             await _context.SaveChangesAsync();
         }
 
-        // Generate readable folder name: username-userid
         string safeUserName = (user.UserName ?? "user").Replace("@", "-").Replace(".", "-");
         foreach (char c in Path.GetInvalidFileNameChars()) { safeUserName = safeUserName.Replace(c, '-'); }
         string userFolder = $"{safeUserName}-{user.Id}";
 
-        // 2. Upload Audio
         string audioUrl = string.Empty;
         if (model.AudioFile != null)
         {
             try 
             {
-                // Pass userFolder to organize files by User
                 audioUrl = await _storageService.UploadFileAsync(model.AudioFile.OpenReadStream(), model.AudioFile.FileName, "music", userFolder);
             }
             catch (Exception ex)
@@ -77,40 +76,65 @@ public class UploadController : Controller
             return BadRequest(new { success = false, message = "Vui lòng chọn file nhạc" });
         }
 
-        // 3. Upload Cover (Optional)
+        
         string? coverUrl = null;
         if (model.CoverFile != null)
         {
             try 
             {
-                // Pass userFolder to organize files by User
                 coverUrl = await _storageService.UploadFileAsync(model.CoverFile.OpenReadStream(), model.CoverFile.FileName, "covers", userFolder);
             }
              catch (Exception ex)
             {
-                 // Log warning but continue? Or fail? Let's fail strictly for now.
                  return BadRequest(new { success = false, message = "Lỗi khi upload ảnh: " + ex.Message });
             }
         }
 
-        // 4. Save Song
         var song = new Song
         {
             Title = model.Title,
             ArtistId = artist.Id,
             AudioUrl = audioUrl,
             CoverUrl = coverUrl,
-            Duration = TimeSpan.FromSeconds(180), // TODO: Get actual duration? For now default 3 mins.
+            Duration = TimeSpan.FromSeconds(180), 
             ReleaseDate = DateTime.UtcNow,
-            Description = model.Description
+            Description = model.Description,
+            IsPublic = model.IsPublic
         };
 
         _context.Songs.Add(song);
         await _context.SaveChangesAsync();
 
+        if (model.GenreIds != null && model.GenreIds.Any())
+        {
+            foreach (var genreId in model.GenreIds)
+            {
+                var songGenre = new SongGenre
+                {
+                    SongId = song.Id,
+                    GenreId = genreId
+                };
+                _context.SongGenres.Add(songGenre);
+            }
+            await _context.SaveChangesAsync();
+        }
+
         return Ok(new { success = true, message = "Upload bài hát thành công!" });
     }
+
+    [HttpPost("/upload/toggle/{id:int}")]
+    public async Task<IActionResult> ToggleVisibility(int id)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null) return Unauthorized(new { success = false, message = "Vui lòng đăng nhập" });
+
+        var success = await _musicService.ToggleSongVisibilityAsync(id, user.Id);
+        if (!success) return BadRequest(new { success = false, message = "Không thể thay đổi trạng thái" });
+
+        return Ok(new { success = true });
+    }
 }
+
 
 public class UploadSongViewModel
 {
@@ -118,4 +142,6 @@ public class UploadSongViewModel
     public string? Description { get; set; }
     public IFormFile AudioFile { get; set; } = null!;
     public IFormFile? CoverFile { get; set; }
+    public List<int> GenreIds { get; set; } = new();
+    public bool IsPublic { get; set; } = true;
 }

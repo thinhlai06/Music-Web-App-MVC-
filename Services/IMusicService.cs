@@ -20,4 +20,10 @@ public interface IMusicService
     Task<GenreDetailViewModel?> GetGenreDetailAsync(int id, string? userId);
     Task<bool> UpdatePlaylistAsync(int id, string name, string? coverUrl, string userId);
     Task<bool> SetUserSongRatingAsync(int songId, decimal rating, string userId);
+    Task<bool> ToggleSongVisibilityAsync(int songId, string userId);
+    Task<bool> FollowUserAsync(string followerId, string followeeId);
+    Task<bool> UnfollowUserAsync(string followerId, string followeeId);
+    Task<List<UserResultViewModel>> GetFollowersAsync(string userId, string? currentUserId);
+    Task<List<UserResultViewModel>> GetFollowingAsync(string userId, string? currentUserId);
+    Task<bool> RemoveFollowerAsync(string userId, string followerId);
 }

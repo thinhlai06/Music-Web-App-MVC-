@@ -19,13 +19,11 @@ public class CloudflareStorageService : IStorageService
     {
         var bucketName = _configuration["CloudflareR2:BucketName"];
         var publicDomain = _configuration["CloudflareR2:PublicDomain"];
-        
-        // Sanitize filename
+                
         var safeFileName = Path.GetFileNameWithoutExtension(fileName)
             .Replace(" ", "-")
             .ToLower() + Path.GetExtension(fileName);
             
-        // Construct Key: folder/subFolder/guid_filename OR folder/guid_filename
         var key = string.IsNullOrEmpty(subFolder) 
             ? $"{folder}/{Guid.NewGuid()}_{safeFileName}" 
             : $"{folder}/{subFolder}/{Guid.NewGuid()}_{safeFileName}";
@@ -35,13 +33,13 @@ public class CloudflareStorageService : IStorageService
             InputStream = fileStream,
             Key = key,
             BucketName = bucketName,
-            DisablePayloadSigning = true // Recommended for R2 compatibility
+            DisablePayloadSigning = true 
         };
 
         var fileTransferUtility = new TransferUtility(_s3Client);
         await fileTransferUtility.UploadAsync(uploadRequest);
 
-        // Construct public URL
+       
         return $"{publicDomain}/{key}";
     }
     public async Task DeleteFileAsync(string fileUrl)
@@ -51,12 +49,7 @@ public class CloudflareStorageService : IStorageService
         var bucketName = _configuration["CloudflareR2:BucketName"];
         var publicDomain = _configuration["CloudflareR2:PublicDomain"];
 
-        // Extract Key from URL
-        // URL: https://public-domain.com/folder/key
-        // Key: folder/key
         
-        // Remove Protocol (https://) if present in domain config or url logic
-        // Simple strategy: Replace PublicDomain with empty string
         
         string key = fileUrl.Replace(publicDomain + "/", "");
         

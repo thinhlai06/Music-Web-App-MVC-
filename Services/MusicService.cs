@@ -38,6 +38,7 @@ public class MusicService : IMusicService
         var recommendations = await _context.Songs
             .Include(s => s.Artist)
             .Include(s => s.SongGenres).ThenInclude(sg => sg.Genre)
+            .Where(s => s.IsPublic)
             .OrderByDescending(s => s.ReleaseDate)
             .Take(8)
             .ToListAsync();
@@ -46,6 +47,7 @@ public class MusicService : IMusicService
         // Top 7 songs by ViewCount
         var chartSongs = await _context.Songs
             .Include(s => s.Artist)
+            .Where(s => s.IsPublic)
             .OrderByDescending(s => s.ViewCount)
             .Take(7)
             .ToListAsync();
@@ -112,6 +114,24 @@ public class MusicService : IMusicService
                 .Where(s => s.Artist.UserId == userId)
                 .OrderByDescending(s => s.ReleaseDate)
                 .ToListAsync();
+
+            // Stats Logic
+            int followersCount = 0;
+            int followingCount = 0;
+            int publicSongCount = 0;
+
+            if (profile != null) 
+            {
+                 followersCount = await _context.UserFollows.CountAsync(f => f.FolloweeId == profile.UserId);
+                 followingCount = await _context.UserFollows.CountAsync(f => f.FollowerId == profile.UserId);
+                 publicSongCount = await _context.Songs.CountAsync(s => s.Artist.UserId == profile.UserId && s.IsPublic);
+                 
+                 profile = profile with { 
+                    FollowersCount = followersCount, 
+                    FollowingCount = followingCount, 
+                    PublicSongCount = publicSongCount 
+                 };
+            }
         }
 
         return new HomeViewModel
@@ -176,6 +196,7 @@ public class MusicService : IMusicService
             .Include(sg => sg.Song)
                 .ThenInclude(s => s.Artist)
             .Select(sg => sg.Song)
+            .Where(s => s.IsPublic)
             .ToListAsync();
 
         var favorites = new HashSet<int>();
@@ -214,7 +235,7 @@ public class MusicService : IMusicService
         var songsQuery = _context.Songs
             .Include(s => s.Artist)
             .Include(s => s.SongGenres).ThenInclude(sg => sg.Genre)
-            .Where(s => s.Title.Contains(term));
+            .Where(s => s.Title.Contains(term) && s.IsPublic);
 
         var artistsQuery = _context.Artists
             .Where(a => a.Name.Contains(term));
@@ -227,8 +248,8 @@ public class MusicService : IMusicService
             .Where(a => a.Title.Contains(term));
 
         var usersQuery = _context.Users
-            .Where(u => u.DisplayName != null && u.DisplayName.Contains(term) || 
-                        u.Email != null && u.Email.Contains(term));
+            .Where(u => u.Id != userId && (u.DisplayName != null && u.DisplayName.Contains(term) || 
+                        u.Email != null && u.Email.Contains(term)));
 
         var songResults = await songsQuery.Take(10).ToListAsync();
 
@@ -244,7 +265,8 @@ public class MusicService : IMusicService
                 new AlbumResultViewModel(a.Id, a.Title, a.Artist.Name, a.CoverUrl))
                 .ToListAsync(),
             Users = await usersQuery.Take(10).Select(u =>
-                new UserResultViewModel(u.Id, u.DisplayName ?? u.UserName ?? "Unknown", u.Email, u.AvatarUrl))
+                new UserResultViewModel(u.Id, u.DisplayName ?? u.UserName ?? "Unknown", u.Email, u.AvatarUrl, 
+                    userId != null && _context.UserFollows.Any(f => f.FollowerId == userId && f.FolloweeId == u.Id)))
                 .ToListAsync()
         };
 
@@ -534,6 +556,80 @@ public class MusicService : IMusicService
             song.SongGenres.FirstOrDefault()?.Genre.Name ?? "Unknown",
             song.ReleaseDate,
             song.ViewCount,
-            song.UserRatings.Any() ? (decimal?)song.UserRatings.Average(r => (double)r.Rating) : null);
+            song.UserRatings.Any() ? (decimal?)song.UserRatings.Average(r => (double)r.Rating) : null,
+            song.IsPublic);
+
+    public async Task<bool> ToggleSongVisibilityAsync(int songId, string userId)
+    {
+        var song = await _context.Songs
+            .Include(s => s.Artist)
+            .FirstOrDefaultAsync(s => s.Id == songId);
+
+        if (song == null || song.Artist.UserId != userId) return false;
+
+        song.IsPublic = !song.IsPublic;
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> FollowUserAsync(string followerId, string followeeId)
+    {
+        if (followerId == followeeId) return false;
+
+        var exists = await _context.UserFollows
+            .AnyAsync(f => f.FollowerId == followerId && f.FolloweeId == followeeId);
+        
+        if (exists) return true;
+
+        _context.UserFollows.Add(new UserFollow { FollowerId = followerId, FolloweeId = followeeId });
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> UnfollowUserAsync(string followerId, string followeeId)
+    {
+        var follow = await _context.UserFollows
+            .FirstOrDefaultAsync(f => f.FollowerId == followerId && f.FolloweeId == followeeId);
+        
+        if (follow == null) return true;
+
+        _context.UserFollows.Remove(follow);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<List<UserResultViewModel>> GetFollowersAsync(string userId, string? currentUserId)
+    {
+        return await _context.UserFollows
+            .Where(f => f.FolloweeId == userId)
+            .Include(f => f.Follower)
+            .Select(f => f.Follower)
+            .Select(u => new UserResultViewModel(u.Id, u.DisplayName ?? u.UserName ?? "Unknown", u.Email, u.AvatarUrl,
+                currentUserId != null && _context.UserFollows.Any(x => x.FollowerId == currentUserId && x.FolloweeId == u.Id)))
+            .ToListAsync();
+    }
+
+    public async Task<List<UserResultViewModel>> GetFollowingAsync(string userId, string? currentUserId)
+    {
+        return await _context.UserFollows
+            .Where(f => f.FollowerId == userId)
+            .Include(f => f.Followee)
+            .Select(f => f.Followee)
+            .Select(u => new UserResultViewModel(u.Id, u.DisplayName ?? u.UserName ?? "Unknown", u.Email, u.AvatarUrl,
+                currentUserId != null && _context.UserFollows.Any(x => x.FollowerId == currentUserId && x.FolloweeId == u.Id)))
+            .ToListAsync();
+    }
+
+    public async Task<bool> RemoveFollowerAsync(string userId, string followerId)
+    {
+        var follow = await _context.UserFollows
+            .FirstOrDefaultAsync(f => f.FollowerId == followerId && f.FolloweeId == userId);
+
+        if (follow == null) return true;
+
+        _context.UserFollows.Remove(follow);
+        await _context.SaveChangesAsync();
+        return true;
+    }
 }
 

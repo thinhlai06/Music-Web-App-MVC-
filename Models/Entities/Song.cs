@@ -10,6 +10,7 @@ public class Song
     public string? CoverUrl { get; set; }
     public string? LyricsUrl { get; set; }
     public DateTime ReleaseDate { get; set; } = DateTime.UtcNow;
+    public bool IsPublic { get; set; } = true;
 
     public int ArtistId { get; set; }
     public Artist Artist { get; set; } = null!;

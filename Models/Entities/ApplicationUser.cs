@@ -10,5 +10,8 @@ public class ApplicationUser : IdentityUser
     public ICollection<FavoriteSong> FavoriteSongs { get; set; } = new List<FavoriteSong>();
     public ICollection<PlayHistory> PlayHistories { get; set; } = new List<PlayHistory>();
     public ICollection<UserSongRating> SongRatings { get; set; } = new List<UserSongRating>();
+    
+    public ICollection<UserFollow> Followers { get; set; } = new List<UserFollow>();
+    public ICollection<UserFollow> Following { get; set; } = new List<UserFollow>();
 }
 
