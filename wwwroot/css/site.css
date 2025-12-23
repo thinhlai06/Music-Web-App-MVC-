@@ -1472,3 +1472,54 @@ ul {
     align-items: center;
     gap: 5px;
 }
+
+/* Horizontal Scroll Section */
+.section-scroll-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 25px;
+    padding-bottom: 20px;
+    margin: 0 -10px 20px -10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+}
+
+.section-scroll-container .card {
+    flex: 0 0 200px;
+    width: 200px;
+    scroll-snap-align: start;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.section-scroll-container .card:hover {
+    transform: translateY(-5px) scale(1.02);
+    z-index: 10;
+}
+
+.section-scroll-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.section-scroll-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    margin: 0 10px;
+}
+
+.section-scroll-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+.section-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: var(--purple-primary);
+    cursor: grab;
+}
+
+.section-scroll-container .card-img-wrapper {
+    width: 100%;
+    aspect-ratio: 1/1;
+    height: auto;
+}

@@ -35,12 +35,24 @@ public class MusicService : IMusicService
             userRatings = ratings;
         }
 
-        var recommendations = await _context.Songs
+        // NEW RELEASES: Latest 8 songs (For the carousel/scroll section)
+        var newReleasesRaw = await _context.Songs
             .Include(s => s.Artist)
             .Include(s => s.SongGenres).ThenInclude(sg => sg.Genre)
             .Where(s => s.IsPublic)
             .OrderByDescending(s => s.ReleaseDate)
             .Take(8)
+            .ToListAsync();
+
+        // RECOMMENDATIONS: Random 3 songs from ALL available songs
+        // Guid.NewGuid() ensures a random sort order every time this is called,
+        // so it will always pick 3 random songs from the current total pool of songs (6, 10, or 100+).
+        var randomRecommendations = await _context.Songs
+            .Include(s => s.Artist)
+            .Include(s => s.SongGenres).ThenInclude(sg => sg.Genre)
+            .Where(s => s.IsPublic)
+            .OrderBy(s => Guid.NewGuid()) 
+            .Take(3)
             .ToListAsync();
 
         // DYNAMIC ZINGCHART
@@ -137,11 +149,10 @@ public class MusicService : IMusicService
         return new HomeViewModel
         {
             CurrentUser = profile,
-            Recommendations = recommendations
+            Recommendations = randomRecommendations
                 .Select(song => ToSongCard(song, favoriteSongIds, userRatings))
                 .ToList(),
-            NewReleases = recommendations
-                .OrderByDescending(s => s.ReleaseDate)
+            NewReleases = newReleasesRaw
                 .Select(song => ToSongCard(song, favoriteSongIds, userRatings))
                 .ToList(),
             Chart = chartSongs.Select((s, index) => {
