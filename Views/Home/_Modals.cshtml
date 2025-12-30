@@ -48,6 +48,24 @@
             <input type="password" class="auth-input" name="confirmPassword" placeholder="Nhập lại mật khẩu" data-auth-field="register" style="display:none;">
             <button type="submit" class="auth-submit">Tiếp tục</button>
         </form>
+        
+        <div style="display: flex; align-items: center; margin: 20px 0; gap: 10px;">
+            <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1);"></div>
+            <span style="color: var(--text-secondary); font-size: 12px;">HOẶC</span>
+            <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1);"></div>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button type="button" class="oauth-btn oauth-btn-google" onclick="loginWithGoogle()">
+                <i class="fab fa-google"></i>
+                <span>Tiếp tục với Google</span>
+            </button>
+            <button type="button" class="oauth-btn oauth-btn-facebook" onclick="loginWithFacebook()">
+                <i class="fab fa-facebook-f"></i>
+                <span>Tiếp tục với Facebook</span>
+            </button>
+        </div>
+        
         <small id="auth-error" style="color:#ff7b7b;display:none;margin-top:10px;"></small>
     </div>
 </div>

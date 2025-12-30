@@ -658,6 +658,42 @@ ul {
     background: var(--purple-hover);
 }
 
+.oauth-btn {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    background: transparent;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+.oauth-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.oauth-btn-google:hover {
+    background: rgba(234, 67, 53, 0.1);
+    border-color: #ea4335;
+}
+
+.oauth-btn-facebook:hover {
+    background: rgba(24, 119, 242, 0.1);
+    border-color: #1877f2;
+}
+
+.oauth-btn i {
+    font-size: 18px;
+}
+
 .lyrics-overlay {
     position: fixed;
     bottom: -100%;

@@ -5,6 +5,7 @@ using MusicWeb.Models.Entities;
 using MusicWeb.Models.ViewModels;
 using MusicWeb.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace MusicWeb.Controllers;
 
@@ -125,6 +126,81 @@ public class AccountController : ControllerBase
     {
         await _signInManager.SignOutAsync();
         return Ok(new { success = true });
+    }
+
+    [HttpGet("external-login")]
+    public IActionResult ExternalLogin(string provider, string returnUrl = "/")
+    {
+        var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { returnUrl });
+        var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+        return Challenge(properties, provider);
+    }
+
+    [HttpGet("external-login-callback")]
+    public async Task<IActionResult> ExternalLoginCallback(string returnUrl = "/")
+    {
+        var info = await _signInManager.GetExternalLoginInfoAsync();
+        if (info == null)
+        {
+            return Redirect($"/?error=external-login-failed");
+        }
+
+        // Try to sign in with external login provider
+        var result = await _signInManager.ExternalLoginSignInAsync(
+            info.LoginProvider, info.ProviderKey, isPersistent: true, bypassTwoFactor: true);
+
+        if (result.Succeeded)
+        {
+            return Redirect(returnUrl);
+        }
+
+        if (result.IsLockedOut)
+        {
+            return Redirect($"/?error=account-locked");
+        }
+
+        // User doesn't have an account yet, create one
+        var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+        if (string.IsNullOrEmpty(email))
+        {
+            return Redirect($"/?error=email-not-provided");
+        }
+
+        // Check if user already exists with this email
+        var existingUser = await _userManager.FindByEmailAsync(email);
+        if (existingUser != null)
+        {
+            // Link the external login to existing user
+            var addLoginResult = await _userManager.AddLoginAsync(existingUser, info);
+            if (addLoginResult.Succeeded)
+            {
+                await _signInManager.SignInAsync(existingUser, isPersistent: true);
+                return Redirect(returnUrl);
+            }
+            return Redirect($"/?error=could-not-link-account");
+        }
+
+        // Create new user
+        var name = info.Principal.FindFirstValue(ClaimTypes.Name) ?? email.Split('@')[0];
+        var user = new ApplicationUser
+        {
+            UserName = email,
+            Email = email,
+            DisplayName = name,
+            EmailConfirmed = true,  // OAuth providers verify email
+            Provider = info.LoginProvider
+        };
+
+        var createResult = await _userManager.CreateAsync(user);
+        if (createResult.Succeeded)
+        {
+            await _userManager.AddToRoleAsync(user, "User");
+            await _userManager.AddLoginAsync(user, info);
+            await _signInManager.SignInAsync(user, isPersistent: true);
+            return Redirect(returnUrl);
+        }
+
+        return Redirect($"/?error=registration-failed");
     }
 }
 

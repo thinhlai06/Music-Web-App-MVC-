@@ -62,7 +62,7 @@ public static class DbSeeder
                     CoverUrl = "https://pub-324f8069623142339b8c13eaa25fe400.r2.dev/0806ea1c463042079f3fc0316d2032b0.jpg",
                     ReleaseDate = DateTime.UtcNow.AddDays(-20),
                     AudioUrl = "https://pub-58b2e24834214ddb922477279bdf5ff7.r2.dev/Anh%20L%C3%A0%20Ai.mp3",
-                    LyricsUrl="https://pub-87373e218bc4407c8df5c79268c30d48.r2.dev/anh_la_ai.txt"
+                    LyricsUrl="https://pub-87373e218bc4407c8df5c79268c30d48.r2.dev/anh_la_ai.lrc"
                 },
                 new Song
                 {

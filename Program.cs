@@ -24,6 +24,21 @@ public class Program
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
+        // Configure OAuth Authentication
+        builder.Services.AddAuthentication()
+            .AddGoogle(options =>
+            {
+                options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
+                options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
+                options.CallbackPath = "/signin-google";
+            })
+            .AddFacebook(options =>
+            {
+                options.AppId = builder.Configuration["Authentication:Facebook:AppId"]!;
+                options.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"]!;
+                options.CallbackPath = "/signin-facebook";
+            });
+
         builder.Services.AddScoped<IMusicService, MusicService>();
         
         // Register Cloudflare R2 (S3)

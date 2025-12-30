@@ -1,30 +1,42 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "E:\\project cuoi ki\\",
+  "WorkspaceRootPath": "C:\\VScode\\project cuoi ki\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|e:\\project cuoi ki\\services\\musicservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\migrations\\20251224140408_addoauthsupport.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:migrations\\20251224140408_addoauthsupport.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\data\\dbseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:data\\dbseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\services\\musicservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:services\\musicservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|e:\\project cuoi ki\\controllers\\uploadcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\controllers\\uploadcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:controllers\\uploadcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|e:\\project cuoi ki\\services\\cloudflarestorageservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\services\\cloudflarestorageservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:services\\cloudflarestorageservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|e:\\project cuoi ki\\models\\viewmodels\\searchresultsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\models\\viewmodels\\searchresultsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:models\\viewmodels\\searchresultsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|e:\\project cuoi ki\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|e:\\project cuoi ki\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,49 +46,83 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 10,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             },
             {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "MusicService.cs",
-              "DocumentMoniker": "E:\\project cuoi ki\\Services\\MusicService.cs",
-              "RelativeDocumentMoniker": "Services\\MusicService.cs",
-              "ToolTip": "E:\\project cuoi ki\\Services\\MusicService.cs",
-              "RelativeToolTip": "Services\\MusicService.cs",
-              "ViewState": "AgIAAEgBAAAAAAAAAAAcwFYBAABZAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-23T08:46:43.943Z",
-              "EditorCaption": ""
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "UploadController.cs",
-              "DocumentMoniker": "E:\\project cuoi ki\\Controllers\\UploadController.cs",
-              "RelativeDocumentMoniker": "Controllers\\UploadController.cs",
-              "ToolTip": "E:\\project cuoi ki\\Controllers\\UploadController.cs",
-              "RelativeToolTip": "Controllers\\UploadController.cs",
-              "ViewState": "AgIAAJAAAAAAAAAAAABAwJMAAAAAAAAAAAAAAA==",
+              "Title": "20251224140408_AddOAuthSupport.cs",
+              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Migrations\\20251224140408_AddOAuthSupport.cs",
+              "RelativeDocumentMoniker": "Migrations\\20251224140408_AddOAuthSupport.cs",
+              "ToolTip": "C:\\VScode\\project cuoi ki\\Migrations\\20251224140408_AddOAuthSupport.cs",
+              "RelativeToolTip": "Migrations\\20251224140408_AddOAuthSupport.cs",
+              "ViewState": "AgIAACgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-19T08:33:56.705Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-24T14:04:09.528Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\VScode\\project cuoi ki\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAABMAAAAAAAAAAAAswC4AAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-23T17:03:51.747Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "DbSeeder.cs",
+              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Data\\DbSeeder.cs",
+              "RelativeDocumentMoniker": "Data\\DbSeeder.cs",
+              "ToolTip": "C:\\VScode\\project cuoi ki\\Data\\DbSeeder.cs",
+              "RelativeToolTip": "Data\\DbSeeder.cs",
+              "ViewState": "AgIAABwAAAAAAAAAAAAswDEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-23T14:40:16.296Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "MusicService.cs",
+              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Services\\MusicService.cs",
+              "RelativeDocumentMoniker": "Services\\MusicService.cs",
+              "ToolTip": "C:\\VScode\\project cuoi ki\\Services\\MusicService.cs",
+              "RelativeToolTip": "Services\\MusicService.cs",
+              "ViewState": "AgIAAEgBAAAAAAAAAAAcwF4BAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-23T08:46:43.943Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "UploadController.cs",
+              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Controllers\\UploadController.cs",
+              "RelativeDocumentMoniker": "Controllers\\UploadController.cs",
+              "ToolTip": "C:\\VScode\\project cuoi ki\\Controllers\\UploadController.cs",
+              "RelativeToolTip": "Controllers\\UploadController.cs",
+              "ViewState": "AgIAAJEAAAAAAAAAAAA5wJMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-19T08:33:56.705Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "CloudflareStorageService.cs",
-              "DocumentMoniker": "E:\\project cuoi ki\\Services\\CloudflareStorageService.cs",
+              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Services\\CloudflareStorageService.cs",
               "RelativeDocumentMoniker": "Services\\CloudflareStorageService.cs",
-              "ToolTip": "E:\\project cuoi ki\\Services\\CloudflareStorageService.cs",
+              "ToolTip": "C:\\VScode\\project cuoi ki\\Services\\CloudflareStorageService.cs",
               "RelativeToolTip": "Services\\CloudflareStorageService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAADMAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -84,11 +130,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 7,
               "Title": "SearchResultsViewModel.cs",
-              "DocumentMoniker": "E:\\project cuoi ki\\Models\\ViewModels\\SearchResultsViewModel.cs",
+              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Models\\ViewModels\\SearchResultsViewModel.cs",
               "RelativeDocumentMoniker": "Models\\ViewModels\\SearchResultsViewModel.cs",
-              "ToolTip": "E:\\project cuoi ki\\Models\\ViewModels\\SearchResultsViewModel.cs",
+              "ToolTip": "C:\\VScode\\project cuoi ki\\Models\\ViewModels\\SearchResultsViewModel.cs",
               "RelativeToolTip": "Models\\ViewModels\\SearchResultsViewModel.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -96,11 +142,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 8,
               "Title": "ApplicationDbContext.cs",
-              "DocumentMoniker": "E:\\project cuoi ki\\Data\\ApplicationDbContext.cs",
+              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Data\\ApplicationDbContext.cs",
               "RelativeDocumentMoniker": "Data\\ApplicationDbContext.cs",
-              "ToolTip": "E:\\project cuoi ki\\Data\\ApplicationDbContext.cs",
+              "ToolTip": "C:\\VScode\\project cuoi ki\\Data\\ApplicationDbContext.cs",
               "RelativeToolTip": "Data\\ApplicationDbContext.cs",
               "ViewState": "AgIAADkAAAAAAAAAAAAjwFEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -108,15 +154,16 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 0,
               "Title": "appsettings.json",
-              "DocumentMoniker": "E:\\project cuoi ki\\appsettings.json",
+              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
-              "ToolTip": "E:\\project cuoi ki\\appsettings.json",
+              "ToolTip": "C:\\VScode\\project cuoi ki\\appsettings.json",
               "RelativeToolTip": "appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABwAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-12-19T04:53:35.952Z"
+              "WhenOpened": "2025-12-19T04:53:35.952Z",
+              "EditorCaption": ""
             }
           ]
         }

@@ -2043,5 +2043,14 @@
             });
     }
 
+    // OAuth Login Handlers
+    window.loginWithGoogle = function () {
+        window.location.href = '/account/external-login?provider=Google&returnUrl=' + encodeURIComponent(window.location.pathname);
+    };
+
+    window.loginWithFacebook = function () {
+        window.location.href = '/account/external-login?provider=Facebook&returnUrl=' + encodeURIComponent(window.location.pathname);
+    };
+
     document.addEventListener('DOMContentLoaded', init);
 })();

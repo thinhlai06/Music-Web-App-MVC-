@@ -6,6 +6,8 @@ public class ApplicationUser : IdentityUser
 {
     public string? DisplayName { get; set; }
     public string? AvatarUrl { get; set; }
+    public string? Provider { get; set; }  // "Google", "Facebook", "Local"
+    public string? ProviderKey { get; set; }  // External ID from provider
     public ICollection<Playlist> Playlists { get; set; } = new List<Playlist>();
     public ICollection<FavoriteSong> FavoriteSongs { get; set; } = new List<FavoriteSong>();
     public ICollection<PlayHistory> PlayHistories { get; set; } = new List<PlayHistory>();
