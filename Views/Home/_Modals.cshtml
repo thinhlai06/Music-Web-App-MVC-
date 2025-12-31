@@ -45,6 +45,9 @@
             <input type="text" class="auth-input" name="displayName" placeholder="Tên hiển thị" data-auth-field="register" style="display:none;">
             <input type="email" class="auth-input" name="email" placeholder="Email" required>
             <input type="password" class="auth-input" name="password" placeholder="Mật khẩu" required>
+            <div style="text-align: right; margin-top: -10px; margin-bottom: 10px;" data-auth-field="login">
+                <a href="/account/forgot-password" style="color: var(--purple-primary); font-size: 12px; text-decoration: none; transition: opacity 0.2s;">Quên mật khẩu?</a>
+            </div>
             <input type="password" class="auth-input" name="confirmPassword" placeholder="Nhập lại mật khẩu" data-auth-field="register" style="display:none;">
             <button type="submit" class="auth-submit">Tiếp tục</button>
         </form>

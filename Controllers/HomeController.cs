@@ -93,7 +93,8 @@ public class HomeController : Controller
     {
         if (request.Rating < 0 || request.Rating > 5)
         {
-            return BadRequest(new { success = false, message = "Rating must be between 0 and 5" });
+            Response.StatusCode = 400;
+            return Json(new { success = false, message = "Rating must be between 0 and 5" });
         }
 
         var userId = _userManager.GetUserId(User)!;
@@ -104,7 +105,8 @@ public class HomeController : Controller
             return Json(new { success = true, rating = request.Rating });
         }
         
-        return BadRequest(new { success = false, message = "Failed to update rating" });
+        Response.StatusCode = 400;
+        return Json(new { success = false, message = "Failed to update rating" });
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

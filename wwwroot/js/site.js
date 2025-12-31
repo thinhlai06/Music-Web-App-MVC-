@@ -543,8 +543,10 @@
                 document.getElementById('auth-title').textContent = mode === 'login' ? 'Đăng nhập' : 'Đăng ký';
                 const displayNameFn = form.querySelector('input[name="displayName"]');
                 const confirmPassFn = form.querySelector('input[name="confirmPassword"]');
+                const forgotPasswordLink = form.querySelector('[data-auth-field="login"]');
                 if (displayNameFn) displayNameFn.style.display = mode === 'register' ? 'block' : 'none';
                 if (confirmPassFn) confirmPassFn.style.display = mode === 'register' ? 'block' : 'none';
+                if (forgotPasswordLink) forgotPasswordLink.style.display = mode === 'login' ? 'block' : 'none';
                 if (mode === 'login') {
                     if (displayNameFn) displayNameFn.value = '';
                     if (confirmPassFn) confirmPassFn.value = '';

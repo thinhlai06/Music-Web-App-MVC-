@@ -40,6 +40,7 @@ public class Program
             });
 
         builder.Services.AddScoped<IMusicService, MusicService>();
+        builder.Services.AddScoped<IEmailService, EmailService>();
         
         // Register Cloudflare R2 (S3)
         builder.Services.AddSingleton<Amazon.S3.IAmazonS3>(sp =>

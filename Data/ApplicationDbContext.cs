@@ -24,6 +24,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<UserSongRating> UserSongRatings => Set<UserSongRating>();
     public DbSet<UserFollow> UserFollows => Set<UserFollow>();
     public DbSet<Notification> Notifications => Set<Notification>();
+    public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
 
 
     protected override void OnModelCreating(ModelBuilder builder)
