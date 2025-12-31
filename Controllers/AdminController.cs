@@ -542,4 +542,44 @@ public class AdminController : Controller
         public List<Song> Songs { get; set; } = new();
         public List<Song> AvailableSongs { get; set; } = new();
     }
+
+    [HttpGet]
+    public IActionResult SendNotification()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> SendNotification(string title, string message, string? link)
+    {
+        if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(message))
+        {
+            ModelState.AddModelError("", "Tiêu đề và nội dung là bắt buộc");
+            return View();
+        }
+
+        var users = await _userManager.Users.Select(u => u.Id).ToListAsync();
+        var notifications = new List<Notification>();
+
+        foreach (var userId in users)
+        {
+            notifications.Add(new Notification
+            {
+                UserId = userId,
+                Title = title,
+                Message = message,
+                Link = link,
+                Type = "System",
+                CreatedAt = DateTime.UtcNow,
+                IsRead = false
+            });
+        }
+
+        // Add in batches if too many, but for now assuming reasonable user count
+        _context.Notifications.AddRange(notifications);
+        await _context.SaveChangesAsync();
+
+        TempData["Message"] = "Đã gửi thông báo đến " + notifications.Count + " người dùng.";
+        return RedirectToAction(nameof(SendNotification));
+    }
 }

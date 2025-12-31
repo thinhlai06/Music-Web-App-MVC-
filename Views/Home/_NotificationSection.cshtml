@@ -1,0 +1,136 @@
+<section id="notification-view" class="view-section hidden">
+    <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="margin:0;">Thông báo</h2>
+        <button id="mark-all-read-btn" class="btn-secondary">
+            <i class="fa-solid fa-check-double"></i> Đánh dấu tất cả đã đọc
+        </button>
+    </div>
+    
+    <div id="notification-list-container" class="notification-list">
+        <!-- Filled by JS -->
+        <div class="loading-spinner">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+        </div>
+    </div>
+</section>
+
+<style>
+    .btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 8px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: white;
+    }
+
+    .notification-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .notification-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 16px;
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        position: relative;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: 1px solid transparent;
+    }
+    .notification-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
+    }
+    
+    /* Unread Styles */
+    .notification-item.unread {
+        background: rgba(29, 185, 84, 0.08); /* Subtle green tint */
+        border-color: rgba(29, 185, 84, 0.3);
+    }
+    .notification-item.unread::after {
+        content: '';
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 10px;
+        height: 10px;
+        background-color: #1db954;
+        border-radius: 50%;
+        box-shadow: 0 0 10px rgba(29, 185, 84, 0.5);
+    }
+    
+    .notification-item.system.unread {
+        background: rgba(255, 87, 34, 0.08);
+        border-color: rgba(255, 87, 34, 0.3);
+    }
+    .notification-item.system.unread::after {
+        background-color: #ff5722;
+        box-shadow: 0 0 10px rgba(255, 87, 34, 0.5);
+    }
+
+    .notification-content {
+        flex: 1;
+        margin-right: 30px; /* Space for the unread dot */
+    }
+    .notification-content h4 {
+        margin: 0 0 6px 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #fff;
+    }
+    .notification-item.unread .notification-content h4 {
+        color: #1db954; /* Highlight title for unread */
+    }
+    .notification-item.system.unread .notification-content h4 {
+        color: #ff5722;
+    }
+
+    .notification-content p {
+        margin: 0 0 8px 0;
+        color: #b3b3b3;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+    .notification-item.unread .notification-content p {
+        color: #fff; /* Brighter text for unread */
+        font-weight: 500;
+    }
+
+    .notification-content small {
+        color: #777;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .btn-view {
+        background: rgba(255, 255, 255, 0.1); 
+        color: white; 
+        padding: 6px 12px; 
+        text-decoration: none; 
+        border-radius: 15px; 
+        font-size: 12px; 
+        font-weight: 500;
+        white-space: nowrap;
+        transition: background 0.2s;
+        margin-top: 5px;
+        display: inline-block;
+    }
+    .btn-view:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+</style>

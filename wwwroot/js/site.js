@@ -1411,6 +1411,7 @@
         document.getElementById('genre-view-container')?.classList.add('hidden');
         document.getElementById('search-results-view')?.classList.add('hidden');
         document.getElementById('upload-view')?.classList.add('hidden');
+        document.getElementById('notification-view')?.classList.add('hidden');
 
         // Hide dynamic views
         const albumView = document.getElementById('album-view');
@@ -1420,6 +1421,11 @@
         const selected = document.getElementById(`${viewName}-view`);
         if (selected) selected.classList.remove('hidden');
 
+        // Special handling for notification
+        if (viewName === 'notification') {
+            loadNotifications();
+        }
+
         // Update Nav
         document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
         const navItem = document.querySelector(`.nav-item[data-view="${viewName}"]`);
@@ -1428,6 +1434,90 @@
         // Scroll to top
         document.querySelector('.main-view')?.scrollTo(0, 0);
     };
+
+    window.loadNotifications = function () {
+        const container = document.getElementById('notification-list-container');
+        if (!container) return;
+
+        container.innerHTML = '<div class="loading-spinner" style="text-align:center; padding:20px;"><i class="fa-solid fa-spinner fa-spin"></i></div>';
+
+        fetch('/Notification/GetNotifications')
+            .then(res => res.json())
+            .then(data => {
+                if (!data.success) throw new Error('Failed to load');
+                renderNotifications(data.data);
+                // Reset badge locally
+                const badge = document.getElementById('notification-badge');
+                if (badge) badge.style.display = 'none';
+            })
+            .catch(err => {
+                container.innerHTML = '<p style="text-align:center; color: #ff7b7b;">Không thể tải thông báo</p>';
+            });
+    };
+
+    function renderNotifications(notifications) {
+        const container = document.getElementById('notification-list-container');
+        if (!container) return;
+        container.innerHTML = '';
+
+        if (!notifications || notifications.length === 0) {
+            container.innerHTML = '<p style="text-align:center; color: #888; padding: 50px;">Không có thông báo nào.</p>';
+            return;
+        }
+
+        notifications.forEach(item => {
+            const div = document.createElement('div');
+            const isSystem = item.type === 'System';
+            div.className = `notification-item ${item.isRead ? 'read' : 'unread'} ${isSystem ? 'system' : ''}`;
+            const date = new Date(item.createdAt).toLocaleString('vi-VN');
+
+
+            div.innerHTML = `
+                <div class="notification-content">
+                    <h4>${item.title}</h4>
+                    <p>${item.message}</p>
+                    <small><i class="fa-regular fa-clock"></i> ${date}</small>
+                </div>
+            `;
+
+            if (item.link) {
+                const btn = document.createElement('a');
+                btn.className = 'btn-view';
+                btn.href = item.link;
+                btn.style.cssText = 'background: #444; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px; font-size: 12px; margin-left: 10px;';
+                btn.textContent = 'Xem';
+                // Handle internal links without reload if possible, but standard link is fine for now
+                if (item.link.startsWith('/Song/Detail') || item.link.startsWith('/Song/Play')) {
+                    // Optional: implement play/view logic
+                }
+                div.appendChild(btn);
+            }
+
+            // Mark as read on click?
+            div.addEventListener('click', () => {
+                if (!item.isRead) {
+                    fetch('/Notification/MarkAsRead', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `id=${item.id}`
+                    });
+                    div.classList.remove('unread');
+                    div.classList.add('read');
+                }
+            });
+
+            container.appendChild(div);
+        });
+
+        // Bind Mark All Read button
+        document.getElementById('mark-all-read-btn')?.addEventListener('click', () => {
+            fetch('/Notification/MarkAllAsRead', { method: 'POST' })
+                .then(r => r.json())
+                .then(d => {
+                    if (d.success) loadNotifications();
+                });
+        });
+    }
 
     window.loadAlbum = function (albumId) {
         const mainView = document.querySelector('.main-view');
@@ -1445,6 +1535,8 @@
                 document.getElementById('profile-view')?.classList.add('hidden');
                 document.getElementById('all-songs-view')?.classList.add('hidden');
                 document.getElementById('search-results-view')?.classList.add('hidden');
+                document.getElementById('upload-view')?.classList.add('hidden');
+                document.getElementById('notification-view')?.classList.add('hidden');
 
                 // Remove existing album view if any
                 const existing = document.getElementById('album-view');
@@ -1758,6 +1850,8 @@
                 document.getElementById('profile-view')?.classList.add('hidden');
                 document.getElementById('all-songs-view')?.classList.add('hidden');
                 document.getElementById('search-results-view')?.classList.add('hidden');
+                document.getElementById('upload-view')?.classList.add('hidden');
+                document.getElementById('notification-view')?.classList.add('hidden');
 
                 // Hide Album View if exists
                 document.getElementById('album-view')?.remove();
@@ -1923,6 +2017,8 @@
                 document.getElementById('all-genres-view')?.classList.add('hidden');
                 document.getElementById('playlist-view-container')?.classList.add('hidden');
                 document.getElementById('search-results-view')?.classList.add('hidden');
+                document.getElementById('upload-view')?.classList.add('hidden');
+                document.getElementById('notification-view')?.classList.add('hidden');
                 document.getElementById('album-view')?.remove();
 
                 const container = document.getElementById('genre-view-container');
@@ -2052,5 +2148,22 @@
         window.location.href = '/account/external-login?provider=Facebook&returnUrl=' + encodeURIComponent(window.location.pathname);
     };
 
-    document.addEventListener('DOMContentLoaded', init);
+    function checkNotifications() {
+        if (!state.isAuthenticated) return;
+        fetch('/Notification/GetUnreadCount')
+            .then(r => r.json())
+            .then(data => {
+                const badge = document.getElementById('notification-badge');
+                if (badge && data.count > 0) {
+                    badge.innerText = data.count > 99 ? '99+' : data.count;
+                    badge.style.display = 'block';
+                }
+            })
+            .catch(() => { });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        init();
+        checkNotifications();
+    });
 })();

@@ -119,6 +119,28 @@ public class UploadController : Controller
             await _context.SaveChangesAsync();
         }
 
+        // Send Notifications to Followers
+        var followers = await _context.UserFollows
+            .Where(uf => uf.FolloweeId == user.Id)
+            .Select(uf => uf.FollowerId)
+            .ToListAsync();
+
+        if (followers.Any())
+        {
+            var notifications = followers.Select(followerId => new Notification
+            {
+                UserId = followerId,
+                Title = "Nhạc mới từ " + artist.Name,
+                Message = $"{artist.Name} vừa ra mắt bài hát mới: {song.Title}",
+                Link = $"/Song/Detail/{song.Id}", // Assume Detail or Play action exists, checking Home later
+                Type = "NewRelease",
+                CreatedAt = DateTime.UtcNow
+            }).ToList();
+
+            _context.Notifications.AddRange(notifications);
+            await _context.SaveChangesAsync();
+        }
+
         return Ok(new { success = true, message = "Upload bài hát thành công!" });
     }
 

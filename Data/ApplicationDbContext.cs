@@ -23,6 +23,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<PlayHistory> PlayHistories => Set<PlayHistory>();
     public DbSet<UserSongRating> UserSongRatings => Set<UserSongRating>();
     public DbSet<UserFollow> UserFollows => Set<UserFollow>();
+    public DbSet<Notification> Notifications => Set<Notification>();
+
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

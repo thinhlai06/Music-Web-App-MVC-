@@ -1,0 +1,40 @@
+@using MusicWeb.Models.Entities
+@{
+    ViewData["Title"] = "Gửi thông báo";
+    Layout = "_Layout";
+}
+
+<div class="container" style="padding-top: 100px; max-width: 600px; margin: auto; color: white;">
+    <h2>Gửi thông báo hệ thống</h2>
+    
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success" style="background: #4caf50; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+            @TempData["Message"]
+        </div>
+    }
+
+    <form asp-action="SendNotification" method="post" style="background: #2a2a2a; padding: 30px; border-radius: 10px;">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label style="display:block; margin-bottom:5px;">Tiêu đề</label>
+            <input name="title" class="form-control" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #444; background: #333; color: white;" required />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label style="display:block; margin-bottom:5px;">Nội dung</label>
+            <textarea name="message" class="form-control" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #444; background: #333; color: white; min-height: 100px;" required></textarea>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label style="display:block; margin-bottom:5px;">Link (Tùy chọn)</label>
+            <input name="link" class="form-control" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #444; background: #333; color: white;" placeholder="/Song/Detail/..." />
+        </div>
+
+        <div style="display:flex; justify-content: space-between;">
+            <a href="/Admin" class="btn" style="background: #666; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Quay lại</a>
+            <button type="submit" class="btn" style="background: #1db954; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Gửi thông báo</button>
+        </div>
+    </form>
+</div>
