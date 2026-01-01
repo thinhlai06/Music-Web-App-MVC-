@@ -44,12 +44,12 @@
             <!-- Genre Selection -->
             <div class="row mb-4">
                 <div class="col-12">
-                     <label class="form-label">Chọn thể loại (Có thể chọn nhiều)</label>
+                     <label class="form-label">Chọn thể loại (Chỉ chọn 1)</label>
                      <div class="genre-selector-container script-scroll">
                         @foreach (var genre in Model.Genres)
                         {
                             <div class="genre-checkbox-item">
-                                <input type="checkbox" id="genre-@genre.Id" name="GenreIds" value="@genre.Id">
+                                <input type="radio" id="genre-@genre.Id" name="GenreId" value="@genre.Id" required>
                                 <label for="genre-@genre.Id">@genre.Title</label>
                             </div>
                         }

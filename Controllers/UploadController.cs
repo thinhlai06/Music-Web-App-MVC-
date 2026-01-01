@@ -105,17 +105,14 @@ public class UploadController : Controller
         _context.Songs.Add(song);
         await _context.SaveChangesAsync();
 
-        if (model.GenreIds != null && model.GenreIds.Any())
+        if (model.GenreId > 0)
         {
-            foreach (var genreId in model.GenreIds)
+            var songGenre = new SongGenre
             {
-                var songGenre = new SongGenre
-                {
-                    SongId = song.Id,
-                    GenreId = genreId
-                };
-                _context.SongGenres.Add(songGenre);
-            }
+                SongId = song.Id,
+                GenreId = model.GenreId
+            };
+            _context.SongGenres.Add(songGenre);
             await _context.SaveChangesAsync();
         }
 
@@ -155,6 +152,18 @@ public class UploadController : Controller
 
         return Ok(new { success = true });
     }
+
+    [HttpPost("/upload/delete/{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null) return Unauthorized(new { success = false, message = "Vui lòng đăng nhập" });
+
+        var success = await _musicService.DeleteSongAsync(id, user.Id);
+        if (!success) return BadRequest(new { success = false, message = "Không thể xóa bài hát (Bạn không phải chủ sở hữu hoặc lỗi hệ thống)" });
+
+        return Ok(new { success = true, message = "Đã xóa bài hát" });
+    }
 }
 
 
@@ -164,6 +173,6 @@ public class UploadSongViewModel
     public string? Description { get; set; }
     public IFormFile AudioFile { get; set; } = null!;
     public IFormFile? CoverFile { get; set; }
-    public List<int> GenreIds { get; set; } = new();
+    public int GenreId { get; set; }
     public bool IsPublic { get; set; } = true;
 }

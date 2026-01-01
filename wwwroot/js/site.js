@@ -1606,18 +1606,32 @@
     }
 
     // SORT FUNCTIONALITY FOR ALL SONGS VIEW
+    // SORT AND FILTER FUNCTIONALITY FOR ALL SONGS VIEW
     function initSortControls() {
         const sortSelect = document.getElementById('sort-select');
+        const genreFilter = document.getElementById('genre-filter');
         const resetBtn = document.getElementById('reset-sort');
         const songsList = document.querySelector('.all-songs-list');
 
-        if (!sortSelect || !songsList) return;
+        if (!sortSelect || !songsList || !genreFilter) return;
 
-        // Sort function
-        function sortSongs(sortBy, order) {
-            const songsArray = Array.from(songsList.querySelectorAll('.song-card'));
+        // Store original songs to always filter from full set
+        // Adding a class to identify them if not already strictly managed
+        const originalSongs = Array.from(songsList.querySelectorAll('.song-card'));
 
-            songsArray.sort((a, b) => {
+        function filterAndSort() {
+            const sortByFull = sortSelect.value;
+            const [sortBy, order] = sortByFull.split('-');
+            const genreId = genreFilter.value;
+
+            // 1. Filter
+            let filteredSongs = originalSongs.filter(song => {
+                if (genreId === 'all') return true;
+                return song.dataset.genreId === genreId;
+            });
+
+            // 2. Sort
+            filteredSongs.sort((a, b) => {
                 let valueA, valueB;
 
                 switch (sortBy) {
@@ -1648,31 +1662,25 @@
                 return order === 'asc' ? valueA - valueB : valueB - valueA;
             });
 
-            // Clear and re-append in sorted order
+            // 3. Render
             songsList.innerHTML = '';
-            songsArray.forEach(song => songsList.appendChild(song));
-
-            // Show toast notification
-            const sortLabels = {
-                'viewCount': 'Lượt xem',
-                'rating': 'Điểm đánh giá',
-                'releaseDate': 'Ngày phát hành',
-                'title': 'Tên bài hát'
-            };
-            const orderLabel = order === 'asc' ? 'tăng dần' : 'giảm dần';
-            showToast(`Đã sắp xếp theo ${sortLabels[sortBy]} (${orderLabel})`);
+            if (filteredSongs.length === 0) {
+                songsList.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">Không tìm thấy bài hát nào phù hợp.</div>';
+            } else {
+                filteredSongs.forEach(song => songsList.appendChild(song));
+            }
         }
 
-        // Event listener for sort select
-        sortSelect.addEventListener('change', (e) => {
-            const [sortBy, order] = e.target.value.split('-');
-            sortSongs(sortBy, order);
-        });
+        // Event listeners
+        sortSelect.addEventListener('change', filterAndSort);
+        genreFilter.addEventListener('change', filterAndSort);
 
         // Reset button
         resetBtn?.addEventListener('click', () => {
             sortSelect.value = 'releaseDate-desc';
-            sortSongs('releaseDate', 'desc');
+            genreFilter.value = 'all';
+            filterAndSort();
+            showToast('Đã đặt lại bộ lọc');
         });
     }
 

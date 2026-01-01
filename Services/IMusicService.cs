@@ -26,6 +26,7 @@ public interface IMusicService
     Task<List<UserResultViewModel>> GetFollowersAsync(string userId, string? currentUserId);
     Task<List<UserResultViewModel>> GetFollowingAsync(string userId, string? currentUserId);
     Task<bool> RemoveFollowerAsync(string userId, string followerId);
+    Task<bool> DeleteSongAsync(int songId, string userId);
 }
 
 public record LyricLineViewModel(double Time, string Text);

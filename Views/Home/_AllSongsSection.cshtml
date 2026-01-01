@@ -8,9 +8,20 @@
         Khám phá kho nhạc phong phú.
     </div>
 
-    <!-- Sort Controls -->
+    <!-- Sort and Filter Controls -->
     <div class="sort-controls" style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px;">
-        <span style="color: var(--text-secondary); font-size: 14px;">Sắp xếp theo:</span>
+        
+         <!-- Filter by Genre -->
+        <span style="color: var(--text-secondary); font-size: 14px;">Thể loại:</span>
+        <select id="genre-filter" style="padding: 8px 12px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff; cursor: pointer; min-width: 150px;">
+            <option value="all">Tất cả</option>
+            @foreach (var genre in Model.Genres)
+            {
+                <option value="@genre.Id">@genre.Title</option>
+            }
+        </select>
+
+        <span style="color: var(--text-secondary); font-size: 14px; margin-left: 15px;">Sắp xếp:</span>
         <select id="sort-select" style="padding: 8px 12px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff; cursor: pointer;">
             <option value="releaseDate-desc">Ngày phát hành (Mới nhất)</option>
             <option value="releaseDate-asc">Ngày phát hành (Cũ nhất)</option>
@@ -43,6 +54,7 @@
              var releaseDate = song.ReleaseDate?.ToString("dd/MM/yyyy") ?? "N/A";
              var releaseDateSort = song.ReleaseDate?.ToString("yyyy-MM-dd") ?? "1900-01-01";
              var avgRating = song.AverageRating?.ToString("F1") ?? "0";
+             var genreId = song.GenreId?.ToString() ?? "0";
              
              <div class="playlist-item song-card" 
                   data-song-id="@song.Id" 
@@ -54,7 +66,8 @@
                   data-favorite="@song.IsFavorite"
                   data-view-count="@song.ViewCount"
                   data-average-rating="@avgRating"
-                  data-release-date="@releaseDateSort">
+                  data-release-date="@releaseDateSort"
+                  data-genre-id="@genreId">
                 
                 <div style="width: 30%; display: flex; align-items: center;">
                     <img src="@cover" style="width: 40px; height: 40px; border-radius: 4px; object-fit: cover; margin-right: 15px;">

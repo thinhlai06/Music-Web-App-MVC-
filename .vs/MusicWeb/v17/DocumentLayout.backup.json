@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\VScode\\project cuoi ki\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -63,19 +67,31 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "appsettings.Development.json",
+              "ToolTip": "C:\\VScode\\project cuoi ki\\appsettings.Development.json",
+              "RelativeToolTip": "appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-12-31T17:08:18.741Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "AccountController.cs",
               "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Controllers\\AccountController.cs",
               "RelativeDocumentMoniker": "Controllers\\AccountController.cs",
               "ToolTip": "C:\\VScode\\project cuoi ki\\Controllers\\AccountController.cs",
               "RelativeToolTip": "Controllers\\AccountController.cs",
-              "ViewState": "AgIAABwBAAAAAAAAAAAYwDEBAABFAAAAAAAAAA==",
+              "ViewState": "AgIAABwBAAAAAAAAAAAYwDUBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-31T14:38:41.962Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-31T14:38:41.962Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "20251224140408_AddOAuthSupport.cs",
               "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Migrations\\20251224140408_AddOAuthSupport.cs",
               "RelativeDocumentMoniker": "Migrations\\20251224140408_AddOAuthSupport.cs",
@@ -83,12 +99,11 @@
               "RelativeToolTip": "Migrations\\20251224140408_AddOAuthSupport.cs",
               "ViewState": "AgIAACUAAAAAAAAAAABOwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-24T14:04:09.528Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-24T14:04:09.528Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
@@ -96,12 +111,11 @@
               "RelativeToolTip": "Program.cs",
               "ViewState": "AgIAABMAAAAAAAAAAAAswDgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-23T17:03:51.747Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-23T17:03:51.747Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "DbSeeder.cs",
               "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Data\\DbSeeder.cs",
               "RelativeDocumentMoniker": "Data\\DbSeeder.cs",
@@ -109,12 +123,11 @@
               "RelativeToolTip": "Data\\DbSeeder.cs",
               "ViewState": "AgIAABwAAAAAAAAAAAAswDEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-23T14:40:16.296Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-23T14:40:16.296Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "MusicService.cs",
               "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Services\\MusicService.cs",
               "RelativeDocumentMoniker": "Services\\MusicService.cs",
@@ -122,12 +135,11 @@
               "RelativeToolTip": "Services\\MusicService.cs",
               "ViewState": "AgIAAEgBAAAAAAAAAAAcwF4BAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-23T08:46:43.943Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-23T08:46:43.943Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "UploadController.cs",
               "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Controllers\\UploadController.cs",
               "RelativeDocumentMoniker": "Controllers\\UploadController.cs",
@@ -135,12 +147,11 @@
               "RelativeToolTip": "Controllers\\UploadController.cs",
               "ViewState": "AgIAAJIAAAAAAAAAAAAUwJMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-19T08:33:56.705Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-19T08:33:56.705Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "CloudflareStorageService.cs",
               "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Services\\CloudflareStorageService.cs",
               "RelativeDocumentMoniker": "Services\\CloudflareStorageService.cs",
@@ -148,12 +159,11 @@
               "RelativeToolTip": "Services\\CloudflareStorageService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAADMAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-19T08:29:17.653Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-19T08:29:17.653Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "SearchResultsViewModel.cs",
               "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Models\\ViewModels\\SearchResultsViewModel.cs",
               "RelativeDocumentMoniker": "Models\\ViewModels\\SearchResultsViewModel.cs",
@@ -161,12 +171,11 @@
               "RelativeToolTip": "Models\\ViewModels\\SearchResultsViewModel.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-19T07:26:38.375Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-19T07:26:38.375Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "ApplicationDbContext.cs",
               "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Data\\ApplicationDbContext.cs",
               "RelativeDocumentMoniker": "Data\\ApplicationDbContext.cs",
@@ -174,12 +183,11 @@
               "RelativeToolTip": "Data\\ApplicationDbContext.cs",
               "ViewState": "AgIAADoAAAAAAAAAAAAjwFIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-19T07:23:37.645Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-19T07:23:37.645Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\VScode\\project cuoi ki\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
@@ -187,8 +195,7 @@
               "RelativeToolTip": "appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-12-19T04:53:35.952Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-19T04:53:35.952Z"
             }
           ]
         }

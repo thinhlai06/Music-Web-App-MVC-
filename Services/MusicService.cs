@@ -10,11 +10,13 @@ public class MusicService : IMusicService
 {
     private readonly ApplicationDbContext _context;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IStorageService _storageService;
 
-    public MusicService(ApplicationDbContext context, IHttpClientFactory httpClientFactory)
+    public MusicService(ApplicationDbContext context, IHttpClientFactory httpClientFactory, IStorageService storageService)
     {
         _context = context;
         _httpClientFactory = httpClientFactory;
+        _storageService = storageService;
     }
 
     public async Task<HomeViewModel> BuildHomeAsync(string? userId)
@@ -602,7 +604,8 @@ public class MusicService : IMusicService
             song.ReleaseDate,
             song.ViewCount,
             song.UserRatings.Any() ? (decimal?)song.UserRatings.Average(r => (double)r.Rating) : null,
-            song.IsPublic);
+            song.IsPublic,
+            song.SongGenres.FirstOrDefault()?.GenreId);
 
     public async Task<bool> ToggleSongVisibilityAsync(int songId, string userId)
     {
@@ -673,6 +676,32 @@ public class MusicService : IMusicService
         if (follow == null) return true;
 
         _context.UserFollows.Remove(follow);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> DeleteSongAsync(int songId, string userId)
+    {
+        var song = await _context.Songs
+            .Include(s => s.Artist)
+            .FirstOrDefaultAsync(s => s.Id == songId);
+
+        if (song == null || song.Artist.UserId != userId) return false;
+
+        // 1. Delete Audio File from Cloudflare
+        if (!string.IsNullOrEmpty(song.AudioUrl))
+        {
+            await _storageService.DeleteFileAsync(song.AudioUrl);
+        }
+
+        // 2. Delete Cover File if it's hosted (not a placeholder)
+        if (!string.IsNullOrEmpty(song.CoverUrl) && !song.CoverUrl.Contains("picsum.photos") && !song.CoverUrl.Contains("ui-avatars.com"))
+        {
+            await _storageService.DeleteFileAsync(song.CoverUrl);
+        }
+
+        // 3. Remove from Database
+        _context.Songs.Remove(song);
         await _context.SaveChangesAsync();
         return true;
     }

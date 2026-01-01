@@ -141,6 +141,9 @@
                             <button class="circle-btn visibility-toggle @eyeClass" title="@eyeTitle" onclick="toggleVisibility(event, @song.Id, this)">
                                 <i class="fa-solid @eyeIcon"></i>
                             </button>
+                            <button class="circle-btn delete-song-btn" title="Xóa bài hát" onclick="deleteSong(event, @song.Id, this)" style="color: #ff4d4d;">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
                             <button class="circle-btn favorite-toggle @(song.IsFavorite ? "active" : string.Empty)"><i class="fa-solid fa-heart"></i></button>
                             <button class="circle-btn playlist-add"><i class="fa-solid fa-plus"></i></button>
                         </div>
@@ -212,6 +215,51 @@
 </div>
 
 <script>
+    async function deleteSong(event, songId, btn) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        if (!confirm('Bạn có chắc chắn muốn xóa bài hát này? Hành động này không thể hoàn tác.')) {
+            return;
+        }
+
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        btn.disabled = true;
+
+        try {
+            const response = await fetch(`/upload/delete/${songId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Remove card from UI
+                const card = btn.closest('.song-card');
+                if (card) {
+                    card.style.transition = 'opacity 0.5s';
+                    card.style.opacity = '0';
+                    setTimeout(() => card.remove(), 500);
+                }
+                // Show toast (assuming showToast is global, if not we use alert)
+                if (typeof showToast === 'function') {
+                    showToast('Đã xóa bài hát thành công');
+                }
+            } else {
+                 throw new Error(data.message || "Failed");
+            }
+        } catch (error) {
+            console.error('Error deleting song:', error);
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
+            alert(error.message || 'Có lỗi xảy ra khi xóa bài hát');
+        }
+    }
+    
     async function toggleVisibility(event, songId, btn) {
         event.stopPropagation(); // Prevent card click
         event.preventDefault();
