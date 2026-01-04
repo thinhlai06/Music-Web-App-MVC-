@@ -1,0 +1,49 @@
+@model MusicWeb.Models.ViewModels.HomeViewModel
+
+<div id="user-albums-view" class="content-padding hidden">
+    <div class="section-title" style="margin-top: 10px;">
+        <span style="font-size: 24px;">Albums Của Tôi</span>
+        <button class="btn" onclick="
+            console.log('Step 1: Button clicked!');
+            console.log('Step 2: window.isAuthenticated =', window.isAuthenticated);
+            console.log('Step 3: typeof openCreateAlbumModal =', typeof openCreateAlbumModal);
+            console.log('Step 4: modal element =', document.getElementById('create-album-modal'));
+            if (typeof openCreateAlbumModal === 'function') {
+                console.log('Step 5: Calling openCreateAlbumModal...');
+                openCreateAlbumModal();
+            } else {
+                alert('ERROR: openCreateAlbumModal is not defined!');
+            }
+        " style="padding: 8px 20px; background: var(--purple-primary); border: none; border-radius: 20px; cursor: pointer;">
+            <i class="fa-solid fa-plus"></i> Tạo Album
+        </button>
+    </div>
+
+    <div id="user-albums-grid" class="music-grid" style="margin-top: 20px;">
+        <div style="text-align: center; color: var(--text-secondary); padding: 50px;">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size: 32px;"></i>
+            <p style="margin-top: 15px;">Đang tải albums...</p>
+        </div>
+    </div>
+</div>
+
+<style>
+.album-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    z-index: 2;
+}
+
+.album-badge.public {
+    background: rgba(76, 175, 80, 0.9);
+}
+
+.album-badge.private {
+    background: rgba(244, 67, 54, 0.9);
+}
+</style>

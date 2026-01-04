@@ -123,3 +123,124 @@
         </div>
     </div>
 </div>
+
+<!-- USER ALBUM MODALS -->
+<!-- CREATE ALBUM MODAL -->
+<div class="modal-overlay" id="create-album-modal">
+    <div class="auth-box">
+        <div class="auth-close" onclick="closeCreateAlbumModal()"><i class="fa-solid fa-xmark"></i></div>
+        <h2 style="margin-bottom: 20px;">Tạo Album Mới</h2>
+        <form id="create-album-form">
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">Tên album</label>
+                <input type="text" class="auth-input" name="name" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">Mô tả (tùy chọn)</label>
+                <textarea class="auth-input" name="description" rows="3" style="resize: vertical;"></textarea>
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">Ảnh bìa (tùy chọn)</label>
+                <input type="file" class="auth-input" name="coverFile" accept="image/*">
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label class="custom-checkbox-label" style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" name="isPublic" style="width: auto; margin: 0;">
+                    <span>Công khai (Mọi người có thể xem)</span>
+                </label>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button type="button" class="modal-btn modal-btn-secondary" onclick="closeCreateAlbumModal()">
+                    <i class="fa-solid fa-xmark"></i> Hủy
+                </button>
+                <button type="submit" class="modal-btn modal-btn-primary">
+                    <i class="fa-solid fa-plus"></i> Tạo Album
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- EDIT ALBUM MODAL -->
+<div class="modal-overlay" id="edit-album-modal">
+    <div class="auth-box">
+        <div class="auth-close" onclick="closeEditAlbumModal()"><i class="fa-solid fa-xmark"></i></div>
+        <h2 style="margin-bottom: 20px;">Chỉnh sửa Album</h2>
+        <form id="edit-album-form">
+            <input type="hidden" name="albumId">
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">Tên album</label>
+                <input type="text" class="auth-input" name="name" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">Mô tả</label>
+                <textarea class="auth-input" name="description" rows="3" style="resize: vertical;"></textarea>
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">Ảnh bìa mới (tùy chọn)</label>
+                <input type="file" class="auth-input" name="coverFile" accept="image/*">
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label class="custom-checkbox-label" style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" name="isPublic" style="width: auto; margin: 0;">
+                    <span>Công khai</span>
+                </label>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button type="button" class="modal-btn modal-btn-secondary" onclick="closeEditAlbumModal()">
+                    <i class="fa-solid fa-xmark"></i> Hủy
+                </button>
+                <button type="submit" class="modal-btn modal-btn-primary">
+                    <i class="fa-solid fa-save"></i> Lưu
+                </button>
+                <button type="button" class="modal-btn modal-btn-danger" onclick="deleteUserAlbumConfirm()">
+                    <i class="fa-solid fa-trash"></i> Xóa
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ADD SONG TO ALBUM MODAL -->
+<div class="modal-overlay" id="add-song-album-modal">
+    <div class="auth-box">
+        <div class="auth-close" onclick="closeAddSongToAlbumModal()"><i class="fa-solid fa-xmark"></i></div>
+        <h2 style="margin-bottom: 20px;">Thêm Bài Hát Vào Album</h2>
+        
+        <div class="auth-tabs">
+            <div class="auth-tab active" data-mode="existing">Từ bài hát đã có</div>
+            <div class="auth-tab" data-mode="upload">Upload mới</div>
+        </div>
+
+        <!-- Existing Songs Tab -->
+        <div id="existing-songs-tab" class="add-song-tab">
+            <input type="text" class="auth-input" id="song-search-input" placeholder="Tìm kiếm bài hát..." style="margin-bottom: 15px;">
+            <div id="user-songs-list" style="max-height: 300px; overflow-y: auto;">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Upload New Tab -->
+        <div id="upload-song-tab" class="add-song-tab hidden">
+            <form id="upload-song-album-form">
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">Tên bài hát</label>
+                    <input type="text" class="auth-input" name="title" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">File nhạc</label>
+                    <input type="file" class="auth-input" name="audioFile" accept="audio/*" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">Ảnh bìa (tùy chọn)</label>
+                    <input type="file" class="auth-input" name="coverFile" accept="image/*">
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">Mô tả (tùy chọn)</label>
+                    <textarea class="auth-input" name="description" rows="2" style="resize: vertical;"></textarea>
+                </div>
+                <button type="submit" class="auth-submit">Upload & Thêm vào Album</button>
+            </form>
+        </div>
+    </div>
+</div>

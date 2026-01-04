@@ -1,0 +1,216 @@
+@model MusicWeb.Models.ViewModels.UserAlbumDetailViewModel
+
+<div id="user-album-detail-view" class="content-padding" data-album-id="@Model.Id" data-album-songs='@System.Text.Json.JsonSerializer.Serialize(Model.Songs, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase })'>
+    <div class="album-detail-header">
+        <div class="album-cover-large">
+            <img src="@Model.CoverUrl" alt="@Model.Name">
+        </div>
+        <div class="album-info">
+            <div class="album-type">ALBUM NGƯỜI DÙNG</div>
+            <h1 class="album-title">@Model.Name</h1>
+            <div class="album-meta">
+                <span>By @Model.OwnerName</span>
+                <span>•</span>
+                <span>@Model.Songs.Count bài hát</span>
+                <span>•</span>
+                <span class="@(Model.IsPublic ? "text-success" : "text-danger")">
+                    <i class="fa-solid @(Model.IsPublic ? "fa-globe" : "fa-lock")"></i>
+                    @(Model.IsPublic ? "Công khai" : "Riêng tư")
+                </span>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <p class="album-description">@Model.Description</p>
+            }
+            <div class="album-actions" style="margin-top: 20px;">
+                <button class="btn btn-play" onclick="playUserAlbumAll()" style="padding: 12px 30px; background: var(--purple-primary); border: none; border-radius: 25px; font-size: 16px;">
+                    <i class="fa-solid fa-play"></i> Phát tất cả
+                </button>
+                @if (Model.IsOwner)
+                {
+                    <button class="btn edit-album-btn" 
+                            data-id="@Model.Id" 
+                            data-name="@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(Model.Name))" 
+                            data-cover="@Model.CoverUrl" 
+                            data-public="@Model.IsPublic.ToString().ToLower()" 
+                            data-description="@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(Model.Description ?? ""))"
+                            style="padding: 12px 24px; background: transparent; border: 1px solid #fff; border-radius: 25px; margin-left: 10px;">
+                        <i class="fa-solid fa-edit"></i> Chỉnh sửa
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="album-songs-section" style="margin-top: 40px;">
+        <h3 style="margin-bottom: 20px;">Danh sách bài hát</h3>
+        <div class="album-songs-list">
+            @if (Model.Songs.Any())
+            {
+                @for (int i = 0; i < Model.Songs.Count; i++)
+                {
+                    var song = Model.Songs[i];
+                    var cover = string.IsNullOrWhiteSpace(song.CoverUrl) ? $"https://picsum.photos/seed/{song.Id}/300/300" : song.CoverUrl;
+                    <div class="song-item song-card" data-song-id="@song.Id" data-title="@song.Title" data-artist="@song.Artist"
+                         data-cover="@cover" data-audio="@song.AudioUrl" data-duration="@song.Duration" data-favorite="@song.IsFavorite" onclick="playUserAlbumSong(@i)">
+                        <div class="song-number">@(i + 1)</div>
+                        <img src="@cover" class="song-thumbnail" alt="@song.Title">
+                        <div class="song-details">
+                            <div class="song-title-table">@song.Title</div>
+                            <div class="song-artist">@song.Artist</div>
+                        </div>
+                        <div class="song-duration">@song.Duration</div>
+                        @if (Model.IsOwner)
+                        {
+                            <button class="btn-icon-small" onclick="event.stopPropagation(); removeUserAlbumSong(@Model.Id, @song.Id, '@song.Title')" title="Xóa khỏi album">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                    <i class="fa-solid fa-music" style="font-size: 48px; opacity: 0.3;"></i>
+                    <p style="margin-top: 15px;">Chưa có bài hát nào trong album</p>
+                    @if (Model.IsOwner)
+                    {
+                        <button class="btn" onclick="openAddSongToAlbumModal(@Model.Id)" style="margin-top: 15px; padding: 10px 20px; background: var(--purple-primary); border: none; border-radius: 20px;">
+                            <i class="fa-solid fa-plus"></i> Thêm bài hát
+                        </button>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+.album-detail-header {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.album-cover-large {
+    flex-shrink: 0;
+}
+
+.album-cover-large img {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.album-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.album-type {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.album-title {
+    font-size: 48px;
+    font-weight: 700;
+    margin: 0 0 15px 0;
+}
+
+.album-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 15px;
+}
+
+.album-description {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 600px;
+}
+
+.song-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+    gap: 15px;
+}
+
+.song-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.song-number {
+    width: 25px;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.song-thumbnail {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.song-details {
+    flex: 1;
+}
+
+.song-title-table {
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.song-artist {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.song-duration {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-right: 15px;
+}
+
+.btn-icon-small {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 8px;
+    opacity: 0;
+    transition: opacity 0.2s, color 0.2s;
+}
+
+.song-item:hover .btn-icon-small {
+    opacity: 1;
+}
+
+.btn-icon-small:hover {
+    color: var(--purple-primary);
+}
+
+.text-success {
+    color: #4caf50;
+}
+
+.text-danger {
+    color: #f44336;
+}
+</style>

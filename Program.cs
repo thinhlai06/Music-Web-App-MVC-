@@ -59,6 +59,7 @@ public class Program
         });
 
         builder.Services.AddScoped<IStorageService, CloudflareStorageService>();
+        builder.Services.AddScoped<IUserAlbumService, UserAlbumService>();
 
         builder.Services.AddHttpClient();
         builder.Services.AddControllersWithViews();

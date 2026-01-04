@@ -588,7 +588,8 @@ ul {
     backdrop-filter: blur(5px);
 }
 
-.modal-overlay.visible {
+.modal-overlay.visible,
+.modal-overlay.active {
     display: flex;
 }
 
@@ -656,6 +657,62 @@ ul {
 
 .auth-submit:hover {
     background: var(--purple-hover);
+}
+
+/* Modal Button Styles */
+.modal-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.modal-btn i {
+    font-size: 14px;
+}
+
+.modal-btn-primary {
+    background: linear-gradient(135deg, var(--purple-primary), #8b5cf6);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.modal-btn-primary:hover {
+    background: linear-gradient(135deg, var(--purple-hover), #9b6cf6);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
+}
+
+.modal-btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.modal-btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.modal-btn-danger:hover {
+    background: linear-gradient(135deg, #f87171, #ef4444);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
 }
 
 .oauth-btn {

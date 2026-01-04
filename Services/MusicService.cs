@@ -74,11 +74,32 @@ public class MusicService : IMusicService
 
         var genres = await _context.Genres.ToListAsync();
 
-        var albums = await _context.Albums
+        // ALBUM HOT: Combine admin albums and public user albums
+        var adminAlbums = await _context.Albums
             .Include(a => a.Artist)
             .OrderByDescending(a => a.ReleaseDate)
             .Take(8)
+            .Select(a => new AlbumCardViewModel(
+                a.Id,
+                a.Title,
+                a.Artist.Name,
+                a.CoverUrl ?? "https://picsum.photos/seed/album-" + a.Id + "/300/300"))
             .ToListAsync();
+
+        var userAlbums = await _context.UserAlbums
+            .Include(ua => ua.Owner)
+            .Where(ua => ua.IsPublic)
+            .OrderByDescending(ua => ua.CreatedAt)
+            .Take(8)
+            .Select(ua => new AlbumCardViewModel(
+                ua.Id,
+                ua.Name,
+                "By " + (ua.Owner.DisplayName ?? ua.Owner.UserName ?? "Unknown"),
+                ua.CoverUrl ?? "https://picsum.photos/300/300"))
+            .ToListAsync();
+
+        // Combine both - admin albums first, then user albums, take 12 total
+        var albums = adminAlbums.Concat(userAlbums).Take(12).ToList();
 
         UserProfileViewModel? profile = null;
         List<Playlist> personalPlaylists = new();
@@ -175,11 +196,7 @@ public class MusicService : IMusicService
                 p.Name,
                 $"Tạo bởi {p.Owner.DisplayName ?? p.Owner.Email}",
                 p.CoverUrl ?? "https://picsum.photos/id/129/300/300")).ToList(),
-            Albums = albums.Select(a => new AlbumCardViewModel(
-                a.Id,
-                a.Title,
-                a.Artist.Name,
-                a.CoverUrl ?? "https://picsum.photos/seed/album-" + a.Id + "/300/300")).ToList(),
+            Albums = albums,  // Already AlbumCardViewModel list
             Genres = genres.Select(g => new GenreTileViewModel(g.Id, g.Name, g.TileImageUrl ?? string.Empty)).ToList(),
             PersonalPlaylists = personalPlaylists.Select(p => new PlaylistCardViewModel(
                 p.Id,

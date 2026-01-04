@@ -1,61 +1,80 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\VScode\\project cuoi ki\\",
+  "WorkspaceRootPath": "C:\\VScode\\MusicWeb\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\views\\home\\_uploadsection.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:views\\home\\_uploadsection.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\musicweb\\wwwroot\\js\\useralbums.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:wwwroot\\js\\useralbums.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\data\\dbseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:data\\dbseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\musicweb\\views\\home\\_useralbumssection.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:views\\home\\_useralbumssection.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\musicweb\\views\\home\\_useralbumdetailsection.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:views\\home\\_useralbumdetailsection.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\views\\home\\_artistdetailsection.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:views\\home\\_artistdetailsection.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\musicweb\\views\\home\\_sidebar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:views\\home\\_sidebar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\musicweb\\views\\home\\_modals.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:views\\home\\_modals.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\musicweb\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\migrations\\20251224140408_addoauthsupport.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\musicweb\\views\\home\\_uploadsection.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:views\\home\\_uploadsection.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\VScode\\project cuoi ki\\appsettings.Development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\musicweb\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\musicweb\\views\\home\\_artistdetailsection.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:views\\home\\_artistdetailsection.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\musicweb\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\musicweb\\migrations\\20251224140408_addoauthsupport.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:migrations\\20251224140408_addoauthsupport.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\services\\musicservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\musicweb\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\musicweb\\data\\dbseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:data\\dbseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\musicweb\\services\\musicservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:services\\musicservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\controllers\\uploadcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\musicweb\\controllers\\uploadcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:controllers\\uploadcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\services\\cloudflarestorageservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\musicweb\\services\\cloudflarestorageservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:services\\cloudflarestorageservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\models\\viewmodels\\searchresultsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\musicweb\\models\\viewmodels\\searchresultsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:models\\viewmodels\\searchresultsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\project cuoi ki\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\musicweb\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -66,21 +85,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 2,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "_UploadSection.cshtml",
-              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Views\\Home\\_UploadSection.cshtml",
-              "RelativeDocumentMoniker": "Views\\Home\\_UploadSection.cshtml",
-              "ToolTip": "C:\\VScode\\project cuoi ki\\Views\\Home\\_UploadSection.cshtml",
-              "RelativeToolTip": "Views\\Home\\_UploadSection.cshtml",
-              "ViewState": "AgIAADYAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-01-04T07:56:58.94Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
@@ -91,11 +97,89 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "useralbums.js",
+              "DocumentMoniker": "C:\\VScode\\MusicWeb\\wwwroot\\js\\useralbums.js",
+              "RelativeDocumentMoniker": "wwwroot\\js\\useralbums.js",
+              "ToolTip": "C:\\VScode\\MusicWeb\\wwwroot\\js\\useralbums.js",
+              "RelativeToolTip": "wwwroot\\js\\useralbums.js",
+              "ViewState": "AgIAANoAAAAAAAAAAAAswAABAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-01-04T17:23:12.1Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "_UserAlbumsSection.cshtml",
+              "DocumentMoniker": "C:\\VScode\\MusicWeb\\Views\\Home\\_UserAlbumsSection.cshtml",
+              "RelativeDocumentMoniker": "Views\\Home\\_UserAlbumsSection.cshtml",
+              "ToolTip": "C:\\VScode\\MusicWeb\\Views\\Home\\_UserAlbumsSection.cshtml",
+              "RelativeToolTip": "Views\\Home\\_UserAlbumsSection.cshtml",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAxwBcAAABQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-04T17:12:20.662Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "_UserAlbumDetailSection.cshtml",
+              "DocumentMoniker": "C:\\VScode\\MusicWeb\\Views\\Home\\_UserAlbumDetailSection.cshtml",
+              "RelativeDocumentMoniker": "Views\\Home\\_UserAlbumDetailSection.cshtml",
+              "ToolTip": "C:\\VScode\\MusicWeb\\Views\\Home\\_UserAlbumDetailSection.cshtml",
+              "RelativeToolTip": "Views\\Home\\_UserAlbumDetailSection.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-04T17:12:15.118Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "_Sidebar.cshtml",
+              "DocumentMoniker": "C:\\VScode\\MusicWeb\\Views\\Home\\_Sidebar.cshtml",
+              "RelativeDocumentMoniker": "Views\\Home\\_Sidebar.cshtml",
+              "ToolTip": "C:\\VScode\\MusicWeb\\Views\\Home\\_Sidebar.cshtml",
+              "RelativeToolTip": "Views\\Home\\_Sidebar.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-04T17:12:02.646Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "_Modals.cshtml",
+              "DocumentMoniker": "C:\\VScode\\MusicWeb\\Views\\Home\\_Modals.cshtml",
+              "RelativeDocumentMoniker": "Views\\Home\\_Modals.cshtml",
+              "ToolTip": "C:\\VScode\\MusicWeb\\Views\\Home\\_Modals.cshtml",
+              "RelativeToolTip": "Views\\Home\\_Modals.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-04T17:11:59.553Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "_UploadSection.cshtml",
+              "DocumentMoniker": "C:\\VScode\\MusicWeb\\Views\\Home\\_UploadSection.cshtml",
+              "RelativeDocumentMoniker": "Views\\Home\\_UploadSection.cshtml",
+              "ToolTip": "C:\\VScode\\MusicWeb\\Views\\Home\\_UploadSection.cshtml",
+              "RelativeToolTip": "Views\\Home\\_UploadSection.cshtml",
+              "ViewState": "AgIAADYAAAAAAAAAAAAAAEcAAABLAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-04T07:56:58.94Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "AdminController.cs",
-              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Controllers\\AdminController.cs",
+              "DocumentMoniker": "C:\\VScode\\MusicWeb\\Controllers\\AdminController.cs",
               "RelativeDocumentMoniker": "Controllers\\AdminController.cs",
-              "ToolTip": "C:\\VScode\\project cuoi ki\\Controllers\\AdminController.cs",
+              "ToolTip": "C:\\VScode\\MusicWeb\\Controllers\\AdminController.cs",
               "RelativeToolTip": "Controllers\\AdminController.cs",
               "ViewState": "AgIAANsBAAAAAAAAAAASwPUBAAAlAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -103,11 +187,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 9,
               "Title": "_ArtistDetailSection.cshtml",
-              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Views\\Home\\_ArtistDetailSection.cshtml",
+              "DocumentMoniker": "C:\\VScode\\MusicWeb\\Views\\Home\\_ArtistDetailSection.cshtml",
               "RelativeDocumentMoniker": "Views\\Home\\_ArtistDetailSection.cshtml",
-              "ToolTip": "C:\\VScode\\project cuoi ki\\Views\\Home\\_ArtistDetailSection.cshtml",
+              "ToolTip": "C:\\VScode\\MusicWeb\\Views\\Home\\_ArtistDetailSection.cshtml",
               "RelativeToolTip": "Views\\Home\\_ArtistDetailSection.cshtml",
               "ViewState": "AgIAAAwAAAAAAAAAAAAzwDEAAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -115,23 +199,23 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 7,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "C:\\VScode\\project cuoi ki\\appsettings.Development.json",
-              "RelativeDocumentMoniker": "appsettings.Development.json",
+              "RelativeDocumentMoniker": "..\\project cuoi ki\\appsettings.Development.json",
               "ToolTip": "C:\\VScode\\project cuoi ki\\appsettings.Development.json",
-              "RelativeToolTip": "appsettings.Development.json",
+              "RelativeToolTip": "..\\project cuoi ki\\appsettings.Development.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2025-12-31T17:08:18.741Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 10,
               "Title": "AccountController.cs",
-              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Controllers\\AccountController.cs",
+              "DocumentMoniker": "C:\\VScode\\MusicWeb\\Controllers\\AccountController.cs",
               "RelativeDocumentMoniker": "Controllers\\AccountController.cs",
-              "ToolTip": "C:\\VScode\\project cuoi ki\\Controllers\\AccountController.cs",
+              "ToolTip": "C:\\VScode\\MusicWeb\\Controllers\\AccountController.cs",
               "RelativeToolTip": "Controllers\\AccountController.cs",
               "ViewState": "AgIAABwBAAAAAAAAAAAYwDUBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -139,11 +223,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 11,
               "Title": "20251224140408_AddOAuthSupport.cs",
-              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Migrations\\20251224140408_AddOAuthSupport.cs",
+              "DocumentMoniker": "C:\\VScode\\MusicWeb\\Migrations\\20251224140408_AddOAuthSupport.cs",
               "RelativeDocumentMoniker": "Migrations\\20251224140408_AddOAuthSupport.cs",
-              "ToolTip": "C:\\VScode\\project cuoi ki\\Migrations\\20251224140408_AddOAuthSupport.cs",
+              "ToolTip": "C:\\VScode\\MusicWeb\\Migrations\\20251224140408_AddOAuthSupport.cs",
               "RelativeToolTip": "Migrations\\20251224140408_AddOAuthSupport.cs",
               "ViewState": "AgIAACUAAAAAAAAAAABOwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -151,11 +235,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 12,
               "Title": "Program.cs",
-              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Program.cs",
+              "DocumentMoniker": "C:\\VScode\\MusicWeb\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\VScode\\project cuoi ki\\Program.cs",
+              "ToolTip": "C:\\VScode\\MusicWeb\\Program.cs",
               "RelativeToolTip": "Program.cs",
               "ViewState": "AgIAABMAAAAAAAAAAAAswDgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -163,24 +247,23 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 13,
               "Title": "DbSeeder.cs",
-              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Data\\DbSeeder.cs",
+              "DocumentMoniker": "C:\\VScode\\MusicWeb\\Data\\DbSeeder.cs",
               "RelativeDocumentMoniker": "Data\\DbSeeder.cs",
-              "ToolTip": "C:\\VScode\\project cuoi ki\\Data\\DbSeeder.cs",
+              "ToolTip": "C:\\VScode\\MusicWeb\\Data\\DbSeeder.cs",
               "RelativeToolTip": "Data\\DbSeeder.cs",
               "ViewState": "AgIAADEAAAAAAAAAAAAswFEAAABXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-23T14:40:16.296Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-23T14:40:16.296Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 14,
               "Title": "MusicService.cs",
-              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Services\\MusicService.cs",
+              "DocumentMoniker": "C:\\VScode\\MusicWeb\\Services\\MusicService.cs",
               "RelativeDocumentMoniker": "Services\\MusicService.cs",
-              "ToolTip": "C:\\VScode\\project cuoi ki\\Services\\MusicService.cs",
+              "ToolTip": "C:\\VScode\\MusicWeb\\Services\\MusicService.cs",
               "RelativeToolTip": "Services\\MusicService.cs",
               "ViewState": "AgIAAEgBAAAAAAAAAAAcwF4BAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -188,11 +271,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 15,
               "Title": "UploadController.cs",
-              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Controllers\\UploadController.cs",
+              "DocumentMoniker": "C:\\VScode\\MusicWeb\\Controllers\\UploadController.cs",
               "RelativeDocumentMoniker": "Controllers\\UploadController.cs",
-              "ToolTip": "C:\\VScode\\project cuoi ki\\Controllers\\UploadController.cs",
+              "ToolTip": "C:\\VScode\\MusicWeb\\Controllers\\UploadController.cs",
               "RelativeToolTip": "Controllers\\UploadController.cs",
               "ViewState": "AgIAAJIAAAAAAAAAAAAUwJMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -200,11 +283,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 16,
               "Title": "CloudflareStorageService.cs",
-              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Services\\CloudflareStorageService.cs",
+              "DocumentMoniker": "C:\\VScode\\MusicWeb\\Services\\CloudflareStorageService.cs",
               "RelativeDocumentMoniker": "Services\\CloudflareStorageService.cs",
-              "ToolTip": "C:\\VScode\\project cuoi ki\\Services\\CloudflareStorageService.cs",
+              "ToolTip": "C:\\VScode\\MusicWeb\\Services\\CloudflareStorageService.cs",
               "RelativeToolTip": "Services\\CloudflareStorageService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAADMAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -212,11 +295,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 17,
               "Title": "SearchResultsViewModel.cs",
-              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Models\\ViewModels\\SearchResultsViewModel.cs",
+              "DocumentMoniker": "C:\\VScode\\MusicWeb\\Models\\ViewModels\\SearchResultsViewModel.cs",
               "RelativeDocumentMoniker": "Models\\ViewModels\\SearchResultsViewModel.cs",
-              "ToolTip": "C:\\VScode\\project cuoi ki\\Models\\ViewModels\\SearchResultsViewModel.cs",
+              "ToolTip": "C:\\VScode\\MusicWeb\\Models\\ViewModels\\SearchResultsViewModel.cs",
               "RelativeToolTip": "Models\\ViewModels\\SearchResultsViewModel.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -224,11 +307,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 18,
               "Title": "ApplicationDbContext.cs",
-              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\Data\\ApplicationDbContext.cs",
+              "DocumentMoniker": "C:\\VScode\\MusicWeb\\Data\\ApplicationDbContext.cs",
               "RelativeDocumentMoniker": "Data\\ApplicationDbContext.cs",
-              "ToolTip": "C:\\VScode\\project cuoi ki\\Data\\ApplicationDbContext.cs",
+              "ToolTip": "C:\\VScode\\MusicWeb\\Data\\ApplicationDbContext.cs",
               "RelativeToolTip": "Data\\ApplicationDbContext.cs",
               "ViewState": "AgIAADoAAAAAAAAAAAAjwFIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -236,15 +319,16 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 5,
               "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\VScode\\project cuoi ki\\appsettings.json",
+              "DocumentMoniker": "C:\\VScode\\MusicWeb\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
-              "ToolTip": "C:\\VScode\\project cuoi ki\\appsettings.json",
+              "ToolTip": "C:\\VScode\\MusicWeb\\appsettings.json",
               "RelativeToolTip": "appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAnAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABwAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-12-19T04:53:35.952Z"
+              "WhenOpened": "2025-12-19T04:53:35.952Z",
+              "EditorCaption": ""
             }
           ]
         }

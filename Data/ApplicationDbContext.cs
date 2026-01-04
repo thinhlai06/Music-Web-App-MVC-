@@ -25,6 +25,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<UserFollow> UserFollows => Set<UserFollow>();
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
+    public DbSet<UserAlbum> UserAlbums => Set<UserAlbum>();
+    public DbSet<UserAlbumSong> UserAlbumSongs => Set<UserAlbumSong>();
 
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -97,6 +99,19 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .WithMany(x => x.Followers)
             .HasForeignKey(x => x.FolloweeId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<UserAlbumSong>()
+            .HasKey(x => new { x.UserAlbumId, x.SongId });
+
+        builder.Entity<UserAlbumSong>()
+            .HasOne(x => x.UserAlbum)
+            .WithMany(x => x.UserAlbumSongs)
+            .HasForeignKey(x => x.UserAlbumId);
+
+        builder.Entity<UserAlbumSong>()
+            .HasOne(x => x.Song)
+            .WithMany(x => x.UserAlbumSongs)
+            .HasForeignKey(x => x.SongId);
     }
 }
 

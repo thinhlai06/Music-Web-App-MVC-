@@ -1415,6 +1415,7 @@
         document.getElementById('search-results-view')?.classList.add('hidden');
         document.getElementById('upload-view')?.classList.add('hidden');
         document.getElementById('notification-view')?.classList.add('hidden');
+        document.getElementById('user-albums-view')?.classList.add('hidden');
 
         // Hide dynamic views
         const albumView = document.getElementById('album-view');
@@ -1423,6 +1424,9 @@
         const artistView = document.getElementById('artist-view');
         if (artistView) artistView.remove();
 
+        const userAlbumDetailView = document.getElementById('user-album-detail-view');
+        if (userAlbumDetailView) userAlbumDetailView.remove();
+
         // Show selected
         const selected = document.getElementById(`${viewName}-view`);
         if (selected) selected.classList.remove('hidden');
@@ -1430,6 +1434,11 @@
         // Special handling for notification
         if (viewName === 'notification') {
             loadNotifications();
+        }
+
+        // Special handling for user-albums
+        if (viewName === 'user-albums') {
+            loadUserAlbums();
         }
 
         // Update Nav

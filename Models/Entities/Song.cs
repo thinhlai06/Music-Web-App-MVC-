@@ -25,6 +25,7 @@ public class Song
     public ICollection<ChartEntry> ChartEntries { get; set; } = new List<ChartEntry>();
     public ICollection<PlayHistory> PlayHistories { get; set; } = new List<PlayHistory>();
     public ICollection<UserSongRating> UserRatings { get; set; } = new List<UserSongRating>();
+    public ICollection<UserAlbumSong> UserAlbumSongs { get; set; } = new List<UserAlbumSong>();
     
     public int ViewCount { get; set; } = 0;
 }
