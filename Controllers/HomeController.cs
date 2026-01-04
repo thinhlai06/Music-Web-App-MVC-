@@ -114,6 +114,14 @@ public class HomeController : Controller
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+    [HttpGet("/artist/{id:int}")]
+    public async Task<IActionResult> GetArtist(int id)
+    {
+        var userId = _userManager.GetUserId(User);
+        var artist = await _musicService.GetArtistDetailAsync(id, userId);
+        if (artist == null) return NotFound();
+        return PartialView("_ArtistDetailSection", artist);
+    }
 }
 
 public record RatingRequest(decimal Rating);

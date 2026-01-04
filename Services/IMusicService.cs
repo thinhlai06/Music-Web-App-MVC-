@@ -18,7 +18,7 @@ public interface IMusicService
     Task<AlbumDetailViewModel?> GetAlbumDetailAsync(int id, string? userId);
     Task<PlaylistDetailViewModel?> GetPlaylistDetailAsync(int id, string? userId);
     Task<GenreDetailViewModel?> GetGenreDetailAsync(int id, string? userId);
-    Task<bool> UpdatePlaylistAsync(int id, string name, string? coverUrl, string userId);
+    Task<bool> UpdatePlaylistAsync(int id, string name, string? coverUrl, bool isPublic, string userId);
     Task<bool> SetUserSongRatingAsync(int songId, decimal rating, string userId);
     Task<bool> ToggleSongVisibilityAsync(int songId, string userId);
     Task<bool> FollowUserAsync(string followerId, string followeeId);
@@ -27,6 +27,7 @@ public interface IMusicService
     Task<List<UserResultViewModel>> GetFollowingAsync(string userId, string? currentUserId);
     Task<bool> RemoveFollowerAsync(string userId, string followerId);
     Task<bool> DeleteSongAsync(int songId, string userId);
+    Task<ArtistDetailViewModel?> GetArtistDetailAsync(int id, string? userId);
 }
 
 public record LyricLineViewModel(double Time, string Text);

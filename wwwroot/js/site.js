@@ -881,6 +881,7 @@
                 const artistCard = document.createElement('div');
                 artistCard.className = 'artist-card';
                 artistCard.style.cssText = 'display: flex; align-items: center; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; cursor: pointer; transition: all 0.3s;';
+                artistCard.onclick = () => loadArtist(artist.id);
 
                 artistCard.innerHTML = `
                     <img src="${avatar}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin-right: 15px;">
@@ -1417,7 +1418,10 @@
 
         // Hide dynamic views
         const albumView = document.getElementById('album-view');
-        if (albumView) albumView.remove(); // Remove dynamic album view to keep DOM clean or hide it
+        if (albumView) albumView.remove();
+
+        const artistView = document.getElementById('artist-view');
+        if (artistView) artistView.remove();
 
         // Show selected
         const selected = document.getElementById(`${viewName}-view`);
@@ -1593,6 +1597,117 @@
         if (window.musicModel) state.playlists = window.musicModel.personalPlaylists ?? [];
         if (typeof window.isAuthenticated !== 'undefined') state.isAuthenticated = !!window.isAuthenticated;
     }
+
+    // ARTIST VIEW LOGIC
+    window.loadArtist = function (artistId) {
+        const mainView = document.querySelector('.main-view');
+        if (!mainView) return;
+
+        // Hide all views
+        document.querySelectorAll('.content-padding').forEach(el => el.classList.add('hidden'));
+        document.getElementById('album-view')?.remove();
+        document.getElementById('artist-view')?.remove(); // Remove existing to re-render
+
+        fetch(`/artist/${artistId}`)
+            .then(res => {
+                if (!res.ok) throw new Error('Không thể tải thông tin nghệ sĩ');
+                return res.text();
+            })
+            .then(html => {
+                mainView.insertAdjacentHTML('beforeend', html);
+
+                // Parse Artist Songs for Queue
+                const artistView = document.getElementById('artist-view');
+                if (artistView && artistView.dataset.artistSongs) {
+                    try {
+                        const rawSongs = JSON.parse(artistView.dataset.artistSongs);
+                        state.contextQueue = rawSongs.map(s => ({
+                            id: s.Id || s.id,
+                            title: s.Title || s.title,
+                            artist: s.Artist || s.artist,
+                            cover: s.CoverUrl || s.coverUrl,
+                            audio: s.AudioUrl || s.audioUrl,
+                            durationLabel: s.Duration || s.duration,
+                            isFavorite: s.IsFavorite || s.isFavorite,
+                            viewCount: s.ViewCount || s.viewCount
+                        }));
+                    } catch (e) {
+                        console.error('Error parsing artist songs', e);
+                        state.contextQueue = [];
+                    }
+                }
+            })
+            .catch(err => {
+                showToast(err.message);
+            });
+    };
+
+    window.playArtistAll = function () {
+        if (state.contextQueue && state.contextQueue.length > 0) {
+            playQueue(state.contextQueue, 0);
+        }
+    };
+
+    window.playArtistSong = function (index) {
+        if (state.contextQueue && state.contextQueue.length > 0) {
+            playQueue(state.contextQueue, index);
+        }
+    };
+
+    window.toggleArtistFollow = function (btn, userId) {
+        if (!state.isAuthenticated) {
+            toggleAuthModal(true);
+            return;
+        }
+
+        const isFollowing = btn.classList.contains('active');
+        const url = isFollowing ? `/unfollow/${userId}` : `/follow/${userId}`;
+
+        // Optimistic UI
+        btn.classList.toggle('active');
+        btn.textContent = isFollowing ? "Theo dõi" : "Đang theo dõi";
+
+        // This is where specific styling for "active" state in Artist Profile comes in.
+        // The inline style in HTML defines the base state. The active class should override it via CSS or JS injection.
+        // For now, let's just toggle text and rely on CSS class if present, or manually swap styles if needed.
+        // Since the user asked for "improved UI", let's ensure visuals match state.
+        if (!isFollowing) {
+            // Becoming active
+            btn.style.borderColor = 'white';
+            btn.style.background = 'transparent'; // Spotify keeps it transparent but changes text? Or maybe it stays outlined.
+            // Actually Spotify "Follow" turns to "Following" which is often distinct.
+            // Let's keep it simple: Active = Filled or just Text change as per the general `toggleFollow` logic elsewhere?
+            // Global `toggleFollow` uses: active -> purple bg.
+            // Let's match that for consistency, although inline styles might fight it.
+            btn.style.background = 'var(--purple-primary)';
+            btn.style.border = 'none';
+        } else {
+            // Unfollowing
+            btn.style.background = 'transparent';
+            btn.style.border = '1px solid rgba(255,255,255,0.3)';
+        }
+
+        fetch(url, { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.success) {
+                    // Revert
+                    btn.classList.toggle('active');
+                    btn.textContent = isFollowing ? "Đang theo dõi" : "Theo dõi";
+                    if (isFollowing) {
+                        btn.style.background = 'var(--purple-primary)';
+                        btn.style.border = 'none';
+                    } else {
+                        btn.style.background = 'transparent';
+                        btn.style.border = '1px solid rgba(255,255,255,0.3)';
+                    }
+                    showToast('Có lỗi xảy ra');
+                }
+            })
+            .catch(err => {
+                showToast('Lỗi kết nối');
+            });
+    };
 
     // Global Playlist Click Delegation
     function handlePlaylistClicks() {
@@ -1924,7 +2039,7 @@
     };
 
     // Edit Playlist Modal Logic
-    window.openEditPlaylistModal = function (id, currentName, currentCover) {
+    window.openEditPlaylistModal = function (id, currentName, currentCover, isPublic) {
         // Create modal if not exists
         let modal = document.getElementById('edit-playlist-modal');
         if (!modal) {
@@ -1939,6 +2054,12 @@
                     <div class="form-group mb-3">
                         <label>Tên Playlist</label>
                         <input type="text" name="name" class="auth-input" required>
+                    </div>
+                    <div class="form-group mb-3">
+                         <label class="custom-checkbox-label" style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                            <input type="checkbox" name="isPublic" style="width: auto; margin: 0;">
+                            <span>Công khai (Mọi người có thể nhìn thấy)</span>
+                        </label>
                     </div>
                     <div class="form-group mb-3">
                         <label>Ảnh bìa (File)</label>
@@ -1966,6 +2087,7 @@
         const form = modal.querySelector('form');
         form.id.value = id;
         form.name.value = currentName;
+        form.isPublic.checked = isPublic;
         form.coverUrlInput.value = '';
         form.coverFile.value = '';
 
@@ -1977,6 +2099,20 @@
         const form = e.target;
         const formData = new FormData(form);
         const id = form.id.value;
+
+        // Manual check for checkbox since FormData might handle it differently for unchecked
+        // Actually FormData sends "on" if checked, nothing if not. But we need to be explicit for IsPublic bool binding often.
+        // Let's ensure we append correctly if we construct our own, but here we are using FormData directly.
+        // Asp.Net Core Model Binding will bind "on" to true if the name matches the boolean property.
+        // HOWEVER, unchecked checkbox sends nothing. So default false works if missing.
+        // To be safe, let's verify.
+
+        // Easier: Just let it be. If checked -> "on" (true). If unchecked -> missing (false).
+        // BUT we need to make sure the name "isPublic" matches "IsPublic" in request. It does.
+
+        // Wait, for checkbox to bind correctly to boolean in default MVC binder, usually we need a hidden input with false.
+        // Or we can manually set it.
+        formData.set('IsPublic', form.isPublic.checked);
 
         fetch(`/playlists/${id}/update`, {
             method: 'POST',
@@ -1994,9 +2130,9 @@
                         document.getElementById('playlist-detail-cover').src = data.coverUrl;
                     }
 
-                    // Should also update sidebar list eventually
-                    // Trigger a reload of sidebar?
-                    // For now UI update in detail view is enough.
+                    // Reload to update Public/Private badge logic easiest
+                    // Or we could update DOM manually
+                    window.location.reload();
                 } else {
                     showToast('Cập nhật thất bại');
                 }

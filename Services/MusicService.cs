@@ -382,6 +382,7 @@ public class MusicService : IMusicService
         {
             Name = name,
             OwnerId = userId,
+            IsPublic = false, // Default to private
             CoverUrl = "https://picsum.photos/seed/" + Guid.NewGuid() + "/300/300"
         };
 
@@ -430,12 +431,13 @@ public class MusicService : IMusicService
         };
     }
 
-    public async Task<bool> UpdatePlaylistAsync(int id, string name, string? coverUrl, string userId)
+    public async Task<bool> UpdatePlaylistAsync(int id, string name, string? coverUrl, bool isPublic, string userId)
     {
         var playlist = await _context.Playlists.FindAsync(id);
         if (playlist == null || playlist.OwnerId != userId) return false;
 
         playlist.Name = name;
+        playlist.IsPublic = isPublic;
         if (coverUrl != null) playlist.CoverUrl = coverUrl;
         
         await _context.SaveChangesAsync();
@@ -704,6 +706,54 @@ public class MusicService : IMusicService
         _context.Songs.Remove(song);
         await _context.SaveChangesAsync();
         return true;
+    }
+    public async Task<ArtistDetailViewModel?> GetArtistDetailAsync(int id, string? userId)
+    {
+        var artist = await _context.Artists.FirstAsync(a => a.Id == id);
+        
+        if (artist == null) return null;
+
+        var songs = await _context.Songs
+            .Where(s => s.ArtistId == id && s.IsPublic)
+            .OrderByDescending(s => s.ViewCount)
+            .Include(s => s.Artist)
+            .Include(s => s.SongGenres).ThenInclude(sg => sg.Genre)
+            .ToListAsync();
+
+        var favoriteIds = new HashSet<int>();
+        var userRatings = new Dictionary<int, decimal>();
+        if (userId != null)
+        {
+            favoriteIds = (await _context.FavoriteSongs
+                .Where(f => f.UserId == userId)
+                .Select(f => f.SongId)
+                .ToListAsync()).ToHashSet();
+            userRatings = await _context.UserSongRatings
+                .Where(r => r.UserId == userId)
+                .ToDictionaryAsync(r => r.SongId, r => r.Rating);
+        }
+
+        // Total Views Calculation
+        long totalViews = songs.Sum(s => (long)s.ViewCount);
+
+        // Check if following
+        bool isFollowing = false;
+        if (userId != null && artist.UserId != null)
+        {
+            isFollowing = await _context.UserFollows.AnyAsync(f => f.FollowerId == userId && f.FolloweeId == artist.UserId);
+        }
+
+        return new ArtistDetailViewModel
+        {
+            Id = artist.Id,
+            Name = artist.Name,
+            Bio = artist.Bio,
+            AvatarUrl = artist.AvatarUrl ?? "https://ui-avatars.com/api/?name=" + Uri.EscapeDataString(artist.Name),
+            TotalViews = totalViews,
+            IsFollowing = isFollowing,
+            UserId = artist.UserId,
+            PopularSongs = songs.Select(s => ToSongCard(s, favoriteIds, userRatings)).ToList()
+        };
     }
 }
 

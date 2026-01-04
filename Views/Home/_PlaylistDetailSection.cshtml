@@ -33,7 +33,7 @@
                 <img src="@Model.CoverUrl" alt="@Model.Name" class="main-cover" id="playlist-detail-cover">
                 @if (Model.CanEdit)
                 {
-                    <div class="card-overlay" style="cursor: pointer;" onclick="openEditPlaylistModal(@Model.Id, '@Model.Name', '@Model.CoverUrl')">
+                    <div class="card-overlay" style="cursor: pointer;" onclick="openEditPlaylistModal(@Model.Id, '@Model.Name', '@Model.CoverUrl', @Model.IsPublic.ToString().ToLower())">
                         <i class="fa-solid fa-pen" style="color: white; font-size: 30px;"></i>
                     </div>
                 }
@@ -44,6 +44,14 @@
                 <div class="meta-row">
                     <span class="artist-name">@Model.OwnerName</span>
                     <span class="dot">•</span>
+                    @if (Model.IsPublic)
+                    {
+                        <span class="badge" style="background: var(--text-secondary); color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-right: 5px;">Công khai</span>
+                    }
+                    else
+                    {
+                        <span class="badge" style="background: #333; color: #aaa; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-right: 5px;">Riêng tư</span>
+                    }
                     <span class="song-count">@Model.Songs.Count bài hát,</span>
                     <span class="duration">@durationString</span>
                 </div>
@@ -60,7 +68,7 @@
         </button>
         @if (Model.CanEdit)
         {
-            <button class="action-icon-btn" onclick="openEditPlaylistModal(@Model.Id, '@Model.Name', '@Model.CoverUrl')">
+            <button class="action-icon-btn" onclick="openEditPlaylistModal(@Model.Id, '@Model.Name', '@Model.CoverUrl', @Model.IsPublic.ToString().ToLower())">
                 <i class="fa-solid fa-pen"></i>
             </button>
         }

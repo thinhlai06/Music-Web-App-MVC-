@@ -105,7 +105,7 @@ public class PlaylistController : Controller
             coverUrl = "/uploads/playlists/" + uniqueFileName;
         }
 
-        var result = await _musicService.UpdatePlaylistAsync(id, request.Name, coverUrl, userId);
+        var result = await _musicService.UpdatePlaylistAsync(id, request.Name, coverUrl, request.IsPublic, userId);
         if (!result) return Forbid();
 
         return Ok(new { success = true, coverUrl });
@@ -115,6 +115,7 @@ public class PlaylistController : Controller
 public class UpdatePlaylistRequest
 {
     public string Name { get; set; } = string.Empty;
+    public bool IsPublic { get; set; }
     public string? CoverUrlInput { get; set; }
     public IFormFile? CoverFile { get; set; }
 }
