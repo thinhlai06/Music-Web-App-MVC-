@@ -27,6 +27,14 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
     public DbSet<UserAlbum> UserAlbums => Set<UserAlbum>();
     public DbSet<UserAlbumSong> UserAlbumSongs => Set<UserAlbumSong>();
+    
+    // Premium feature entities
+    public DbSet<SubscriptionPlan> SubscriptionPlans => Set<SubscriptionPlan>();
+    public DbSet<UserSubscription> UserSubscriptions => Set<UserSubscription>();
+    public DbSet<PremiumSongRequest> PremiumSongRequests => Set<PremiumSongRequest>();
+    public DbSet<UserWallet> UserWallets => Set<UserWallet>();
+    public DbSet<WalletTransaction> WalletTransactions => Set<WalletTransaction>();
+    public DbSet<EarningsHistory> EarningsHistories => Set<EarningsHistory>();
 
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -112,6 +120,13 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .HasOne(x => x.Song)
             .WithMany(x => x.UserAlbumSongs)
             .HasForeignKey(x => x.SongId);
+
+        // Premium feature: Song.UploadedBy foreign key mapping
+        builder.Entity<Song>()
+            .HasOne(x => x.UploadedBy)
+            .WithMany()
+            .HasForeignKey(x => x.UploadedByUserId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }
 

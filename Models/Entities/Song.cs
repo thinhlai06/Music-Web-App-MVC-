@@ -27,6 +27,12 @@ public class Song
     public ICollection<UserSongRating> UserRatings { get; set; } = new List<UserSongRating>();
     public ICollection<UserAlbumSong> UserAlbumSongs { get; set; } = new List<UserAlbumSong>();
     
+    // Premium feature fields
+    public bool IsPremium { get; set; } = false;
+    public string PremiumStatus { get; set; } = "Free"; // Free, Pending, Approved, Rejected
+    public string? UploadedByUserId { get; set; }
+    public ApplicationUser? UploadedBy { get; set; }
+    
     public int ViewCount { get; set; } = 0;
 }
 

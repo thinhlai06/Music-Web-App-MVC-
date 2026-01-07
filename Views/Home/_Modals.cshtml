@@ -1,5 +1,26 @@
 @model MusicWeb.Models.ViewModels.HomeViewModel
 
+<!-- AD OVERLAY (28s audio ad for free users) -->
+<div id="ad-overlay" class="ad-overlay hidden">
+    <div class="ad-content">
+        <div class="ad-badge">QUẢNG CÁO</div>
+        <div class="ad-icon">
+            <i class="fa-solid fa-music"></i>
+        </div>
+        <h3 class="ad-title">Đang phát quảng cáo</h3>
+        <p class="ad-message">Nâng cấp Premium để nghe không quảng cáo</p>
+        <div class="ad-progress-container">
+            <div class="ad-progress">
+                <div id="ad-progress-fill" class="ad-progress-fill"></div>
+            </div>
+            <div class="ad-timer">Còn <span id="ad-countdown">28</span>s</div>
+        </div>
+        <button class="ad-upgrade-btn" onclick="skipAdForPremium(); switchView('premium');">
+            <i class="fa-solid fa-crown"></i> Nâng cấp Premium
+        </button>
+    </div>
+</div>
+
 <!-- EDIT PROFILE MODAL -->
 <div class="modal-overlay" id="edit-profile-modal">
     <div class="auth-box">

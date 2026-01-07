@@ -83,7 +83,8 @@ public class MusicService : IMusicService
                 a.Id,
                 a.Title,
                 a.Artist.Name,
-                a.CoverUrl ?? "https://picsum.photos/seed/album-" + a.Id + "/300/300"))
+                a.CoverUrl ?? "https://picsum.photos/seed/album-" + a.Id + "/300/300",
+                false)) // IsUserAlbum = false for admin albums
             .ToListAsync();
 
         var userAlbums = await _context.UserAlbums
@@ -95,7 +96,8 @@ public class MusicService : IMusicService
                 ua.Id,
                 ua.Name,
                 "By " + (ua.Owner.DisplayName ?? ua.Owner.UserName ?? "Unknown"),
-                ua.CoverUrl ?? "https://picsum.photos/300/300"))
+                ua.CoverUrl ?? "https://picsum.photos/300/300",
+                true)) // IsUserAlbum = true
             .ToListAsync();
 
         // Combine both - admin albums first, then user albums, take 12 total

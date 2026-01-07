@@ -12,7 +12,17 @@
         contextQueue: [], // New: Temporary queue from current view (Album)
         isShuffled: false, // Shuffle state
         loopMode: 'off', // Loop mode: 'off', 'all', 'one'
-        originalQueue: null // Original queue before shuffle
+        originalQueue: null, // Original queue before shuffle
+
+        // Premium & Ads state
+        songsPlayedSinceAd: 0,    // Count songs played since last ad
+        adInterval: 3,             // Play ad after every X songs
+        isPlayingAd: false,        // Currently playing ad?
+        isPremiumUser: false,      // User has premium subscription?
+        adDuration: 28,            // Ad duration in seconds
+        pendingSongAfterAd: null,  // Song to play after ad finishes
+        adAudioFiles: ['/ads/Spotify premium ad.mp3'],
+        adCountdownInterval: null  // Countdown interval ID for cleanup
     };
 
     const els = {
@@ -59,13 +69,29 @@
     }
 
     function playSong(song) {
-        if (!song.audio) {
+        // If currently playing ad, ignore song requests
+        if (state.isPlayingAd) return;
+
+        // Support both 'audio' and 'audioUrl' property names
+        const audioSrc = song.audio || song.audioUrl;
+        if (!audioSrc) {
             showToast('Bản thu âm chưa sẵn sàng.');
             return;
         }
 
+        // Check if should play ad first (for free users only)
+        if (shouldPlayAd()) {
+            state.pendingSongAfterAd = song;
+            playAd();
+            return;
+        }
+
+        // Normalize song properties for player UI
+        song.cover = song.cover || song.coverUrl;
+        song.audio = audioSrc;
+
         state.currentSong = song;
-        els.audio.src = song.audio;
+        els.audio.src = audioSrc;
         els.audio.playbackRate = state.playbackSpeed;
         els.audio.play().then(() => {
             state.isPlaying = true;
@@ -73,10 +99,197 @@
             els.playIcon.classList.add('fa-circle-pause');
             updatePlayerUI();
             recordPlay(song.id);
-        }).catch(() => {
+
+            // Record premium play for revenue sharing (if premium user plays premium song)
+            if (song.isPremium) {
+                recordPremiumPlay(song.id);
+            }
+
+            // Increment songs played counter (for ad trigger)
+            state.songsPlayedSinceAd++;
+        }).catch((err) => {
+            // AbortError is normal when loading new audio - ignore it
+            if (err.name === 'AbortError') {
+                console.log('Audio load interrupted by new request (normal)');
+                return;
+            }
             showToast('Không thể phát bài hát.');
         });
     }
+
+    // =============================================
+    // AUDIO ADS SYSTEM
+    // =============================================
+
+    function shouldPlayAd() {
+        // Premium users never see ads
+        if (state.isPremiumUser) return false;
+        // Check if enough songs played since last ad
+        return state.songsPlayedSinceAd >= state.adInterval;
+    }
+
+    function playAd() {
+        state.isPlayingAd = true;
+        state.songsPlayedSinceAd = 0; // Reset counter
+
+        // Show ad overlay
+        showAdOverlay();
+
+        // Pick random ad file
+        const adSrc = state.adAudioFiles[Math.floor(Math.random() * state.adAudioFiles.length)];
+
+        // Play ad audio
+        els.audio.src = adSrc;
+        els.audio.playbackRate = 1.0; // Always normal speed for ads
+        els.audio.play().catch(() => {
+            console.error('Failed to play ad');
+            onAdEnded(); // Skip ad if can't play
+        });
+
+        // Disable player controls during ad
+        disablePlayerControlsDuringAd();
+
+        // Start countdown timer
+        startAdCountdown();
+    }
+
+    function onAdEnded() {
+        state.isPlayingAd = false;
+        hideAdOverlay();
+        enablePlayerControlsAfterAd();
+
+        // Resume with pending song
+        if (state.pendingSongAfterAd) {
+            const song = state.pendingSongAfterAd;
+            state.pendingSongAfterAd = null;
+            playSong(song);
+        }
+    }
+
+    function showAdOverlay() {
+        const overlay = document.getElementById('ad-overlay');
+        if (overlay) {
+            overlay.classList.remove('hidden');
+            document.getElementById('ad-countdown').textContent = state.adDuration;
+        }
+    }
+
+    function hideAdOverlay() {
+        const overlay = document.getElementById('ad-overlay');
+        if (overlay) {
+            overlay.classList.add('hidden');
+        }
+    }
+
+    // Allow skipping ad when user clicks upgrade button
+    function skipAdForPremium() {
+        state.isPlayingAd = false;
+        state.pendingSongAfterAd = null; // Cancel pending song
+        state.songsPlayedSinceAd = 0; // Reset counter
+        els.audio.pause();
+        els.audio.src = '';
+        hideAdOverlay();
+        enablePlayerControlsAfterAd();
+
+        // Clear countdown interval if running
+        if (state.adCountdownInterval) {
+            clearInterval(state.adCountdownInterval);
+            state.adCountdownInterval = null;
+        }
+    }
+
+    // Export to window for HTML onclick
+    window.hideAdOverlay = hideAdOverlay;
+    window.skipAdForPremium = skipAdForPremium;
+
+    function startAdCountdown() {
+        let remaining = state.adDuration;
+        const countdownEl = document.getElementById('ad-countdown');
+        const progressFill = document.getElementById('ad-progress-fill');
+
+        // Clear any existing interval
+        if (state.adCountdownInterval) {
+            clearInterval(state.adCountdownInterval);
+        }
+
+        state.adCountdownInterval = setInterval(() => {
+            remaining--;
+            if (countdownEl) countdownEl.textContent = remaining;
+            if (progressFill) {
+                const percent = ((state.adDuration - remaining) / state.adDuration) * 100;
+                progressFill.style.width = `${percent}%`;
+            }
+
+            if (remaining <= 0) {
+                clearInterval(state.adCountdownInterval);
+                state.adCountdownInterval = null;
+            }
+        }, 1000);
+    }
+
+    function disablePlayerControlsDuringAd() {
+        // Disable skip, prev, next, seek during ad
+        const controls = ['btn-next', 'btn-prev', 'btn-shuffle', 'btn-repeat'];
+        controls.forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) btn.disabled = true;
+        });
+
+        // Disable progress bar seek
+        if (els.progress) els.progress.style.pointerEvents = 'none';
+    }
+
+    function enablePlayerControlsAfterAd() {
+        const controls = ['btn-next', 'btn-prev', 'btn-shuffle', 'btn-repeat'];
+        controls.forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) btn.disabled = false;
+        });
+
+        if (els.progress) els.progress.style.pointerEvents = 'auto';
+    }
+
+    // Show ad popup for free users trying to download
+    function showDownloadAdPopup(downloadUrl) {
+        // Store download URL to open after ad
+        state.pendingDownloadUrl = downloadUrl;
+
+        // Show ad overlay
+        showAdOverlay();
+
+        // Update overlay message for download
+        const adTitle = document.querySelector('.ad-title');
+        const adMessage = document.querySelector('.ad-message');
+        if (adTitle) adTitle.textContent = 'Xem quảng cáo để tải xuống';
+        if (adMessage) adMessage.textContent = 'Nâng cấp Premium để tải không quảng cáo';
+
+        // Play ad audio
+        const adAudio = state.adAudioFiles[Math.floor(Math.random() * state.adAudioFiles.length)];
+        els.audio.src = adAudio;
+        state.isPlayingAd = true;
+
+        els.audio.play().catch(() => {
+            // If audio fails, just show countdown
+            console.log('Ad audio failed to play');
+        });
+
+        startAdCountdown();
+
+        // Set up callback to open download after ad ends
+        const handleDownloadAdEnd = () => {
+            if (state.pendingDownloadUrl) {
+                // Open download in new tab
+                window.open(state.pendingDownloadUrl, '_blank');
+                state.pendingDownloadUrl = null;
+            }
+            els.audio.removeEventListener('ended', handleDownloadAdEnd);
+        };
+
+        els.audio.addEventListener('ended', handleDownloadAdEnd);
+    }
+
+    // Export for external access
+    window.showDownloadAdPopup = showDownloadAdPopup;
 
     // New: Play a specific list of songs
     window.playQueue = function (songs, startIndex = 0) {
@@ -652,7 +865,15 @@
             const downloadBtn = event.target.closest('.download-btn');
             if (downloadBtn) {
                 event.stopPropagation();
-                // Allow default behavior (download)
+
+                // Check if user is premium
+                if (!state.isPremiumUser) {
+                    event.preventDefault(); // Block download for free users
+                    showDownloadAdPopup(downloadBtn.href);
+                    return;
+                }
+
+                // Premium user - allow default behavior (download)
                 return;
             }
             // Handle Album Song Row Click (Queue Mode)
@@ -710,7 +931,14 @@
         document.getElementById('btn-repeat')?.addEventListener('click', toggleLoop);
         els.audio.addEventListener('timeupdate', updateProgress);
         els.audio.addEventListener('loadedmetadata', updateProgress);
-        els.audio.addEventListener('ended', playNext);
+        // Handle audio ended - check if it was an ad or a song
+        els.audio.addEventListener('ended', () => {
+            if (state.isPlayingAd) {
+                onAdEnded();
+            } else {
+                playNext();
+            }
+        });
         els.progress.addEventListener('click', seek);
         els.playerFavorite.addEventListener('click', () => state.currentSong && toggleFavorite(state.currentSong.id, els.playerFavorite));
         els.volumeBar?.addEventListener('click', event => {
@@ -1416,6 +1644,7 @@
         document.getElementById('upload-view')?.classList.add('hidden');
         document.getElementById('notification-view')?.classList.add('hidden');
         document.getElementById('user-albums-view')?.classList.add('hidden');
+        document.getElementById('premium-view')?.classList.add('hidden');
 
         // Hide dynamic views
         const albumView = document.getElementById('album-view');
@@ -1439,6 +1668,11 @@
         // Special handling for user-albums
         if (viewName === 'user-albums') {
             loadUserAlbums();
+        }
+
+        // Special handling for premium
+        if (viewName === 'premium' && typeof loadPremiumData === 'function') {
+            loadPremiumData();
         }
 
         // Update Nav
@@ -2317,8 +2551,32 @@
             .catch(() => { });
     }
 
+    // Check if user is premium (for ad skipping)
+    function checkPremiumStatus() {
+        fetch('/api/premium/status')
+            .then(r => r.json())
+            .then(data => {
+                state.isPremiumUser = data.isPremium || data.noAds || false;
+                console.log('Premium status:', state.isPremiumUser ? 'Premium User' : 'Free User');
+            })
+            .catch(() => {
+                state.isPremiumUser = false;
+            });
+    }
+
+    // Record premium song play for revenue sharing
+    function recordPremiumPlay(songId) {
+        if (!state.isAuthenticated || !state.isPremiumUser) return;
+        fetch(`/api/premium/record-play/${songId}`, { method: 'POST' })
+            .catch(() => { });
+    }
+
+    // Export to window for external access
+    window.checkPremiumStatus = checkPremiumStatus;
+
     document.addEventListener('DOMContentLoaded', () => {
         init();
         checkNotifications();
+        checkPremiumStatus(); // Check premium status for ad system
     });
 })();

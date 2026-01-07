@@ -121,7 +121,8 @@
         @foreach (var album in Model.Albums)
         {
             var cover = string.IsNullOrWhiteSpace(album.CoverUrl) ? $"https://picsum.photos/seed/album-{album.Id}/300/300" : album.CoverUrl;
-            <div class="card" onclick="loadAlbum(@album.Id)">
+            var clickHandler = album.IsUserAlbum ? $"loadUserAlbum({album.Id})" : $"loadAlbum({album.Id})";
+            <div class="card" onclick="@clickHandler">
                 <div class="card-img-wrapper">
                     <img src="@cover" class="card-img" alt="@album.Title">
                     <div class="card-overlay">

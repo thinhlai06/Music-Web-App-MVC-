@@ -1616,3 +1616,485 @@ ul {
     aspect-ratio: 1/1;
     height: auto;
 }
+
+/* =============================================
+   AD OVERLAY STYLES - Premium Feature
+   ============================================= */
+
+.ad-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.ad-overlay.hidden {
+    display: none !important;
+}
+
+.ad-content {
+    text-align: center;
+    padding: 60px;
+    background: linear-gradient(145deg, rgba(35, 27, 46, 0.9), rgba(23, 15, 35, 0.95));
+    border-radius: 24px;
+    border: 1px solid rgba(155, 77, 224, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 100px rgba(155, 77, 224, 0.1);
+    max-width: 450px;
+    animation: adFadeIn 0.4s ease-out;
+}
+
+@keyframes adFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.ad-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--purple-primary), #e91e63);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+}
+
+.ad-icon {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 25px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, rgba(155, 77, 224, 0.2), rgba(233, 30, 99, 0.1));
+    border: 2px solid rgba(155, 77, 224, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: adPulse 2s ease-in-out infinite;
+}
+
+.ad-icon i {
+    font-size: 40px;
+    color: var(--purple-primary);
+}
+
+@keyframes adPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(155, 77, 224, 0.4);
+    }
+
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px 10px rgba(155, 77, 224, 0.1);
+    }
+}
+
+.ad-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.ad-message {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 35px;
+}
+
+.ad-progress-container {
+    margin-bottom: 30px;
+}
+
+.ad-progress {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.ad-progress-fill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--purple-primary), #e91e63);
+    border-radius: 3px;
+    transition: width 1s linear;
+}
+
+.ad-timer {
+    font-size: 16px;
+    color: var(--text-secondary);
+}
+
+.ad-timer span {
+    font-weight: 700;
+    color: var(--purple-primary);
+    font-size: 20px;
+}
+
+.ad-upgrade-btn {
+    padding: 14px 40px;
+    background: linear-gradient(135deg, #ffc107, #ff9800);
+    color: #000;
+    border: none;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+}
+
+.ad-upgrade-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
+    background: linear-gradient(135deg, #ffca28, #ffa726);
+}
+
+.ad-upgrade-btn i {
+    font-size: 18px;
+}
+
+/* Premium Badge for Songs */
+.premium-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: linear-gradient(135deg, #ffc107, #ff9800);
+    color: #000;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.premium-badge i {
+    font-size: 10px;
+}
+
+/* =============================================
+   PREMIUM SECTION STYLES
+   ============================================= */
+
+.premium-header {
+    text-align: center;
+    padding: 40px 0;
+    margin-bottom: 30px;
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(155, 77, 224, 0.1));
+    border-radius: 16px;
+    border: 1px solid rgba(255, 193, 7, 0.2);
+}
+
+.premium-icon-large {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffc107, #ff9800);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    color: #000;
+    box-shadow: 0 8px 30px rgba(255, 193, 7, 0.3);
+}
+
+.wallet-card {
+    display: flex;
+    gap: 30px;
+    padding: 25px;
+    background: linear-gradient(145deg, rgba(35, 27, 46, 0.9), rgba(23, 15, 35, 0.95));
+    border-radius: 16px;
+    border: 1px solid rgba(155, 77, 224, 0.3);
+    margin-bottom: 30px;
+}
+
+.wallet-balance,
+.wallet-earnings {
+    flex: 1;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    text-align: center;
+}
+
+.balance-label,
+.earnings-label {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.balance-amount,
+.earnings-amount {
+    font-size: 32px;
+    font-weight: 700;
+    color: #ffc107;
+}
+
+.earnings-amount {
+    color: #4caf50;
+}
+
+.balance-currency,
+.earnings-currency {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-left: 5px;
+}
+
+.subscription-status-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    margin-bottom: 30px;
+}
+
+.status-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.status-icon.free {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+}
+
+.status-icon.premium {
+    background: linear-gradient(135deg, #ffc107, #ff9800);
+    color: #000;
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+}
+
+.status-info h3 {
+    margin: 0 0 5px;
+    font-size: 18px;
+}
+
+.status-info p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.subscription-plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.plan-card {
+    position: relative;
+    padding: 30px;
+    background: linear-gradient(145deg, rgba(35, 27, 46, 0.9), rgba(23, 15, 35, 0.95));
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.plan-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--purple-primary);
+    box-shadow: 0 10px 30px rgba(155, 77, 224, 0.2);
+}
+
+.plan-card.featured {
+    border-color: #ffc107;
+    background: linear-gradient(145deg, rgba(255, 193, 7, 0.1), rgba(35, 27, 46, 0.95));
+}
+
+.plan-card.featured:hover {
+    border-color: #ffc107;
+    box-shadow: 0 10px 30px rgba(255, 193, 7, 0.2);
+}
+
+.plan-badge {
+    position: absolute;
+    top: -12px;
+    right: 20px;
+    background: linear-gradient(135deg, #ffc107, #ff9800);
+    color: #000;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.plan-name {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.plan-price {
+    margin-bottom: 15px;
+}
+
+.price-amount {
+    font-size: 36px;
+    font-weight: 800;
+    background: linear-gradient(90deg, #ffc107, #ff9800);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.price-unit {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.plan-description {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.plan-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 25px;
+}
+
+.plan-features li {
+    padding: 8px 0;
+    color: var(--text-secondary);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.plan-features li i {
+    color: #4caf50;
+}
+
+.plan-buy-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--purple-primary), #8b5cf6);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.plan-buy-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+}
+
+.plan-card.featured .plan-buy-btn {
+    background: linear-gradient(135deg, #ffc107, #ff9800);
+    color: #000;
+}
+
+.plan-card.featured .plan-buy-btn:hover {
+    box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
+}
+
+.transaction-history {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    padding: 5px;
+}
+
+.transaction-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.transaction-item:last-child {
+    border-bottom: none;
+}
+
+.transaction-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.transaction-icon.positive {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+}
+
+.transaction-icon.negative {
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+}
+
+.transaction-info {
+    flex: 1;
+}
+
+.transaction-desc {
+    font-size: 14px;
+    margin-bottom: 3px;
+}
+
+.transaction-date {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.transaction-amount {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.transaction-amount.positive {
+    color: #4caf50;
+}
+
+.transaction-amount.negative {
+    color: #f44336;
+}

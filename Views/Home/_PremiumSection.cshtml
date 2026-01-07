@@ -1,0 +1,269 @@
+@model MusicWeb.Models.ViewModels.HomeViewModel
+
+<div id="premium-view" class="content-padding hidden">
+    <div class="premium-header">
+        <div class="premium-hero">
+            <div class="premium-icon-large">
+                <i class="fa-solid fa-crown"></i>
+            </div>
+            <h1 style="font-size: 32px; margin-bottom: 10px; background: linear-gradient(90deg, #ffc107, #ff9800); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                MusicWave Premium
+            </h1>
+            <p style="color: var(--text-secondary); font-size: 16px; margin-bottom: 30px;">
+                Nghe nhạc không quảng cáo, tải nhạc về máy, và hỗ trợ nghệ sĩ yêu thích
+            </p>
+        </div>
+    </div>
+
+    <!-- Wallet Section -->
+    <div class="premium-wallet-section" id="premium-wallet-section">
+        <div class="section-title" style="margin-top: 0;">
+            <span><i class="fa-solid fa-wallet" style="margin-right: 10px; color: #ffc107;"></i>Ví của tôi</span>
+        </div>
+        <div class="wallet-card">
+            <div class="wallet-balance">
+                <span class="balance-label">Số dư hiện tại</span>
+                <span class="balance-amount" id="wallet-balance">0</span>
+                <span class="balance-currency">VND</span>
+            </div>
+            <div class="wallet-earnings">
+                <span class="earnings-label">Tổng thu nhập từ bài hát</span>
+                <span class="earnings-amount" id="wallet-earnings">0</span>
+                <span class="earnings-currency">VND</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current Subscription -->
+    <div class="premium-status-section" id="premium-status-section">
+        <div class="section-title">
+            <span><i class="fa-solid fa-id-card" style="margin-right: 10px; color: var(--purple-primary);"></i>Trạng thái tài khoản</span>
+        </div>
+        <div class="subscription-status-card" id="subscription-status-card">
+            <div class="status-icon free" id="status-icon">
+                <i class="fa-solid fa-user"></i>
+            </div>
+            <div class="status-info">
+                <h3 id="subscription-plan-name">Tài khoản miễn phí</h3>
+                <p id="subscription-status-text">Nâng cấp để nghe không quảng cáo</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subscription Plans -->
+    <div class="section-title">
+        <span><i class="fa-solid fa-tags" style="margin-right: 10px; color: #4caf50;"></i>Các gói Premium</span>
+    </div>
+    <div class="subscription-plans-grid" id="subscription-plans-grid">
+        <!-- Plans will be loaded via JS -->
+        <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size: 32px; color: var(--purple-primary);"></i>
+            <p style="margin-top: 15px; color: var(--text-secondary);">Đang tải các gói...</p>
+        </div>
+    </div>
+
+    <!-- Transaction History -->
+    <div class="section-title" style="margin-top: 40px;">
+        <span><i class="fa-solid fa-clock-rotate-left" style="margin-right: 10px; color: var(--text-secondary);"></i>Lịch sử giao dịch</span>
+    </div>
+    <div class="transaction-history" id="transaction-history">
+        <div style="text-align: center; padding: 30px; color: var(--text-secondary);">
+            <i class="fa-solid fa-receipt" style="font-size: 32px; margin-bottom: 10px; opacity: 0.5;"></i>
+            <p>Chưa có giao dịch nào</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Load premium data when view is shown
+    function loadPremiumData() {
+        console.log('Loading Premium data...');
+        
+        // Load wallet data
+        fetch('/api/premium/wallet')
+            .then(r => {
+                if (!r.ok) {
+                    console.error('Wallet API returned:', r.status);
+                    throw new Error('Not authorized or API error');
+                }
+                return r.json();
+            })
+            .then(data => {
+                console.log('Wallet data:', data);
+                document.getElementById('wallet-balance').textContent = 
+                    new Intl.NumberFormat('vi-VN').format(data.balance);
+                document.getElementById('wallet-earnings').textContent = 
+                    new Intl.NumberFormat('vi-VN').format(data.totalEarnings);
+                
+                // Render transactions
+                renderTransactions(data.transactions || []);
+            })
+            .catch(err => {
+                console.error('Error loading wallet:', err);
+                document.getElementById('wallet-balance').textContent = 'Chưa đăng nhập';
+            });
+
+        // Load subscription status
+        fetch('/api/premium/status')
+            .then(r => r.json())
+            .then(data => {
+                const statusIcon = document.getElementById('status-icon');
+                const planName = document.getElementById('subscription-plan-name');
+                const statusText = document.getElementById('subscription-status-text');
+                
+                if (data.isPremium || data.hasSubscription) {
+                    statusIcon.className = 'status-icon premium';
+                    statusIcon.innerHTML = '<i class="fa-solid fa-crown"></i>';
+                    planName.textContent = data.planName || 'Premium';
+                    
+                    if (data.endDate) {
+                        const endDate = new Date(data.endDate);
+                        statusText.textContent = `Hết hạn: ${endDate.toLocaleDateString('vi-VN')}`;
+                    } else {
+                        statusText.textContent = 'Đang hoạt động';
+                    }
+                } else {
+                    statusIcon.className = 'status-icon free';
+                    statusIcon.innerHTML = '<i class="fa-solid fa-user"></i>';
+                    planName.textContent = 'Tài khoản miễn phí';
+                    statusText.textContent = 'Nâng cấp để nghe không quảng cáo';
+                }
+            });
+
+        // Load plans
+        fetch('/api/premium/plans')
+            .then(r => r.json())
+            .then(plans => {
+                renderPlans(plans);
+            });
+    }
+
+    function renderPlans(plans) {
+        const container = document.getElementById('subscription-plans-grid');
+        container.innerHTML = '';
+
+        plans.forEach(plan => {
+            if (plan.price === 0) return; // Skip free plan
+
+            const card = document.createElement('div');
+            card.className = 'plan-card';
+            if (plan.name.includes('VIP')) {
+                card.classList.add('featured');
+            }
+
+            const features = [];
+            if (plan.noAds) features.push('<i class="fa-solid fa-check"></i> Không quảng cáo');
+            if (plan.canAccessPremiumSongs) features.push('<i class="fa-solid fa-check"></i> Nghe bài hát Premium');
+            if (plan.downloadLimit === -1) {
+                features.push('<i class="fa-solid fa-check"></i> Tải không giới hạn');
+            } else if (plan.downloadLimit > 0) {
+                features.push(`<i class="fa-solid fa-check"></i> Tải ${plan.downloadLimit} bài/tháng`);
+            }
+            if (plan.highQualityAudio) features.push('<i class="fa-solid fa-check"></i> Chất lượng cao');
+
+            card.innerHTML = `
+                ${plan.name.includes('VIP') ? '<div class="plan-badge">PHỔ BIẾN</div>' : ''}
+                <h3 class="plan-name">${plan.name}</h3>
+                <div class="plan-price">
+                    <span class="price-amount">${new Intl.NumberFormat('vi-VN').format(plan.price)}</span>
+                    <span class="price-unit">VND/${plan.durationDays} ngày</span>
+                </div>
+                <p class="plan-description">${plan.description || ''}</p>
+                <ul class="plan-features">
+                    ${features.map(f => `<li>${f}</li>`).join('')}
+                </ul>
+                <button class="plan-buy-btn" onclick="purchasePlan(${plan.id}, '${plan.name}', ${plan.price})">
+                    <i class="fa-solid fa-cart-shopping"></i> Mua ngay
+                </button>
+            `;
+
+            container.appendChild(card);
+        });
+    }
+
+    function renderTransactions(transactions) {
+        const container = document.getElementById('transaction-history');
+        
+        if (!transactions || transactions.length === 0) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 30px; color: var(--text-secondary);">
+                    <i class="fa-solid fa-receipt" style="font-size: 32px; margin-bottom: 10px; opacity: 0.5;"></i>
+                    <p>Chưa có giao dịch nào</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = transactions.map(t => {
+            const isPositive = t.amount > 0;
+            const icon = isPositive ? 'fa-arrow-down' : 'fa-arrow-up';
+            const colorClass = isPositive ? 'positive' : 'negative';
+            const date = new Date(t.createdAt).toLocaleDateString('vi-VN');
+            
+            return `
+                <div class="transaction-item">
+                    <div class="transaction-icon ${colorClass}">
+                        <i class="fa-solid ${icon}"></i>
+                    </div>
+                    <div class="transaction-info">
+                        <div class="transaction-desc">${t.description}</div>
+                        <div class="transaction-date">${date}</div>
+                    </div>
+                    <div class="transaction-amount ${colorClass}">
+                        ${isPositive ? '+' : ''}${new Intl.NumberFormat('vi-VN').format(t.amount)} VND
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    async function purchasePlan(planId, planName, price) {
+        if (!confirm(`Bạn có chắc muốn mua gói ${planName} với giá ${new Intl.NumberFormat('vi-VN').format(price)} VND?`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/premium/purchase/${planId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                if (typeof showToast === 'function') {
+                    showToast('Mua gói thành công! 🎉');
+                }
+                // Reload premium data
+                loadPremiumData();
+                // Update premium status in player
+                if (typeof checkPremiumStatus === 'function') {
+                    checkPremiumStatus();
+                }
+            } else {
+                alert(data.message || 'Không thể mua gói. Vui lòng kiểm tra số dư.');
+            }
+        } catch (error) {
+            console.error('Purchase error:', error);
+            alert('Có lỗi xảy ra. Vui lòng thử lại.');
+        }
+    }
+
+    // Auto-load when switching to premium view
+    document.addEventListener('DOMContentLoaded', () => {
+        // Observer to detect when premium view becomes visible
+        const premiumView = document.getElementById('premium-view');
+        if (premiumView) {
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                        if (!premiumView.classList.contains('hidden')) {
+                            loadPremiumData();
+                        }
+                    }
+                });
+            });
+            observer.observe(premiumView, { attributes: true });
+        }
+    });
+</script>

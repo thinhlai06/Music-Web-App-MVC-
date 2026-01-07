@@ -60,6 +60,11 @@ public class Program
 
         builder.Services.AddScoped<IStorageService, CloudflareStorageService>();
         builder.Services.AddScoped<IUserAlbumService, UserAlbumService>();
+        
+        // Premium feature services
+        builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+        builder.Services.AddScoped<IWalletService, WalletService>();
+        builder.Services.AddScoped<IRevenueService, RevenueService>();
 
         builder.Services.AddHttpClient();
         builder.Services.AddControllersWithViews();
