@@ -1,0 +1,132 @@
+@model List<MusicWeb.Models.Entities.PremiumSongRequest>
+@{
+    ViewData["Title"] = "Duyệt Premium Songs";
+}
+
+<div class="admin-header">
+    <h2><i class="fa-solid fa-star" style="margin-right: 10px; color: #ffc107;"></i>Duyệt Premium Songs</h2>
+    <span class="badge badge-warning" style="font-size: 14px;">@Model.Count(r => r.Status == "Pending") chờ duyệt</span>
+</div>
+
+<div class="admin-tabs">
+    <a href="?status=pending" class="admin-tab @(ViewBag.Status == "Pending" || ViewBag.Status == null ? "active" : "")">
+        Chờ duyệt
+    </a>
+    <a href="?status=approved" class="admin-tab @(ViewBag.Status == "Approved" ? "active" : "")">
+        Đã duyệt
+    </a>
+    <a href="?status=rejected" class="admin-tab @(ViewBag.Status == "Rejected" ? "active" : "")">
+        Đã từ chối
+    </a>
+</div>
+
+<div class="admin-card">
+    @if (!Model.Any())
+    {
+        <div style="text-align: center; padding: 50px; color: var(--text-secondary);">
+            <i class="fa-solid fa-inbox" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i>
+            <p>Không có yêu cầu nào</p>
+        </div>
+    }
+    else
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Bài hát</th>
+                    <th>Người yêu cầu</th>
+                    <th>Ngày yêu cầu</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var request in Model)
+                {
+                    <tr>
+                        <td>@request.Id</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <img src="@(request.Song?.CoverUrl ?? "https://picsum.photos/50")" 
+                                     style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">
+                                <div>
+                                    <div>@request.Song?.Title</div>
+                                    <div style="font-size: 12px; color: var(--text-secondary);">@request.Song?.Artist?.Name</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>@request.RequestedByUser?.DisplayName</td>
+                        <td>@request.RequestDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            @switch (request.Status)
+                            {
+                                case "Pending":
+                                    <span class="badge badge-warning">Chờ duyệt</span>
+                                    break;
+                                case "Approved":
+                                    <span class="badge badge-success">Đã duyệt</span>
+                                    break;
+                                case "Rejected":
+                                    <span class="badge badge-danger">Từ chối</span>
+                                    break;
+                            }
+                        </td>
+                        <td>
+                            @if (request.Status == "Pending")
+                            {
+                                <form asp-action="ApprovePremiumSong" method="post" style="display: inline;">
+                                    <input type="hidden" name="requestId" value="@request.Id" />
+                                    <button type="submit" class="btn btn-success" style="padding: 5px 10px;">
+                                        <i class="fa-solid fa-check"></i> Duyệt
+                                    </button>
+                                </form>
+                                <button class="btn btn-danger" style="padding: 5px 10px;" 
+                                        onclick="showRejectModal(@request.Id)">
+                                    <i class="fa-solid fa-times"></i> Từ chối
+                                </button>
+                            }
+                            else
+                            {
+                                <span style="color: var(--text-secondary); font-size: 12px;">
+                                    @request.AdminNote
+                                </span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+<!-- Reject Modal -->
+<div id="reject-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; 
+     display: none; align-items: center; justify-content: center;">
+    <div class="admin-card" style="width: 400px;">
+        <h3 style="margin-bottom: 15px;">Từ chối yêu cầu</h3>
+        <form asp-action="RejectPremiumSong" method="post">
+            <input type="hidden" name="requestId" id="reject-request-id" />
+            <div class="form-group">
+                <label class="form-label">Lý do từ chối</label>
+                <textarea name="reason" class="form-control" rows="3" required 
+                          placeholder="Nhập lý do từ chối..."></textarea>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" class="btn btn-outline" onclick="hideRejectModal()">Hủy</button>
+                <button type="submit" class="btn btn-danger">Từ chối</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function showRejectModal(requestId) {
+        document.getElementById('reject-request-id').value = requestId;
+        document.getElementById('reject-modal').style.display = 'flex';
+    }
+    
+    function hideRejectModal() {
+        document.getElementById('reject-modal').style.display = 'none';
+    }
+</script>

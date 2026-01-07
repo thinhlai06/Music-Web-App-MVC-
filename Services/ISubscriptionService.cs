@@ -9,4 +9,9 @@ public interface ISubscriptionService
     Task<bool> CanDownloadAsync(string userId);
     Task<int> GetRemainingDownloadsAsync(string userId);
     Task<bool> PurchaseSubscriptionAsync(string userId, int planId);
+    
+    // Premium song request methods
+    Task<(bool success, string? error)> RequestPremiumSongAsync(string userId, int songId);
+    Task<(bool isPremium, string? status)> GetSongPremiumInfoAsync(int songId);
+    Task<List<Models.Entities.PremiumSongRequest>> GetUserPremiumRequestsAsync(string userId);
 }

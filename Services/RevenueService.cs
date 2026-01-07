@@ -27,44 +27,84 @@ public class RevenueService : IRevenueService
 
     public async Task RecordPremiumPlayAsync(string listenerUserId, int songId)
     {
-        // Get song and check if it's premium
-        var song = await _context.Songs.FindAsync(songId);
-        if (song == null || !song.IsPremium || string.IsNullOrEmpty(song.UploadedByUserId))
+        Console.WriteLine($"[RevenueShare] RecordPremiumPlayAsync called: listener={listenerUserId}, songId={songId}");
+        
+        // Get song with Artist and check if it's premium
+        var song = await _context.Songs
+            .Include(s => s.Artist)
+            .FirstOrDefaultAsync(s => s.Id == songId);
+            
+        if (song == null || !song.IsPremium)
+        {
+            Console.WriteLine($"[RevenueShare] Skipped: song null or not premium");
             return;
+        }
+        
+        // Get uploader UserId from Artist
+        var uploaderUserId = song.Artist?.UserId;
+        Console.WriteLine($"[RevenueShare] Song '{song.Title}' uploader from Artist.UserId: {uploaderUserId}");
+        
+        if (string.IsNullOrEmpty(uploaderUserId))
+        {
+            Console.WriteLine($"[RevenueShare] Skipped: no uploader UserId");
+            return;
+        }
 
         // Check if listener is premium
         if (!await _subscriptionService.IsPremiumUserAsync(listenerUserId))
+        {
+            Console.WriteLine($"[RevenueShare] Skipped: listener is not premium");
             return;
+        }
 
         // Don't pay if listener is the uploader
-        if (song.UploadedByUserId == listenerUserId)
+        if (uploaderUserId == listenerUserId)
+        {
+            Console.WriteLine($"[RevenueShare] Skipped: listener is uploader");
             return;
+        }
 
         // Calculate earning
         var subscription = await _subscriptionService.GetActiveSubscriptionAsync(listenerUserId);
-        if (subscription == null) return;
+        if (subscription == null)
+        {
+            Console.WriteLine($"[RevenueShare] Skipped: no active subscription");
+            return;
+        }
 
         var earningAmount = await CalculateEarningPerPlayAsync(subscription.PlanId);
+        Console.WriteLine($"[RevenueShare] Calculated earning: {earningAmount} VND");
 
-        // Record earnings history
-        var earnings = new EarningsHistory
+        try
         {
-            UploaderUserId = song.UploadedByUserId,
-            ListenerUserId = listenerUserId,
-            SongId = songId,
-            Amount = earningAmount,
-            CreatedAt = DateTime.UtcNow
-        };
-        _context.EarningsHistories.Add(earnings);
-        await _context.SaveChangesAsync();
+            // Record earnings history
+            var earnings = new EarningsHistory
+            {
+                UploaderUserId = uploaderUserId,
+                ListenerUserId = listenerUserId,
+                SongId = songId,
+                Amount = earningAmount,
+                CreatedAt = DateTime.UtcNow
+            };
+            _context.EarningsHistories.Add(earnings);
+            await _context.SaveChangesAsync();
+            Console.WriteLine($"[RevenueShare] EarningsHistory saved successfully");
 
-        // Add earnings to uploader's wallet
-        await _walletService.AddEarningsAsync(
-            song.UploadedByUserId,
-            earningAmount,
-            $"Doanh thu từ bài hát: {song.Title}",
-            songId.ToString()
-        );
+            // Add earnings to uploader's wallet
+            await _walletService.AddEarningsAsync(
+                uploaderUserId,
+                earningAmount,
+                $"Doanh thu từ bài hát: {song.Title}",
+                songId.ToString()
+            );
+            Console.WriteLine($"[RevenueShare] Wallet updated for uploader {uploaderUserId}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[RevenueShare] ERROR: {ex.Message}");
+            Console.WriteLine($"[RevenueShare] Inner: {ex.InnerException?.Message}");
+            throw; // Re-throw to see error in API response
+        }
     }
 
     public async Task<decimal> CalculateEarningPerPlayAsync(int planId)

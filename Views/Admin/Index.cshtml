@@ -1,49 +1,71 @@
 @model List<MusicWeb.Models.Entities.Song>
+@{
+    ViewData["Title"] = "Quản lý Bài hát";
+}
 
-<div class="content-padding">
-    <div class="section-title">
-        <div style="display: flex; gap: 10px; align-items: center;">
-            <a href="/" class="btn" style="border: 1px solid #fff; padding: 5px 15px; border-radius: 4px; font-size: 14px; text-decoration: none; display: flex; align-items: center; gap: 5px;">
-                <i class="fa-solid fa-house"></i> Trang chủ
-            </a>
-            <span>Quản lý Bài hát</span>
-        </div>
-            <span>Quản lý Bài hát</span>
-        </div>
-        <div style="display:flex; gap:10px;">
-             <a href="/Admin/SendNotification" class="btn" style="background:#ff9800; color:white; text-decoration:none;">+ Gửi thông báo</a>
-             <a href="/Admin/CreateSong" class="btn btn-primary" style="text-decoration: none;">+ Thêm bài hát</a>
-        </div>
-    </div>
+<div class="admin-header">
+    <h2><i class="fa-solid fa-music" style="margin-right: 10px; color: var(--purple-primary);"></i>Quản lý Bài hát</h2>
+    <a href="/Admin/CreateSong" class="btn btn-primary">
+        <i class="fa-solid fa-plus"></i> Thêm bài hát
+    </a>
+</div>
 
-    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+<div class="admin-card">
+    <table class="admin-table">
         <thead>
-            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); text-align: left;">
-                <th style="padding: 10px;">ID</th>
-                <th style="padding: 10px;">Bài hát</th>
-                <th style="padding: 10px;">Nghệ sĩ</th>
-                <th style="padding: 10px;">Thể loại</th>
-                <th style="padding: 10px;">Thao tác</th>
+            <tr>
+                <th>ID</th>
+                <th>Bài hát</th>
+                <th>Nghệ sĩ</th>
+                <th>Thể loại</th>
+                <th>Premium</th>
+                <th>Thao tác</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var song in Model)
             {
-                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                    <td style="padding: 10px;">@song.Id</td>
-                    <td style="padding: 10px;">
-                        <div style="display: flex; align-items: center;">
-                            <img src="@(song.CoverUrl ?? "https://picsum.photos/50")" style="width: 40px; height: 40px; border-radius: 4px; margin-right: 10px;">
-                            @song.Title
+                <tr>
+                    <td>@song.Id</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <img src="@(song.CoverUrl ?? "https://picsum.photos/50")" 
+                                 style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">
+                            <span>@song.Title</span>
                         </div>
                     </td>
-                    <td style="padding: 10px;">@song.Artist.Name</td>
-                    <td style="padding: 10px;">@(song.SongGenres.FirstOrDefault()?.Genre.Name ?? "-")</td>
-                    <td style="padding: 10px;">
-                        <a href="/Admin/EditSong/@song.Id" style="color: var(--purple-primary); text-decoration: none; margin-right: 10px; font-weight: 500;">Sửa</a>
-                        <form asp-action="DeleteSong" method="post" onsubmit="return confirm('Bạn chắc chắn muốn xóa?');" style="display: inline;">
+                    <td>@song.Artist?.Name</td>
+                    <td>@(song.SongGenres?.FirstOrDefault()?.Genre?.Name ?? "-")</td>
+                    <td>
+                        @if (song.IsPremium)
+                        {
+                            <span class="badge badge-warning"><i class="fa-solid fa-crown"></i> Premium</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-info">Free</span>
+                        }
+                    </td>
+                    <td>
+                        <a href="/Admin/EditSong/@song.Id" class="btn btn-outline" style="padding: 5px 10px;">
+                            <i class="fa-solid fa-edit"></i>
+                        </a>
+                        @if (song.IsPremium)
+                        {
+                            <form asp-action="RemovePremiumFromSong" method="post" style="display: inline;" 
+                                  onsubmit="return confirm('Gỡ Premium khỏi bài hát này?');">
+                                <input type="hidden" name="songId" value="@song.Id" />
+                                <button type="submit" class="btn btn-outline" style="padding: 5px 10px; color: #ffc107;" title="Gỡ Premium">
+                                    <i class="fa-solid fa-crown"></i>
+                                </button>
+                            </form>
+                        }
+                        <form asp-action="DeleteSong" method="post" style="display: inline;" 
+                              onsubmit="return confirm('Bạn chắc chắn muốn xóa?');">
                             <input type="hidden" name="id" value="@song.Id" />
-                            <button type="submit" style="color: #ff4d4d; background: none; border: none; cursor: pointer;">Xóa</button>
+                            <button type="submit" class="btn btn-danger" style="padding: 5px 10px;">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
                         </form>
                     </td>
                 </tr>

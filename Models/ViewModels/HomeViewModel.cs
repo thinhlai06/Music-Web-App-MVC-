@@ -34,7 +34,9 @@ public record SongCardViewModel(
     int ViewCount = 0,
     decimal? AverageRating = null,
     bool IsPublic = true,
-    int? GenreId = null);
+    int? GenreId = null,
+    bool IsPremium = false,
+    string? PremiumStatus = null);
 
 public record ChartItemViewModel(int SongId, string Title, string Artist, string CoverUrl, int Rank, double Percentage, int ViewCount);
 

@@ -337,14 +337,58 @@ public class AdminController : Controller
         return RedirectToAction(nameof(Users));
     }
     // Album Management
-    public async Task<IActionResult> Albums()
+    public async Task<IActionResult> Albums(string? tab)
     {
-        var albums = await _context.Albums
+        var systemAlbums = await _context.Albums
             .Include(a => a.Artist)
             .Include(a => a.Songs)
             .OrderByDescending(a => a.ReleaseDate)
             .ToListAsync();
-        return View(albums);
+        
+        var userAlbums = await _context.UserAlbums
+            .Include(a => a.Owner)
+            .Include(a => a.UserAlbumSongs)
+            .OrderByDescending(a => a.CreatedAt)
+            .ToListAsync();
+        
+        ViewBag.Tab = tab ?? "system";
+        
+        return View(new AdminAlbumsViewModel
+        {
+            SystemAlbums = systemAlbums,
+            UserAlbums = userAlbums
+        });
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> ToggleUserAlbumVisibility(int id)
+    {
+        var album = await _context.UserAlbums.FindAsync(id);
+        if (album != null)
+        {
+            album.IsPublic = !album.IsPublic;
+            await _context.SaveChangesAsync();
+            TempData["Message"] = $"Đã {(album.IsPublic ? "công khai" : "ẩn")} album";
+        }
+        return RedirectToAction(nameof(Albums), new { tab = "user" });
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> DeleteUserAlbum(int id)
+    {
+        var album = await _context.UserAlbums
+            .Include(a => a.UserAlbumSongs)
+            .FirstOrDefaultAsync(a => a.Id == id);
+        
+        if (album != null)
+        {
+            // Remove songs from album first
+            album.UserAlbumSongs?.Clear();
+            _context.UserAlbums.Remove(album);
+            await _context.SaveChangesAsync();
+            TempData["Message"] = "Đã xóa album";
+        }
+        return RedirectToAction(nameof(Albums), new { tab = "user" });
     }
 
     [HttpGet]
@@ -582,4 +626,324 @@ public class AdminController : Controller
         TempData["Message"] = "Đã gửi thông báo đến " + notifications.Count + " người dùng.";
         return RedirectToAction(nameof(SendNotification));
     }
+    
+    // =============================================
+    // DASHBOARD
+    // =============================================
+    
+    public async Task<IActionResult> Dashboard()
+    {
+        var totalSongs = await _context.Songs.CountAsync();
+        var totalUsers = await _context.Users.CountAsync();
+        var premiumUsers = await _context.UserSubscriptions
+            .Where(s => s.Status == "Active" && (s.EndDate == null || s.EndDate > DateTime.UtcNow))
+            .Select(s => s.UserId)
+            .Distinct()
+            .CountAsync();
+        
+        // Total revenue from successful subscription purchases
+        var totalRevenue = await _context.WalletTransactions
+            .Where(t => t.Type == "Purchase" && t.Amount < 0)
+            .SumAsync(t => Math.Abs(t.Amount));
+        
+        var recentRequests = await _context.PremiumSongRequests
+            .Include(r => r.Song).ThenInclude(s => s!.Artist)
+            .Include(r => r.RequestedByUser)
+            .OrderByDescending(r => r.RequestDate)
+            .Take(5)
+            .ToListAsync();
+        
+        ViewBag.TotalSongs = totalSongs;
+        ViewBag.TotalUsers = totalUsers;
+        ViewBag.PremiumUsers = premiumUsers;
+        ViewBag.TotalRevenue = totalRevenue;
+        ViewBag.RecentRequests = recentRequests;
+        
+        return View();
+    }
+    
+    [HttpGet]
+    [Route("/api/admin/stats")]
+    public async Task<IActionResult> GetAdminStats()
+    {
+        var totalSongs = await _context.Songs.CountAsync();
+        var totalUsers = await _context.Users.CountAsync();
+        var premiumUsers = await _context.UserSubscriptions
+            .Where(s => s.Status == "Active" && (s.EndDate == null || s.EndDate > DateTime.UtcNow))
+            .Select(s => s.UserId)
+            .Distinct()
+            .CountAsync();
+        
+        var totalRevenue = await _context.WalletTransactions
+            .Where(t => t.Type == "Purchase" && t.Amount < 0)
+            .SumAsync(t => Math.Abs(t.Amount));
+        
+        var pendingRequests = await _context.PremiumSongRequests
+            .Where(r => r.Status == "Pending")
+            .CountAsync();
+        
+        return Ok(new
+        {
+            totalSongs,
+            totalUsers,
+            premiumUsers,
+            totalRevenue,
+            pendingRequests
+        });
+    }
+    
+    // =============================================
+    // PREMIUM SONG REQUESTS
+    // =============================================
+    
+    public async Task<IActionResult> PremiumSongRequests(string? status)
+    {
+        var query = _context.PremiumSongRequests
+            .Include(r => r.Song).ThenInclude(s => s!.Artist)
+            .Include(r => r.RequestedByUser)
+            .OrderByDescending(r => r.RequestDate)
+            .AsQueryable();
+        
+        ViewBag.Status = status ?? "Pending";
+        
+        if (!string.IsNullOrEmpty(status) && status != "all")
+        {
+            query = query.Where(r => r.Status == status);
+        }
+        else if (string.IsNullOrEmpty(status))
+        {
+            query = query.Where(r => r.Status == "Pending");
+        }
+        
+        var requests = await query.ToListAsync();
+        return View(requests);
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> ApprovePremiumSong(int requestId)
+    {
+        var request = await _context.PremiumSongRequests
+            .Include(r => r.Song)
+            .FirstOrDefaultAsync(r => r.Id == requestId);
+        
+        if (request != null && request.Status == "Pending")
+        {
+            request.Status = "Approved";
+            request.ReviewedDate = DateTime.UtcNow;
+            request.ReviewedByAdminId = _userManager.GetUserId(User);
+            request.AdminNote = "Đã duyệt";
+            
+            // Update song to Premium
+            if (request.Song != null)
+            {
+                request.Song.IsPremium = true;
+                request.Song.PremiumStatus = "Approved";
+            }
+            
+            // Send notification to user
+            _context.Notifications.Add(new Notification
+            {
+                UserId = request.RequestedByUserId,
+                Title = "Yêu cầu Premium được duyệt",
+                Message = $"Bài hát '{request.Song?.Title}' của bạn đã được duyệt thành Premium!",
+                Type = "PremiumApproved",
+                CreatedAt = DateTime.UtcNow
+            });
+            
+            await _context.SaveChangesAsync();
+            TempData["Message"] = "Đã duyệt bài hát Premium";
+        }
+        
+        return RedirectToAction(nameof(PremiumSongRequests));
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> RejectPremiumSong(int requestId, string reason)
+    {
+        var request = await _context.PremiumSongRequests
+            .Include(r => r.Song)
+            .FirstOrDefaultAsync(r => r.Id == requestId);
+        
+        if (request != null && request.Status == "Pending")
+        {
+            request.Status = "Rejected";
+            request.ReviewedDate = DateTime.UtcNow;
+            request.ReviewedByAdminId = _userManager.GetUserId(User);
+            request.AdminNote = reason;
+            
+            // Send notification to user
+            _context.Notifications.Add(new Notification
+            {
+                UserId = request.RequestedByUserId,
+                Title = "Yêu cầu Premium bị từ chối",
+                Message = $"Bài hát '{request.Song?.Title}' không được duyệt. Lý do: {reason}",
+                Type = "PremiumRejected",
+                CreatedAt = DateTime.UtcNow
+            });
+            
+            await _context.SaveChangesAsync();
+            TempData["Message"] = "Đã từ chối yêu cầu";
+        }
+        
+        return RedirectToAction(nameof(PremiumSongRequests));
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> RemovePremiumFromSong(int songId)
+    {
+        var song = await _context.Songs
+            .Include(s => s.Artist)
+            .FirstOrDefaultAsync(s => s.Id == songId);
+        
+        if (song != null && song.IsPremium)
+        {
+            song.IsPremium = false;
+            song.PremiumStatus = "";  // Use empty string as DB doesn't allow NULL
+            
+            // Notify the owner
+            if (song.Artist.UserId != null)
+            {
+                _context.Notifications.Add(new Notification
+                {
+                    UserId = song.Artist.UserId,
+                    Title = "Bài hát không còn Premium",
+                    Message = $"Bài hát '{song.Title}' đã bị gỡ trạng thái Premium bởi Admin.",
+                    Type = "PremiumRemoved",
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+            
+            await _context.SaveChangesAsync();
+            TempData["Message"] = "Đã gỡ Premium khỏi bài hát";
+        }
+        
+        return RedirectToAction(nameof(Index));
+    }
+    
+    // =============================================
+    // SUBSCRIPTION PLANS
+    // =============================================
+    
+    public async Task<IActionResult> SubscriptionPlans()
+    {
+        var plans = await _context.SubscriptionPlans
+            .OrderBy(p => p.Price)
+            .ToListAsync();
+        return View(plans);
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> SavePlan(SubscriptionPlan model)
+    {
+        if (model.Id == 0)
+        {
+            // Create new
+            model.CreatedAt = DateTime.UtcNow;
+            model.IsActive = true;
+            _context.SubscriptionPlans.Add(model);
+            TempData["Message"] = "Đã thêm gói mới";
+        }
+        else
+        {
+            // Update existing
+            var plan = await _context.SubscriptionPlans.FindAsync(model.Id);
+            if (plan != null)
+            {
+                plan.Name = model.Name;
+                plan.Description = model.Description;
+                plan.Price = model.Price;
+                plan.DurationDays = model.DurationDays;
+                plan.DownloadLimit = model.DownloadLimit;
+                plan.NoAds = model.NoAds;
+                plan.HighQualityAudio = model.HighQualityAudio;
+                plan.CanAccessPremiumSongs = model.CanAccessPremiumSongs;
+                TempData["Message"] = "Đã cập nhật gói";
+            }
+        }
+        
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(SubscriptionPlans));
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> TogglePlan(int id)
+    {
+        var plan = await _context.SubscriptionPlans.FindAsync(id);
+        if (plan != null)
+        {
+            plan.IsActive = !plan.IsActive;
+            await _context.SaveChangesAsync();
+            TempData["Message"] = $"Đã {(plan.IsActive ? "kích hoạt" : "tạm dừng")} gói";
+        }
+        return RedirectToAction(nameof(SubscriptionPlans));
+    }
+    
+    // =============================================
+    // SUBSCRIBERS
+    // =============================================
+    
+    public async Task<IActionResult> Subscribers(string? status)
+    {
+        var query = _context.UserSubscriptions
+            .Include(s => s.User)
+            .Include(s => s.Plan)
+            .OrderByDescending(s => s.StartDate)
+            .AsQueryable();
+        
+        ViewBag.Status = status ?? "Active";
+        
+        if (status == "Active" || string.IsNullOrEmpty(status))
+        {
+            query = query.Where(s => s.Status == "Active" && (s.EndDate == null || s.EndDate > DateTime.UtcNow));
+        }
+        else if (status == "Expired")
+        {
+            query = query.Where(s => s.Status == "Expired" || (s.EndDate != null && s.EndDate <= DateTime.UtcNow));
+        }
+        
+        var subs = await query.ToListAsync();
+        return View(subs);
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> ExtendSubscription(int subId, int days)
+    {
+        var sub = await _context.UserSubscriptions.FindAsync(subId);
+        if (sub != null)
+        {
+            sub.EndDate = (sub.EndDate ?? DateTime.UtcNow).AddDays(days);
+            await _context.SaveChangesAsync();
+            TempData["Message"] = $"Đã gia hạn {days} ngày";
+        }
+        return RedirectToAction(nameof(Subscribers));
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> CancelSubscription(int subId)
+    {
+        var sub = await _context.UserSubscriptions
+            .Include(s => s.User)
+            .FirstOrDefaultAsync(s => s.Id == subId);
+        
+        if (sub != null)
+        {
+            sub.Status = "Cancelled";
+            sub.EndDate = DateTime.UtcNow;
+            
+            // Notify user
+            _context.Notifications.Add(new Notification
+            {
+                UserId = sub.UserId,
+                Title = "Subscription đã bị hủy",
+                Message = "Subscription Premium của bạn đã bị hủy bởi Admin.",
+                Type = "SubscriptionCancelled",
+                CreatedAt = DateTime.UtcNow
+            });
+            
+            await _context.SaveChangesAsync();
+            TempData["Message"] = "Đã hủy subscription";
+        }
+        return RedirectToAction(nameof(Subscribers));
+    }
 }
+

@@ -80,6 +80,26 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .WithMany(x => x.Favorites)
             .HasForeignKey(x => x.SongId);
 
+
+        // Explicit FK mappings for EarningsHistory (DB uses UploaderUserId, ListenerUserId)
+        builder.Entity<EarningsHistory>()
+            .HasOne(e => e.Uploader)
+            .WithMany()
+            .HasForeignKey(e => e.UploaderUserId)
+            .OnDelete(DeleteBehavior.NoAction);
+        
+        builder.Entity<EarningsHistory>()
+            .HasOne(e => e.Listener)
+            .WithMany()
+            .HasForeignKey(e => e.ListenerUserId)
+            .OnDelete(DeleteBehavior.NoAction);
+        
+        builder.Entity<EarningsHistory>()
+            .HasOne(e => e.Song)
+            .WithMany()
+            .HasForeignKey(e => e.SongId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.Entity<UserSongRating>()
             .HasKey(x => new { x.UserId, x.SongId });
 

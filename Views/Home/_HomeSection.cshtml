@@ -12,8 +12,9 @@
         @foreach (var song in Model.Recommendations)
         {
             var cover = string.IsNullOrWhiteSpace(song.CoverUrl) ? $"https://picsum.photos/seed/{song.Id}/300/300" : song.CoverUrl;
-            <div class="card song-card" data-song-id="@song.Id" data-title="@song.Title" data-artist="@song.Artist"
-                 data-cover="@cover" data-audio="@song.AudioUrl" data-duration="@song.Duration" data-favorite="@song.IsFavorite">
+            var premiumClass = song.IsPremium ? "premium-song" : "";
+            <div class="card song-card @premiumClass" data-song-id="@song.Id" data-title="@song.Title" data-artist="@song.Artist"
+                 data-cover="@cover" data-audio="@song.AudioUrl" data-duration="@song.Duration" data-favorite="@song.IsFavorite" data-premium="@song.IsPremium.ToString().ToLower()">
                 <div class="card-actions">
                     <button class="circle-btn favorite-toggle @(song.IsFavorite ? "active" : string.Empty)" title="Yêu thích">
                         <i class="fa-solid fa-heart"></i>
@@ -42,8 +43,9 @@
         @foreach (var song in Model.NewReleases)
         {
             var cover = string.IsNullOrWhiteSpace(song.CoverUrl) ? $"https://picsum.photos/seed/{song.Id}/300/300" : song.CoverUrl;
-            <div class="card song-card" data-song-id="@song.Id" data-title="@song.Title" data-artist="@song.Artist"
-                 data-cover="@cover" data-audio="@song.AudioUrl" data-duration="@song.Duration" data-favorite="@song.IsFavorite">
+            var premiumClass = song.IsPremium ? "premium-song" : "";
+            <div class="card song-card @premiumClass" data-song-id="@song.Id" data-title="@song.Title" data-artist="@song.Artist"
+                 data-cover="@cover" data-audio="@song.AudioUrl" data-duration="@song.Duration" data-favorite="@song.IsFavorite" data-premium="@song.IsPremium.ToString().ToLower()">
                 <div class="card-actions">
                     <button class="circle-btn favorite-toggle @(song.IsFavorite ? "active" : string.Empty)" title="Yêu thích">
                         <i class="fa-solid fa-heart"></i>

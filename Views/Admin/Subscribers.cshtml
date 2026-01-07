@@ -1,0 +1,115 @@
+@model List<MusicWeb.Models.Entities.UserSubscription>
+@{
+    ViewData["Title"] = "Quản lý Subscribers";
+}
+
+<div class="admin-header">
+    <h2><i class="fa-solid fa-credit-card" style="margin-right: 10px; color: #4caf50;"></i>Quản lý Subscribers</h2>
+    <span class="badge badge-success" style="font-size: 14px;">@Model.Count(s => s.Status == "Active") đang hoạt động</span>
+</div>
+
+<div class="admin-tabs">
+    <a href="?status=active" class="admin-tab @(ViewBag.Status == "Active" || ViewBag.Status == null ? "active" : "")">
+        Đang hoạt động
+    </a>
+    <a href="?status=expired" class="admin-tab @(ViewBag.Status == "Expired" ? "active" : "")">
+        Đã hết hạn
+    </a>
+    <a href="?status=all" class="admin-tab @(ViewBag.Status == "All" ? "active" : "")">
+        Tất cả
+    </a>
+</div>
+
+<div class="admin-card">
+    @if (!Model.Any())
+    {
+        <div style="text-align: center; padding: 50px; color: var(--text-secondary);">
+            <i class="fa-solid fa-users" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i>
+            <p>Chưa có subscribers nào</p>
+        </div>
+    }
+    else
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Gói</th>
+                    <th>Bắt đầu</th>
+                    <th>Hết hạn</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var sub in Model)
+                {
+                    var isExpired = sub.EndDate.HasValue && sub.EndDate.Value < DateTime.UtcNow;
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <img src="@(sub.User?.AvatarUrl ?? "https://ui-avatars.com/api/?name=" + sub.User?.DisplayName)" 
+                                     style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
+                                <div>
+                                    <div>@sub.User?.DisplayName</div>
+                                    <div style="font-size: 12px; color: var(--text-secondary);">@sub.User?.Email</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge badge-warning">
+                                <i class="fa-solid fa-crown"></i> @sub.Plan?.Name
+                            </span>
+                        </td>
+                        <td>@sub.StartDate.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            @if (sub.EndDate.HasValue)
+                            {
+                                <span style="color: @(isExpired ? "#f44336" : "#4caf50");">
+                                    @sub.EndDate.Value.ToString("dd/MM/yyyy")
+                                </span>
+                            }
+                            else
+                            {
+                                <span>-</span>
+                            }
+                        </td>
+                        <td>
+                            @if (sub.Status == "Active" && !isExpired)
+                            {
+                                <span class="badge badge-success">Hoạt động</span>
+                            }
+                            else if (isExpired || sub.Status == "Expired")
+                            {
+                                <span class="badge badge-danger">Hết hạn</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-warning">@sub.Status</span>
+                            }
+                        </td>
+                        <td>
+                            @if (sub.Status == "Active" && !isExpired)
+                            {
+                                <form asp-action="ExtendSubscription" method="post" style="display: inline;">
+                                    <input type="hidden" name="subId" value="@sub.Id" />
+                                    <input type="hidden" name="days" value="30" />
+                                    <button type="submit" class="btn btn-success" style="padding: 5px 10px;" title="Gia hạn 30 ngày">
+                                        <i class="fa-solid fa-plus"></i> 30 ngày
+                                    </button>
+                                </form>
+                                <form asp-action="CancelSubscription" method="post" style="display: inline;" 
+                                      onsubmit="return confirm('Bạn chắc chắn muốn hủy subscription này?');">
+                                    <input type="hidden" name="subId" value="@sub.Id" />
+                                    <button type="submit" class="btn btn-danger" style="padding: 5px 10px;" title="Hủy subscription">
+                                        <i class="fa-solid fa-times"></i>
+                                    </button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

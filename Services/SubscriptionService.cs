@@ -139,4 +139,63 @@ public class SubscriptionService : ISubscriptionService
         await _context.SaveChangesAsync();
         return true;
     }
+    
+    public async Task<(bool success, string? error)> RequestPremiumSongAsync(string userId, int songId)
+    {
+        // Check if song exists and belongs to user (via Artist relationship)
+        var song = await _context.Songs
+            .Include(s => s.Artist)
+            .FirstOrDefaultAsync(s => s.Id == songId);
+            
+        if (song == null)
+            return (false, "Bài hát không tồn tại");
+        
+        // Check ownership via Artist (songs are linked to users through Artist)
+        if (song.Artist.UserId != userId)
+            return (false, "Bạn chỉ có thể yêu cầu Premium cho bài hát do bạn tải lên");
+        
+        if (song.IsPremium)
+            return (false, "Bài hát đã là Premium");
+        
+        // Check if there's already a pending request
+        var existingRequest = await _context.PremiumSongRequests
+            .FirstOrDefaultAsync(r => r.SongId == songId && r.Status == "Pending");
+        
+        if (existingRequest != null)
+            return (false, "Đã có yêu cầu đang chờ duyệt cho bài hát này");
+        
+        // Create request
+        var request = new PremiumSongRequest
+        {
+            SongId = songId,
+            RequestedByUserId = userId,
+            RequestDate = DateTime.UtcNow,
+            Status = "Pending"
+        };
+        
+        _context.PremiumSongRequests.Add(request);
+        song.PremiumStatus = "Pending";
+        await _context.SaveChangesAsync();
+        
+        return (true, null);
+    }
+    
+    public async Task<(bool isPremium, string? status)> GetSongPremiumInfoAsync(int songId)
+    {
+        var song = await _context.Songs.FindAsync(songId);
+        if (song == null)
+            return (false, null);
+        
+        return (song.IsPremium, song.PremiumStatus);
+    }
+    
+    public async Task<List<PremiumSongRequest>> GetUserPremiumRequestsAsync(string userId)
+    {
+        return await _context.PremiumSongRequests
+            .Include(r => r.Song)
+            .Where(r => r.RequestedByUserId == userId)
+            .OrderByDescending(r => r.RequestDate)
+            .ToListAsync();
+    }
 }
+

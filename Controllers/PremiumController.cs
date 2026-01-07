@@ -161,11 +161,91 @@ public class PremiumController : ControllerBase
     [Authorize]
     public async Task<IActionResult> RecordPremiumPlay(int songId)
     {
+        try
+        {
+            var userId = _userManager.GetUserId(User);
+            Console.WriteLine($"[PremiumController] RecordPremiumPlay called: userId={userId}, songId={songId}");
+            
+            if (string.IsNullOrEmpty(userId))
+            {
+                Console.WriteLine($"[PremiumController] Unauthorized - no userId");
+                return Unauthorized();
+            }
+
+            await _revenueService.RecordPremiumPlayAsync(userId, songId);
+            Console.WriteLine($"[PremiumController] RecordPremiumPlayAsync completed");
+            return Ok(new { success = true });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[PremiumController] ERROR: {ex.Message}");
+            Console.WriteLine($"[PremiumController] StackTrace: {ex.StackTrace}");
+            return StatusCode(500, new { error = ex.Message, inner = ex.InnerException?.Message });
+        }
+    }
+    
+    /// <summary>
+    /// User requests their uploaded song to be marked as Premium
+    /// </summary>
+    [HttpPost("request-premium/{songId}")]
+    [Authorize]
+    public async Task<IActionResult> RequestPremiumSong(int songId)
+    {
         var userId = _userManager.GetUserId(User);
         if (string.IsNullOrEmpty(userId))
             return Unauthorized();
 
-        await _revenueService.RecordPremiumPlayAsync(userId, songId);
-        return Ok(new { success = true });
+        var result = await _subscriptionService.RequestPremiumSongAsync(userId, songId);
+        
+        if (result.success)
+        {
+            return Ok(new { success = true, message = "Yêu cầu đã được gửi đến Admin" });
+        }
+        
+        return BadRequest(new { success = false, message = result.error });
+    }
+    
+    /// <summary>
+    /// Check if a song is premium (for JS to determine playback behavior)
+    /// </summary>
+    [HttpGet("check-song/{songId}")]
+    public async Task<IActionResult> CheckSongPremium(int songId)
+    {
+        var userId = _userManager.GetUserId(User);
+        var isPremiumUser = !string.IsNullOrEmpty(userId) && await _subscriptionService.IsPremiumUserAsync(userId);
+        var songInfo = await _subscriptionService.GetSongPremiumInfoAsync(songId);
+        
+        return Ok(new 
+        { 
+            isPremiumSong = songInfo.isPremium,
+            canPlay = !songInfo.isPremium || isPremiumUser,
+            isPremiumUser
+        });
+    }
+    
+    /// <summary>
+    /// Get user's pending premium song requests
+    /// </summary>
+    [HttpGet("my-requests")]
+    [Authorize]
+    public async Task<IActionResult> GetMyPremiumRequests()
+    {
+        var userId = _userManager.GetUserId(User);
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized();
+
+        var requests = await _subscriptionService.GetUserPremiumRequestsAsync(userId);
+        
+        return Ok(requests.Select(r => new
+        {
+            r.Id,
+            r.SongId,
+            songTitle = r.Song?.Title,
+            songCover = r.Song?.CoverUrl,
+            r.Status,
+            r.RequestDate,
+            r.AdminNote
+        }));
     }
 }
+

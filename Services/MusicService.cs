@@ -626,7 +626,9 @@ public class MusicService : IMusicService
             song.ViewCount,
             song.UserRatings.Any() ? (decimal?)song.UserRatings.Average(r => (double)r.Rating) : null,
             song.IsPublic,
-            song.SongGenres.FirstOrDefault()?.GenreId);
+            song.SongGenres.FirstOrDefault()?.GenreId,
+            song.IsPremium,
+            song.PremiumStatus);
 
     public async Task<bool> ToggleSongVisibilityAsync(int songId, string userId)
     {

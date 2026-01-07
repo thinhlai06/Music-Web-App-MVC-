@@ -1,0 +1,116 @@
+@using MusicWeb.Models.Entities
+@{
+    ViewData["Title"] = "Dashboard";
+    var recentRequests = ViewBag.RecentRequests as List<PremiumSongRequest> ?? new List<PremiumSongRequest>();
+}
+
+<div class="admin-header">
+    <h2><i class="fa-solid fa-chart-pie" style="margin-right: 10px; color: var(--purple-primary);"></i>Dashboard</h2>
+    <span style="color: var(--text-secondary);">Tổng quan hệ thống</span>
+</div>
+
+<!-- Stats Grid -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(155, 77, 224, 0.2); color: #9b4de0;">
+            <i class="fa-solid fa-music"></i>
+        </div>
+        <div class="stat-value">@ViewBag.TotalSongs</div>
+        <div class="stat-label">Tổng bài hát</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(33, 150, 243, 0.2); color: #2196f3;">
+            <i class="fa-solid fa-users"></i>
+        </div>
+        <div class="stat-value">@ViewBag.TotalUsers</div>
+        <div class="stat-label">Người dùng</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(255, 193, 7, 0.2); color: #ffc107;">
+            <i class="fa-solid fa-crown"></i>
+        </div>
+        <div class="stat-value">@ViewBag.PremiumUsers</div>
+        <div class="stat-label">Premium Users</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(76, 175, 80, 0.2); color: #4caf50;">
+            <i class="fa-solid fa-dollar-sign"></i>
+        </div>
+        <div class="stat-value">@string.Format("{0:N0}", ViewBag.TotalRevenue)</div>
+        <div class="stat-label">Doanh thu (VND)</div>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+    <!-- Recent Activities -->
+    <div class="admin-card">
+        <h3 style="margin-bottom: 15px; font-size: 16px;">
+            <i class="fa-solid fa-clock" style="margin-right: 8px; color: var(--purple-primary);"></i>
+            Yêu cầu Premium gần đây
+        </h3>
+        @if (!recentRequests.Any())
+        {
+            <p style="color: var(--text-secondary); text-align: center; padding: 20px;">
+                <i class="fa-solid fa-inbox"></i> Chưa có yêu cầu nào
+            </p>
+        }
+        else
+        {
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                @foreach (var req in recentRequests)
+                {
+                    <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                        <img src="@(req.Song?.CoverUrl ?? "https://picsum.photos/40")" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">@req.Song?.Title</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">@req.RequestedByUser?.DisplayName</div>
+                        </div>
+                        <div>
+                            @if (req.Status == "Pending")
+                            {
+                                <span class="badge badge-warning">Chờ duyệt</span>
+                            }
+                            else if (req.Status == "Approved")
+                            {
+                                <span class="badge badge-success">Đã duyệt</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-danger">Từ chối</span>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+            <a href="/Admin/PremiumSongRequests" class="btn btn-outline" style="margin-top: 15px; width: 100%; justify-content: center;">
+                Xem tất cả <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        }
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="admin-card">
+        <h3 style="margin-bottom: 15px; font-size: 16px;">
+            <i class="fa-solid fa-bolt" style="margin-right: 8px; color: #ffc107;"></i>
+            Thao tác nhanh
+        </h3>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <a href="/Admin/CreateSong" class="btn btn-outline" style="justify-content: flex-start;">
+                <i class="fa-solid fa-plus"></i> Thêm bài hát mới
+            </a>
+            <a href="/Admin/PremiumSongRequests" class="btn btn-outline" style="justify-content: flex-start;">
+                <i class="fa-solid fa-star"></i> Duyệt Premium Songs
+            </a>
+            <a href="/Admin/SubscriptionPlans" class="btn btn-outline" style="justify-content: flex-start;">
+                <i class="fa-solid fa-box"></i> Quản lý gói Premium
+            </a>
+            <a href="/Admin/Subscribers" class="btn btn-outline" style="justify-content: flex-start;">
+                <i class="fa-solid fa-credit-card"></i> Quản lý Subscribers
+            </a>
+        </div>
+    </div>
+</div>
+

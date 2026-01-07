@@ -1,0 +1,180 @@
+@model List<MusicWeb.Models.Entities.SubscriptionPlan>
+@{
+    ViewData["Title"] = "Quản lý Gói Premium";
+}
+
+<div class="admin-header">
+    <h2><i class="fa-solid fa-box" style="margin-right: 10px; color: var(--purple-primary);"></i>Quản lý Gói Premium</h2>
+    <button class="btn btn-primary" onclick="showCreateModal()">
+        <i class="fa-solid fa-plus"></i> Thêm gói mới
+    </button>
+</div>
+
+<div class="admin-card">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên gói</th>
+                <th>Giá (VND)</th>
+                <th>Thời hạn</th>
+                <th>Quyền lợi</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var plan in Model)
+            {
+                <tr>
+                    <td>@plan.Id</td>
+                    <td>
+                        <strong>@plan.Name</strong>
+                        @if (!string.IsNullOrEmpty(plan.Description))
+                        {
+                            <div style="font-size: 12px; color: var(--text-secondary);">@plan.Description</div>
+                        }
+                    </td>
+                    <td>@plan.Price.ToString("N0")</td>
+                    <td>@plan.DurationDays ngày</td>
+                    <td>
+                        @if (plan.NoAds)
+                        {
+                            <span class="badge badge-success" style="margin: 2px;">No Ads</span>
+                        }
+                        @if (plan.CanAccessPremiumSongs)
+                        {
+                            <span class="badge badge-warning" style="margin: 2px;">Premium Songs</span>
+                        }
+                        @if (plan.HighQualityAudio)
+                        {
+                            <span class="badge badge-info" style="margin: 2px;">HQ Audio</span>
+                        }
+                        @if (plan.DownloadLimit == -1)
+                        {
+                            <span class="badge badge-success" style="margin: 2px;">Unlimited DL</span>
+                        }
+                        else if (plan.DownloadLimit > 0)
+                        {
+                            <span class="badge badge-info" style="margin: 2px;">@plan.DownloadLimit DL/tháng</span>
+                        }
+                    </td>
+                    <td>
+                        @if (plan.IsActive)
+                        {
+                            <span class="badge badge-success">Hoạt động</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-danger">Tạm dừng</span>
+                        }
+                    </td>
+                    <td>
+                        <form asp-action="TogglePlan" method="post" style="display: inline;">
+                            <input type="hidden" name="id" value="@plan.Id" />
+                            <button type="submit" class="btn btn-outline" style="padding: 5px 10px;" 
+                                    title="@(plan.IsActive ? "Tạm dừng" : "Kích hoạt")">
+                                <i class="fa-solid @(plan.IsActive ? "fa-pause" : "fa-play")"></i>
+                            </button>
+                        </form>
+                        <button class="btn btn-outline" style="padding: 5px 10px;" 
+                                onclick="editPlan(@plan.Id, '@plan.Name', @plan.Price, @plan.DurationDays, @plan.DownloadLimit, @(plan.NoAds ? "true" : "false"), @(plan.HighQualityAudio ? "true" : "false"), @(plan.CanAccessPremiumSongs ? "true" : "false"), '@(plan.Description ?? "")')">
+                            <i class="fa-solid fa-edit"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Create/Edit Modal -->
+<div id="plan-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; 
+     align-items: center; justify-content: center;">
+    <div class="admin-card" style="width: 500px; max-height: 90vh; overflow-y: auto;">
+        <h3 style="margin-bottom: 20px;" id="modal-title">Thêm gói mới</h3>
+        <form asp-action="SavePlan" method="post">
+            <input type="hidden" name="Id" id="plan-id" value="0" />
+            
+            <div class="form-group">
+                <label class="form-label">Tên gói *</label>
+                <input type="text" name="Name" id="plan-name" class="form-control" required />
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Mô tả</label>
+                <textarea name="Description" id="plan-description" class="form-control" rows="2"></textarea>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label class="form-label">Giá (VND) *</label>
+                    <input type="number" name="Price" id="plan-price" class="form-control" required min="0" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Thời hạn (ngày) *</label>
+                    <input type="number" name="DurationDays" id="plan-duration" class="form-control" required min="1" value="30" />
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Giới hạn tải (-1 = không giới hạn)</label>
+                <input type="number" name="DownloadLimit" id="plan-download" class="form-control" value="0" />
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Quyền lợi</label>
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 5px;">
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="checkbox" name="NoAds" id="plan-noads" value="true" /> Không quảng cáo
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="checkbox" name="HighQualityAudio" id="plan-hq" value="true" /> Chất lượng cao
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="checkbox" name="CanAccessPremiumSongs" id="plan-premium" value="true" /> Premium Songs
+                    </label>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                <button type="button" class="btn btn-outline" onclick="hideModal()">Hủy</button>
+                <button type="submit" class="btn btn-primary">Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function showCreateModal() {
+        document.getElementById('modal-title').textContent = 'Thêm gói mới';
+        document.getElementById('plan-id').value = 0;
+        document.getElementById('plan-name').value = '';
+        document.getElementById('plan-description').value = '';
+        document.getElementById('plan-price').value = '';
+        document.getElementById('plan-duration').value = 30;
+        document.getElementById('plan-download').value = 0;
+        document.getElementById('plan-noads').checked = false;
+        document.getElementById('plan-hq').checked = false;
+        document.getElementById('plan-premium').checked = false;
+        document.getElementById('plan-modal').style.display = 'flex';
+    }
+    
+    function editPlan(id, name, price, duration, download, noads, hq, premium, desc) {
+        document.getElementById('modal-title').textContent = 'Sửa gói: ' + name;
+        document.getElementById('plan-id').value = id;
+        document.getElementById('plan-name').value = name;
+        document.getElementById('plan-description').value = desc;
+        document.getElementById('plan-price').value = price;
+        document.getElementById('plan-duration').value = duration;
+        document.getElementById('plan-download').value = download;
+        document.getElementById('plan-noads').checked = noads;
+        document.getElementById('plan-hq').checked = hq;
+        document.getElementById('plan-premium').checked = premium;
+        document.getElementById('plan-modal').style.display = 'flex';
+    }
+    
+    function hideModal() {
+        document.getElementById('plan-modal').style.display = 'none';
+    }
+</script>

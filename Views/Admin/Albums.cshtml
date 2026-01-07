@@ -1,48 +1,159 @@
-@model List<MusicWeb.Models.Entities.Album>
+@model MusicWeb.Models.ViewModels.AdminAlbumsViewModel
+@{
+    ViewData["Title"] = "Quản lý Album";
+}
 
-<div class="content-padding">
-    <div class="section-title">
-        <div style="display: flex; gap: 10px; align-items: center;">
-            <a href="/Admin" class="btn" style="border: 1px solid #fff; padding: 5px 15px; border-radius: 4px; font-size: 14px; text-decoration: none; display: flex; align-items: center; gap: 5px;">
-                <i class="fa-solid fa-arrow-left"></i> QL Bài hát
-            </a>
-            <span>Quản lý Album</span>
-        </div>
-        <a href="/Admin/CreateAlbum" class="btn btn-primary" style="text-decoration: none;">+ Thêm Album</a>
-    </div>
+<div class="admin-header">
+    <h2><i class="fa-solid fa-compact-disc" style="margin-right: 10px; color: var(--purple-primary);"></i>Quản lý Album</h2>
+    <a href="/Admin/CreateAlbum" class="btn btn-primary">
+        <i class="fa-solid fa-plus"></i> Thêm Album
+    </a>
+</div>
 
-    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-        <thead>
-            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); text-align: left;">
-                <th style="padding: 10px;">ID</th>
-                <th style="padding: 10px;">Album</th>
-                <th style="padding: 10px;">Nghệ sĩ</th>
-                <th style="padding: 10px;">Số bài hát</th>
-                <th style="padding: 10px;">Thao tác</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var album in Model)
-            {
-                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                    <td style="padding: 10px;">@album.Id</td>
-                    <td style="padding: 10px;">
-                        <div style="display: flex; align-items: center;">
-                            <img src="@(album.CoverUrl ?? "https://picsum.photos/50")" style="width: 40px; height: 40px; border-radius: 4px; margin-right: 10px;">
-                            @album.Title
-                        </div>
-                    </td>
-                    <td style="padding: 10px;">@album.Artist.Name</td>
-                    <td style="padding: 10px;">@album.Songs.Count</td>
-                    <td style="padding: 10px;">
-                        <a href="/Admin/EditAlbum/@album.Id" style="color: var(--purple-primary); text-decoration: none; margin-right: 10px; font-weight: 500;">Sửa</a>
-                        <form asp-action="DeleteAlbum" method="post" onsubmit="return confirm('Bạn chắc chắn muốn xóa album này?');" style="display: inline;">
-                            <input type="hidden" name="id" value="@album.Id" />
-                            <button type="submit" style="color: #ff4d4d; background: none; border: none; cursor: pointer;">Xóa</button>
-                        </form>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+<div class="admin-tabs">
+    <a href="?tab=system" class="admin-tab @(ViewBag.Tab == "system" || ViewBag.Tab == null ? "active" : "")">
+        <i class="fa-solid fa-database"></i> Albums Hệ Thống (@Model.SystemAlbums.Count)
+    </a>
+    <a href="?tab=user" class="admin-tab @(ViewBag.Tab == "user" ? "active" : "")">
+        <i class="fa-solid fa-user"></i> Albums Người Dùng (@Model.UserAlbums.Count)
+    </a>
+</div>
+
+<div class="admin-card">
+    @if (ViewBag.Tab == "user")
+    {
+        <!-- User Albums -->
+        @if (!Model.UserAlbums.Any())
+        {
+            <div style="text-align: center; padding: 50px; color: var(--text-secondary);">
+                <i class="fa-solid fa-music" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i>
+                <p>Chưa có album người dùng nào</p>
+            </div>
+        }
+        else
+        {
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Album</th>
+                        <th>Người tạo</th>
+                        <th>Số bài hát</th>
+                        <th>Công khai</th>
+                        <th>Ngày tạo</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var album in Model.UserAlbums)
+                    {
+                        <tr>
+                            <td>@album.Id</td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <img src="@(album.CoverUrl ?? "https://picsum.photos/50")" 
+                                         style="width: 45px; height: 45px; border-radius: 6px; object-fit: cover;">
+                                    <div>
+                                        <div>@album.Name</div>
+                                        <div style="font-size: 12px; color: var(--text-secondary);">@album.Description</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <img src="@(album.Owner?.AvatarUrl ?? "https://ui-avatars.com/api/?name=" + album.Owner?.DisplayName)" 
+                                         style="width: 25px; height: 25px; border-radius: 50%;">
+                                    @album.Owner?.DisplayName
+                                </div>
+                            </td>
+                            <td>@album.UserAlbumSongs?.Count bài</td>
+                            <td>
+                                @if (album.IsPublic)
+                                {
+                                    <span class="badge badge-success"><i class="fa-solid fa-globe"></i> Công khai</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-warning"><i class="fa-solid fa-lock"></i> Riêng tư</span>
+                                }
+                            </td>
+                            <td>@album.CreatedAt.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <form asp-action="ToggleUserAlbumVisibility" method="post" style="display: inline;">
+                                    <input type="hidden" name="id" value="@album.Id" />
+                                    <button type="submit" class="btn btn-outline" style="padding: 5px 10px;" 
+                                            title="@(album.IsPublic ? "Chuyển thành riêng tư" : "Chuyển thành công khai")">
+                                        <i class="fa-solid @(album.IsPublic ? "fa-lock" : "fa-globe")"></i>
+                                    </button>
+                                </form>
+                                <form asp-action="DeleteUserAlbum" method="post" style="display: inline;" 
+                                      onsubmit="return confirm('Xóa album này? Hành động không thể hoàn tác.');">
+                                    <input type="hidden" name="id" value="@album.Id" />
+                                    <button type="submit" class="btn btn-danger" style="padding: 5px 10px;">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    }
+    else
+    {
+        <!-- System Albums -->
+        @if (!Model.SystemAlbums.Any())
+        {
+            <div style="text-align: center; padding: 50px; color: var(--text-secondary);">
+                <i class="fa-solid fa-compact-disc" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i>
+                <p>Chưa có album nào</p>
+            </div>
+        }
+        else
+        {
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Album</th>
+                        <th>Nghệ sĩ</th>
+                        <th>Số bài hát</th>
+                        <th>Ngày phát hành</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var album in Model.SystemAlbums)
+                    {
+                        <tr>
+                            <td>@album.Id</td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <img src="@(album.CoverUrl ?? "https://picsum.photos/50")" 
+                                         style="width: 45px; height: 45px; border-radius: 6px; object-fit: cover;">
+                                    <span>@album.Title</span>
+                                </div>
+                            </td>
+                            <td>@album.Artist?.Name</td>
+                            <td>@album.Songs?.Count bài</td>
+                            <td>@album.ReleaseDate.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <a href="/Admin/EditAlbum/@album.Id" class="btn btn-outline" style="padding: 5px 10px;">
+                                    <i class="fa-solid fa-edit"></i>
+                                </a>
+                                <form asp-action="DeleteAlbum" method="post" style="display: inline;" 
+                                      onsubmit="return confirm('Xóa album này?');">
+                                    <input type="hidden" name="id" value="@album.Id" />
+                                    <button type="submit" class="btn btn-danger" style="padding: 5px 10px;">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    }
 </div>

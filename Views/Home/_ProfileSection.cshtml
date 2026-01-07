@@ -130,8 +130,9 @@
                 @foreach (var song in Model.UploadedSongs)
                 {
                     var cover = string.IsNullOrWhiteSpace(song.CoverUrl) ? $"https://picsum.photos/seed/uploaded-{song.Id}/300/300" : song.CoverUrl;
-                    <div class="card song-card" data-song-id="@song.Id" data-title="@song.Title" data-artist="@song.Artist"
-                         data-cover="@cover" data-audio="@song.AudioUrl" data-duration="@song.Duration" data-favorite="@song.IsFavorite">
+                    var premiumClass = song.IsPremium ? "premium-song" : "";
+                    <div class="card song-card @premiumClass" data-song-id="@song.Id" data-title="@song.Title" data-artist="@song.Artist"
+                         data-cover="@cover" data-audio="@song.AudioUrl" data-duration="@song.Duration" data-favorite="@song.IsFavorite" data-premium="@song.IsPremium.ToString().ToLower()">
                         <div class="card-actions">
                             @{
                                 var eyeIcon = song.IsPublic ? "fa-eye" : "fa-eye-slash";
@@ -141,6 +142,18 @@
                             <button class="circle-btn visibility-toggle @eyeClass" title="@eyeTitle" onclick="toggleVisibility(event, @song.Id, this)">
                                 <i class="fa-solid @eyeIcon"></i>
                             </button>
+                            @if (!song.IsPremium && song.PremiumStatus != "Pending")
+                            {
+                                <button class="circle-btn request-premium-btn" title="Yêu cầu Premium" onclick="requestPremiumSong(event, @song.Id)" style="color: #ffc107;">
+                                    <i class="fa-solid fa-crown"></i>
+                                </button>
+                            }
+                            else if (song.PremiumStatus == "Pending")
+                            {
+                                <button class="circle-btn" title="Đang chờ duyệt" disabled style="color: #ff9800;">
+                                    <i class="fa-solid fa-clock"></i>
+                                </button>
+                            }
                             <button class="circle-btn delete-song-btn" title="Xóa bài hát" onclick="deleteSong(event, @song.Id, this)" style="color: #ff4d4d;">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
@@ -152,6 +165,10 @@
                             @if (!song.IsPublic)
                             {
                                 <div class="private-badge"><i class="fa-solid fa-lock"></i> Riêng tư</div>
+                            }
+                            @if (song.IsPremium)
+                            {
+                                <div class="premium-badge" style="position: absolute; top: 8px; right: 8px;"><i class="fa-solid fa-crown"></i> Premium</div>
                             }
                             <div class="card-overlay">
                                 <div class="play-btn-circle"><i class="fa-solid fa-play"></i></div>

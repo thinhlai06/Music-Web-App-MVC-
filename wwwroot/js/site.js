@@ -79,6 +79,12 @@
             return;
         }
 
+        // Check if this is a premium song and user is not premium
+        if (song.isPremium && !state.isPremiumUser) {
+            showPremiumRequired();
+            return;
+        }
+
         // Check if should play ad first (for free users only)
         if (shouldPlayAd()) {
             state.pendingSongAfterAd = song;
@@ -288,8 +294,20 @@
         els.audio.addEventListener('ended', handleDownloadAdEnd);
     }
 
+    // Show premium required message and redirect to premium view
+    function showPremiumRequired() {
+        showToast('Đây là bài hát Premium! Nâng cấp để nghe.');
+        // Redirect to premium view after a short delay
+        setTimeout(() => {
+            if (typeof window.switchView === 'function') {
+                window.switchView('premium');
+            }
+        }, 1000);
+    }
+
     // Export for external access
     window.showDownloadAdPopup = showDownloadAdPopup;
+    window.showPremiumRequired = showPremiumRequired;
 
     // New: Play a specific list of songs
     window.playQueue = function (songs, startIndex = 0) {
@@ -324,7 +342,8 @@
             cover: card.dataset.cover,
             audio: card.dataset.audio || '',
             durationLabel: card.dataset.duration,
-            isFavorite: card.dataset.favorite === 'true' || card.dataset.favorite === 'True'
+            isFavorite: card.dataset.favorite === 'true' || card.dataset.favorite === 'True',
+            isPremium: card.dataset.premium === 'true' || card.dataset.premium === 'True'
         };
 
         // If Playing from a card NOT via playQueue (e.g. Home, Search), clear the explicit queue
@@ -2566,13 +2585,53 @@
 
     // Record premium song play for revenue sharing
     function recordPremiumPlay(songId) {
-        if (!state.isAuthenticated || !state.isPremiumUser) return;
+        console.log('[RevenueShare] recordPremiumPlay called for songId:', songId, 'isPremiumUser:', state.isPremiumUser, 'isAuthenticated:', state.isAuthenticated);
+        if (!state.isAuthenticated || !state.isPremiumUser) {
+            console.log('[RevenueShare] Skipped - user not authenticated or not premium');
+            return;
+        }
+        console.log('[RevenueShare] Calling API /api/premium/record-play/' + songId);
         fetch(`/api/premium/record-play/${songId}`, { method: 'POST' })
-            .catch(() => { });
+            .then(r => r.json())
+            .then(data => console.log('[RevenueShare] API response:', data))
+            .catch(err => console.log('[RevenueShare] API error:', err));
+    }
+
+    // Request premium status for a user's uploaded song
+    function requestPremiumSong(event, songId) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        if (!confirm('Bạn muốn yêu cầu bài hát này thành Premium? Nếu được duyệt, người dùng Free sẽ không thể nghe miễn phí.')) {
+            return;
+        }
+
+        fetch(`/api/premium/request-premium/${songId}`, { method: 'POST' })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Đã gửi yêu cầu! Chờ Admin duyệt.');
+                    // Update button to show pending
+                    const btn = event.target.closest('.request-premium-btn');
+                    if (btn) {
+                        btn.innerHTML = '<i class="fa-solid fa-clock"></i>';
+                        btn.title = 'Đang chờ duyệt';
+                        btn.disabled = true;
+                        btn.style.color = '#ff9800';
+                        btn.classList.remove('request-premium-btn');
+                    }
+                } else {
+                    showToast(data.message || 'Không thể gửi yêu cầu.');
+                }
+            })
+            .catch(() => {
+                showToast('Lỗi kết nối. Vui lòng thử lại.');
+            });
     }
 
     // Export to window for external access
     window.checkPremiumStatus = checkPremiumStatus;
+    window.requestPremiumSong = requestPremiumSong;
 
     document.addEventListener('DOMContentLoaded', () => {
         init();

@@ -417,7 +417,9 @@ public class UserAlbumService : IUserAlbumService
             song.ViewCount,
             null, // AverageRating - can be calculated if needed
             song.IsPublic,
-            genre?.Id
+            genre?.Id,
+            song.IsPremium,
+            song.PremiumStatus
         );
     }
 }
