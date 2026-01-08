@@ -265,3 +265,71 @@
         </div>
     </div>
 </div>
+
+<!-- AI SMART PLAYLIST MODAL -->
+<div class="modal-overlay" id="ai-playlist-modal">
+    <div class="auth-box" style="max-width: 600px;">
+        <div class="auth-close" onclick="closeAIPlaylistModal()"><i class="fa-solid fa-xmark"></i></div>
+        <h2 style="margin-bottom: 20px;">
+            <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--purple-primary);"></i>
+            Tạo Playlist với AI
+        </h2>
+        
+        <!-- Input Section -->
+        <div id="ai-playlist-input-section">
+            <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                Mô tả playlist bạn muốn bằng ngôn ngữ tự nhiên:
+            </p>
+            <textarea id="ai-playlist-prompt" class="auth-input" 
+                placeholder="VD: Nhạc EDM của Sơn Tùng và Binz, Ballad buồn, Rap Việt hot nhất..."
+                rows="3" style="resize: vertical; margin-bottom: 15px;"></textarea>
+            <button class="auth-submit" onclick="generateAIPlaylistPreview()" id="ai-preview-btn">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Tạo Preview
+            </button>
+        </div>
+
+        <!-- Loading Section -->
+        <div id="ai-playlist-loading" class="hidden" style="text-align: center; padding: 40px 0;">
+            <div class="loading-spinner" style="width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--purple-primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
+            <p style="color: var(--text-secondary);">AI đang phân tích yêu cầu của bạn...</p>
+        </div>
+
+        <!-- Preview Section -->
+        <div id="ai-playlist-preview-section" class="hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: var(--text-secondary);">
+                    <i class="fa-solid fa-music"></i>
+                    Preview (<span id="ai-song-count">0</span> bài hát)
+                </h4>
+                <button class="pill-btn" style="padding: 5px 12px; font-size: 12px;" onclick="toggleSelectAllAISongs()">
+                    Chọn tất cả
+                </button>
+            </div>
+            
+            <div id="ai-preview-songs" style="max-height: 250px; overflow-y: auto; margin-bottom: 20px;">
+                <!-- Songs populated by JS -->
+            </div>
+
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">Tên playlist:</label>
+                <input type="text" class="auth-input" id="ai-playlist-name" placeholder="Tên playlist gợi ý...">
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button class="pill-btn" style="flex: 1; background: var(--bg-alpha);" onclick="resetAIPlaylistModal()">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại
+                </button>
+                <button class="auth-submit" style="flex: 2; margin: 0;" onclick="confirmAIPlaylist()" id="ai-create-btn">
+                    <i class="fa-solid fa-check"></i> Tạo Playlist
+                </button>
+            </div>
+        </div>
+
+        <!-- Error Section -->
+        <div id="ai-playlist-error" class="hidden" style="text-align: center; padding: 20px; color: #ff7b7b;">
+            <i class="fa-solid fa-circle-exclamation" style="font-size: 32px; margin-bottom: 10px;"></i>
+            <p id="ai-error-message"></p>
+            <button class="pill-btn" style="margin-top: 15px;" onclick="resetAIPlaylistModal()">Thử lại</button>
+        </div>
+    </div>
+</div>

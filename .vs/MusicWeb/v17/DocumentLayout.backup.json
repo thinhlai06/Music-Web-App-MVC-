@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\VScode\\MusicWeb\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\musicweb\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|c:\\vscode\\musicweb\\services\\walletservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2E887E92-CC78-4EF7-B8AB-EFCABA648959}|MusicWeb.csproj|solutionrelative:services\\walletservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -75,19 +79,32 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "C:\\VScode\\MusicWeb\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "appsettings.Development.json",
+              "ToolTip": "C:\\VScode\\MusicWeb\\appsettings.Development.json",
+              "RelativeToolTip": "appsettings.Development.json",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAwwBUAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-01-08T04:24:21.364Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "WalletService.cs",
               "DocumentMoniker": "C:\\VScode\\MusicWeb\\Services\\WalletService.cs",
               "RelativeDocumentMoniker": "Services\\WalletService.cs",
               "ToolTip": "C:\\VScode\\MusicWeb\\Services\\WalletService.cs",
               "RelativeToolTip": "Services\\WalletService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAAzAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-07T02:48:35.116Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "UserWallet.cs",
               "DocumentMoniker": "C:\\VScode\\MusicWeb\\Models\\Entities\\UserWallet.cs",
               "RelativeDocumentMoniker": "Models\\Entities\\UserWallet.cs",
@@ -95,12 +112,11 @@
               "RelativeToolTip": "Models\\Entities\\UserWallet.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-07T02:48:23.976Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-07T02:48:23.976Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "site.js",
               "DocumentMoniker": "C:\\VScode\\MusicWeb\\wwwroot\\js\\site.js",
               "RelativeDocumentMoniker": "wwwroot\\js\\site.js",
@@ -108,12 +124,11 @@
               "RelativeToolTip": "wwwroot\\js\\site.js",
               "ViewState": "AgIAAB8AAAAAAAAAAAAAABUAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2026-01-07T02:38:05.987Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-07T02:38:05.987Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "UserFollow.cs",
               "DocumentMoniker": "C:\\VScode\\MusicWeb\\Models\\Entities\\UserFollow.cs",
               "RelativeDocumentMoniker": "Models\\Entities\\UserFollow.cs",
@@ -121,12 +136,11 @@
               "RelativeToolTip": "Models\\Entities\\UserFollow.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-07T02:36:34.43Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-07T02:36:34.43Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "UserAlbumSong.cs",
               "DocumentMoniker": "C:\\VScode\\MusicWeb\\Models\\Entities\\UserAlbumSong.cs",
               "RelativeDocumentMoniker": "Models\\Entities\\UserAlbumSong.cs",
@@ -134,12 +148,11 @@
               "RelativeToolTip": "Models\\Entities\\UserAlbumSong.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-07T02:36:33.258Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-07T02:36:33.258Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "MusicWeb.csproj",
               "DocumentMoniker": "C:\\VScode\\MusicWeb\\MusicWeb.csproj",
               "RelativeDocumentMoniker": "MusicWeb.csproj",
@@ -151,7 +164,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "useralbums.js",
               "DocumentMoniker": "C:\\VScode\\MusicWeb\\wwwroot\\js\\useralbums.js",
               "RelativeDocumentMoniker": "wwwroot\\js\\useralbums.js",
@@ -163,7 +176,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "_UserAlbumsSection.cshtml",
               "DocumentMoniker": "C:\\VScode\\MusicWeb\\Views\\Home\\_UserAlbumsSection.cshtml",
               "RelativeDocumentMoniker": "Views\\Home\\_UserAlbumsSection.cshtml",
@@ -175,7 +188,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "_UserAlbumDetailSection.cshtml",
               "DocumentMoniker": "C:\\VScode\\MusicWeb\\Views\\Home\\_UserAlbumDetailSection.cshtml",
               "RelativeDocumentMoniker": "Views\\Home\\_UserAlbumDetailSection.cshtml",
@@ -187,7 +200,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "_Sidebar.cshtml",
               "DocumentMoniker": "C:\\VScode\\MusicWeb\\Views\\Home\\_Sidebar.cshtml",
               "RelativeDocumentMoniker": "Views\\Home\\_Sidebar.cshtml",
@@ -199,7 +212,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "_Modals.cshtml",
               "DocumentMoniker": "C:\\VScode\\MusicWeb\\Views\\Home\\_Modals.cshtml",
               "RelativeDocumentMoniker": "Views\\Home\\_Modals.cshtml",
@@ -211,7 +224,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "_UploadSection.cshtml",
               "DocumentMoniker": "C:\\VScode\\MusicWeb\\Views\\Home\\_UploadSection.cshtml",
               "RelativeDocumentMoniker": "Views\\Home\\_UploadSection.cshtml",
@@ -223,7 +236,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\VScode\\MusicWeb\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",

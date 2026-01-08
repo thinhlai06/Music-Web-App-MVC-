@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MusicWeb.Models.Entities;
+using MusicWeb.Models.ViewModels;
 using MusicWeb.Services;
 
 namespace MusicWeb.Controllers;
@@ -12,11 +13,16 @@ namespace MusicWeb.Controllers;
 public class PlaylistController : Controller
 {
     private readonly IMusicService _musicService;
+    private readonly IAIPlaylistService _aiPlaylistService;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public PlaylistController(IMusicService musicService, UserManager<ApplicationUser> userManager)
+    public PlaylistController(
+        IMusicService musicService, 
+        IAIPlaylistService aiPlaylistService,
+        UserManager<ApplicationUser> userManager)
     {
         _musicService = musicService;
+        _aiPlaylistService = aiPlaylistService;
         _userManager = userManager;
     }
 
@@ -76,6 +82,7 @@ public class PlaylistController : Controller
 
         return Ok(new { success = true });
     }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> Detail(int id)
     {
@@ -93,7 +100,6 @@ public class PlaylistController : Controller
 
         if (request.CoverFile != null)
         {
-            // Simple generic upload path
             string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "playlists");
             Directory.CreateDirectory(uploadsFolder);
             string uniqueFileName = Guid.NewGuid().ToString() + "_" + request.CoverFile.FileName;
@@ -110,6 +116,64 @@ public class PlaylistController : Controller
 
         return Ok(new { success = true, coverUrl });
     }
+
+    // ========== AI PLAYLIST ENDPOINTS ==========
+
+    /// <summary>
+    /// Preview AI-generated playlist based on natural language prompt
+    /// </summary>
+    [HttpPost("ai/preview")]
+    public async Task<IActionResult> AIPreview([FromBody] SmartPlaylistRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Prompt))
+        {
+            return BadRequest(new { success = false, error = "Vui lòng nhập mô tả playlist" });
+        }
+
+        var userId = _userManager.GetUserId(User)!;
+        var result = await _aiPlaylistService.GeneratePreviewAsync(request.Prompt, userId);
+        
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Create actual playlist from AI preview selection
+    /// </summary>
+    [HttpPost("ai/create")]
+    public async Task<IActionResult> AICreate([FromBody] CreateAIPlaylistRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.PlaylistName))
+        {
+            return BadRequest(new { success = false, message = "Tên playlist không được để trống" });
+        }
+
+        if (request.SongIds == null || request.SongIds.Count == 0)
+        {
+            return BadRequest(new { success = false, message = "Vui lòng chọn ít nhất một bài hát" });
+        }
+
+        var userId = _userManager.GetUserId(User)!;
+        var playlist = await _aiPlaylistService.CreatePlaylistFromPreviewAsync(
+            request.PlaylistName, 
+            request.SongIds, 
+            userId);
+
+        if (playlist == null)
+        {
+            return BadRequest(new { success = false, message = "Không thể tạo playlist" });
+        }
+
+        // Return same format as CreatePlaylist for frontend compatibility
+        return Ok(new { 
+            success = true, 
+            playlist = new {
+                id = playlist.Id,
+                title = playlist.Name,
+                subtitle = $"{request.SongIds.Count} bài hát",
+                coverUrl = playlist.CoverUrl
+            }
+        });
+    }
 }
 
 public class UpdatePlaylistRequest
@@ -122,5 +186,3 @@ public class UpdatePlaylistRequest
 
 public record CreatePlaylistRequest(string Name);
 public record AddSongRequest(int SongId);
-
-

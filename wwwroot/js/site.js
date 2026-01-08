@@ -567,6 +567,193 @@
             });
     }
 
+    // ========== AI PLAYLIST LOGIC ==========
+    let aiPreviewSongs = []; // Store preview songs for selection
+
+    function openAIPlaylistModal() {
+        if (!state.isAuthenticated) {
+            toggleAuthModal(true);
+            return;
+        }
+        resetAIPlaylistModal();
+        document.getElementById('ai-playlist-modal').classList.add('visible');
+    }
+
+    function closeAIPlaylistModal() {
+        document.getElementById('ai-playlist-modal').classList.remove('visible');
+        resetAIPlaylistModal();
+    }
+
+    function resetAIPlaylistModal() {
+        document.getElementById('ai-playlist-input-section').classList.remove('hidden');
+        document.getElementById('ai-playlist-loading').classList.add('hidden');
+        document.getElementById('ai-playlist-preview-section').classList.add('hidden');
+        document.getElementById('ai-playlist-error').classList.add('hidden');
+        document.getElementById('ai-playlist-prompt').value = '';
+        document.getElementById('ai-playlist-name').value = '';
+        document.getElementById('ai-preview-songs').innerHTML = '';
+        aiPreviewSongs = [];
+    }
+
+    async function generateAIPlaylistPreview() {
+        const prompt = document.getElementById('ai-playlist-prompt').value.trim();
+        if (!prompt) {
+            showToast('Vui lòng nhập mô tả playlist');
+            return;
+        }
+
+        // Show loading
+        document.getElementById('ai-playlist-input-section').classList.add('hidden');
+        document.getElementById('ai-playlist-loading').classList.remove('hidden');
+
+        try {
+            const response = await fetch('/playlists/ai/preview', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt })
+            });
+
+            const result = await response.json();
+            document.getElementById('ai-playlist-loading').classList.add('hidden');
+
+            if (!result.success && result.error && result.songs?.length === 0) {
+                showAIPlaylistError(result.error);
+                return;
+            }
+
+            if (!result.songs || result.songs.length === 0) {
+                showAIPlaylistError(result.error || 'Không tìm thấy bài hát phù hợp');
+                return;
+            }
+
+            // Store songs and render preview
+            aiPreviewSongs = result.songs.map(s => ({ ...s, selected: true }));
+            renderAIPreviewSongs();
+            document.getElementById('ai-song-count').textContent = aiPreviewSongs.length;
+            document.getElementById('ai-playlist-name').value = result.suggestedName || 'AI Playlist';
+            document.getElementById('ai-playlist-preview-section').classList.remove('hidden');
+
+        } catch (error) {
+            document.getElementById('ai-playlist-loading').classList.add('hidden');
+            showAIPlaylistError('Không thể kết nối với AI. Vui lòng thử lại.');
+        }
+    }
+
+    function renderAIPreviewSongs() {
+        const container = document.getElementById('ai-preview-songs');
+        container.innerHTML = '';
+
+        aiPreviewSongs.forEach((song, index) => {
+            const item = document.createElement('div');
+            item.className = 'ai-song-item';
+            item.style.cssText = 'display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 8px; background: var(--bg-alpha); margin-bottom: 8px; cursor: pointer;';
+
+            const escapedTitle = escapeHtml(song.title);
+            const escapedArtist = escapeHtml(song.artist);
+
+            item.innerHTML = `
+                <input type="checkbox" class="ai-song-checkbox" data-index="${index}" ${song.selected ? 'checked' : ''} style="width: 18px; height: 18px; accent-color: var(--purple-primary);">
+                <img src="${song.coverUrl || 'https://picsum.photos/40/40'}" style="width: 40px; height: 40px; border-radius: 4px; object-fit: cover;">
+                <div style="flex: 1; min-width: 0;">
+                    <div style="font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapedTitle}</div>
+                    <div style="font-size: 12px; color: var(--text-secondary);">${escapedArtist}</div>
+                </div>
+            `;
+
+            item.addEventListener('click', (e) => {
+                if (e.target.type !== 'checkbox') {
+                    const checkbox = item.querySelector('.ai-song-checkbox');
+                    checkbox.checked = !checkbox.checked;
+                }
+                aiPreviewSongs[index].selected = item.querySelector('.ai-song-checkbox').checked;
+                updateSelectedCount();
+            });
+
+            container.appendChild(item);
+        });
+    }
+
+    function updateSelectedCount() {
+        const count = aiPreviewSongs.filter(s => s.selected).length;
+        document.getElementById('ai-song-count').textContent = count;
+    }
+
+    function toggleSelectAllAISongs() {
+        const allSelected = aiPreviewSongs.every(s => s.selected);
+        aiPreviewSongs.forEach(s => s.selected = !allSelected);
+        renderAIPreviewSongs();
+        updateSelectedCount();
+    }
+
+    function showAIPlaylistError(message) {
+        document.getElementById('ai-error-message').textContent = message;
+        document.getElementById('ai-playlist-error').classList.remove('hidden');
+    }
+
+    async function confirmAIPlaylist() {
+        const playlistName = document.getElementById('ai-playlist-name').value.trim();
+        if (!playlistName) {
+            showToast('Vui lòng nhập tên playlist');
+            return;
+        }
+
+        const selectedSongs = aiPreviewSongs.filter(s => s.selected);
+        if (selectedSongs.length === 0) {
+            showToast('Vui lòng chọn ít nhất một bài hát');
+            return;
+        }
+
+        const btn = document.getElementById('ai-create-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang tạo...';
+
+        try {
+            const response = await fetch('/playlists/ai/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    playlistName,
+                    songIds: selectedSongs.map(s => s.id)
+                })
+            });
+
+            const result = await response.json();
+
+            if (!result.success) {
+                showToast(result.message || 'Không thể tạo playlist');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Tạo Playlist';
+                return;
+            }
+
+            // Update state and UI like createPlaylist()
+            state.playlists.unshift(result.playlist);
+            appendPersonalPlaylistCard(result.playlist);
+
+            showToast(`Đã tạo playlist "${playlistName}" với ${selectedSongs.length} bài hát!`);
+            closeAIPlaylistModal();
+
+        } catch (error) {
+            showToast('Không thể tạo playlist. Vui lòng thử lại.');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Tạo Playlist';
+        }
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Export AI playlist functions to window
+    window.openAIPlaylistModal = openAIPlaylistModal;
+    window.closeAIPlaylistModal = closeAIPlaylistModal;
+    window.resetAIPlaylistModal = resetAIPlaylistModal;
+    window.generateAIPlaylistPreview = generateAIPlaylistPreview;
+    window.confirmAIPlaylist = confirmAIPlaylist;
+    window.toggleSelectAllAISongs = toggleSelectAllAISongs;
+
     function createGridSongCard(song) {
         const div = document.createElement('div');
         div.className = 'card song-card';

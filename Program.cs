@@ -65,6 +65,10 @@ public class Program
         builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
         builder.Services.AddScoped<IWalletService, WalletService>();
         builder.Services.AddScoped<IRevenueService, RevenueService>();
+        
+        // AI Playlist feature
+        builder.Services.AddScoped<IAIPlaylistService, AIPlaylistService>();
+
 
         builder.Services.AddHttpClient();
         builder.Services.AddControllersWithViews();
