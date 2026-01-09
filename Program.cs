@@ -68,6 +68,9 @@ public class Program
         
         // AI Playlist feature
         builder.Services.AddScoped<IAIPlaylistService, AIPlaylistService>();
+        
+        // Listening Stats feature
+        builder.Services.AddScoped<IListeningStatsService, ListeningStatsService>();
 
 
         builder.Services.AddHttpClient();

@@ -1,0 +1,324 @@
+@* Listening Stats Section - Profile Tab *@
+<div id="stats-container">
+    <!-- Period Selector -->
+    <div class="stats-period-selector">
+        <button class="period-btn" data-period="7d">7 ngày</button>
+        <button class="period-btn" data-period="30d">30 ngày</button>
+        <button class="period-btn active" data-period="all">Tất cả</button>
+    </div>
+
+    <!-- Loading State -->
+    <div id="stats-loading" class="stats-loading">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size: 32px;"></i>
+        <p>Đang tải thống kê...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div id="stats-empty" class="stats-empty hidden">
+        <i class="fa-solid fa-chart-simple" style="font-size: 64px; opacity: 0.3;"></i>
+        <h3>Chưa có dữ liệu nghe nhạc</h3>
+        <p>Hãy nghe một vài bài hát để xem thống kê của bạn!</p>
+    </div>
+
+    <!-- Stats Content -->
+    <div id="stats-content" class="stats-content hidden">
+        <!-- Summary Cards -->
+        <div class="stats-summary-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-play"></i></div>
+                <div class="stat-value" id="stat-total-plays">0</div>
+                <div class="stat-label">Lượt nghe</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-clock"></i></div>
+                <div class="stat-value" id="stat-total-time">0h</div>
+                <div class="stat-label">Thời gian nghe</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-user"></i></div>
+                <div class="stat-value" id="stat-unique-artists">0</div>
+                <div class="stat-label">Nghệ sĩ</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-music"></i></div>
+                <div class="stat-value" id="stat-unique-songs">0</div>
+                <div class="stat-label">Bài hát</div>
+            </div>
+        </div>
+
+        <!-- Top Artists -->
+        <div class="stats-section">
+            <h3 class="stats-section-title"><i class="fa-solid fa-microphone"></i> Top Nghệ Sĩ</h3>
+            <div id="top-artists-list" class="top-list"></div>
+        </div>
+
+        <!-- Top Genres -->
+        <div class="stats-section">
+            <h3 class="stats-section-title"><i class="fa-solid fa-guitar"></i> Top Thể Loại</h3>
+            <div id="top-genres-list" class="top-list"></div>
+        </div>
+
+        <!-- Top Songs -->
+        <div class="stats-section">
+            <h3 class="stats-section-title"><i class="fa-solid fa-headphones"></i> Bài Hát Nghe Nhiều Nhất</h3>
+            <div id="top-songs-list" class="top-songs-list"></div>
+        </div>
+
+        <!-- Listening Patterns -->
+        <div class="stats-patterns-grid">
+            <div class="stats-section">
+                <h3 class="stats-section-title"><i class="fa-solid fa-calendar-week"></i> Nghe Theo Ngày</h3>
+                <div id="day-chart" class="day-chart"></div>
+            </div>
+            <div class="stats-section">
+                <h3 class="stats-section-title"><i class="fa-solid fa-clock"></i> Nghe Theo Giờ</h3>
+                <div id="hour-chart" class="hour-chart"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize stats when tab is clicked
+    (function() {
+        let statsLoaded = false;
+        let currentPeriod = 'all';
+
+        // Period button handlers
+        document.querySelectorAll('.period-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentPeriod = this.dataset.period;
+                loadStats(currentPeriod);
+            });
+        });
+
+        // Load stats function
+        window.loadListeningStats = async function(period = 'all') {
+            const loadingEl = document.getElementById('stats-loading');
+            const emptyEl = document.getElementById('stats-empty');
+            const contentEl = document.getElementById('stats-content');
+
+            loadingEl.classList.remove('hidden');
+            emptyEl.classList.add('hidden');
+            contentEl.classList.add('hidden');
+
+            try {
+                const response = await fetch(`/stats?period=${period}`);
+                if (!response.ok) throw new Error('Failed to load stats');
+                
+                const stats = await response.json();
+                
+                loadingEl.classList.add('hidden');
+                
+                if (stats.totalPlays === 0) {
+                    emptyEl.classList.remove('hidden');
+                    return;
+                }
+
+                contentEl.classList.remove('hidden');
+                renderStats(stats);
+                statsLoaded = true;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+                loadingEl.classList.add('hidden');
+                emptyEl.classList.remove('hidden');
+            }
+        };
+
+        function loadStats(period) {
+            window.loadListeningStats(period);
+        }
+
+        function renderStats(stats) {
+            // Summary cards with animation
+            animateNumber('stat-total-plays', stats.totalPlays);
+            document.getElementById('stat-total-time').textContent = formatDuration(stats.totalListeningTime);
+            animateNumber('stat-unique-artists', stats.uniqueArtists);
+            animateNumber('stat-unique-songs', stats.uniqueSongs);
+
+            // Top Artists
+            renderTopArtists(stats.topArtists);
+
+            // Top Genres
+            renderTopGenres(stats.topGenres);
+
+            // Top Songs
+            renderTopSongs(stats.topSongs);
+
+            // Day chart
+            renderDayChart(stats.playsByDayOfWeek);
+
+            // Hour chart
+            renderHourChart(stats.playsByHour);
+        }
+
+        function animateNumber(elementId, target) {
+            const el = document.getElementById(elementId);
+            const duration = 1000;
+            const start = 0;
+            const startTime = performance.now();
+
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                el.textContent = Math.floor(start + (target - start) * eased);
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                } else {
+                    el.textContent = target;
+                }
+            }
+            requestAnimationFrame(update);
+        }
+
+        function formatDuration(timeSpan) {
+            // timeSpan comes as "HH:MM:SS" or "D.HH:MM:SS"
+            if (!timeSpan) return '0h';
+            
+            const parts = timeSpan.split(':');
+            let hours = 0, minutes = 0;
+            
+            if (parts.length >= 2) {
+                // Check for days
+                if (parts[0].includes('.')) {
+                    const dayHour = parts[0].split('.');
+                    hours = parseInt(dayHour[0]) * 24 + parseInt(dayHour[1]);
+                } else {
+                    hours = parseInt(parts[0]);
+                }
+                minutes = parseInt(parts[1]);
+            }
+
+            if (hours > 0) {
+                return `${hours}h ${minutes}m`;
+            }
+            return `${minutes}m`;
+        }
+
+        function renderTopArtists(artists) {
+            const container = document.getElementById('top-artists-list');
+            if (!artists || artists.length === 0) {
+                container.innerHTML = '<p class="no-data">Chưa có dữ liệu</p>';
+                return;
+            }
+
+            container.innerHTML = artists.map((artist, index) => `
+                <div class="top-item">
+                    <span class="top-rank">${index + 1}</span>
+                    <div class="top-info">
+                        <span class="top-name">${artist.name}</span>
+                        <span class="top-count">${artist.playCount} lượt</span>
+                    </div>
+                    <div class="top-bar-container">
+                        <div class="top-bar" style="width: ${artist.percentage}%"></div>
+                        <span class="top-percentage">${artist.percentage}%</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderTopGenres(genres) {
+            const container = document.getElementById('top-genres-list');
+            if (!genres || genres.length === 0) {
+                container.innerHTML = '<p class="no-data">Chưa có dữ liệu</p>';
+                return;
+            }
+
+            container.innerHTML = genres.map((genre, index) => `
+                <div class="top-item">
+                    <span class="top-rank">${index + 1}</span>
+                    <div class="top-info">
+                        <span class="top-name">${genre.name}</span>
+                        <span class="top-count">${genre.playCount} lượt</span>
+                    </div>
+                    <div class="top-bar-container">
+                        <div class="top-bar genre-bar" style="width: ${genre.percentage}%"></div>
+                        <span class="top-percentage">${genre.percentage}%</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderTopSongs(songs) {
+            const container = document.getElementById('top-songs-list');
+            if (!songs || songs.length === 0) {
+                container.innerHTML = '<p class="no-data">Chưa có dữ liệu</p>';
+                return;
+            }
+
+            container.innerHTML = songs.map((song, index) => `
+                <div class="top-song-item" data-song-id="${song.songId}">
+                    <span class="top-rank">${index + 1}</span>
+                    <img src="${song.coverUrl || `https://picsum.photos/seed/song-${song.songId}/50/50`}" class="top-song-cover" alt="${song.title}">
+                    <div class="top-song-info">
+                        <span class="top-song-title">${song.title}</span>
+                        <span class="top-song-artist">${song.artist}</span>
+                    </div>
+                    <span class="top-song-plays">${song.playCount}x</span>
+                </div>
+            `).join('');
+        }
+
+        function renderDayChart(data) {
+            const container = document.getElementById('day-chart');
+            if (!data) {
+                container.innerHTML = '<p class="no-data">Chưa có dữ liệu</p>';
+                return;
+            }
+
+            const days = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+            const maxValue = Math.max(...Object.values(data), 1);
+
+            container.innerHTML = days.map(day => {
+                const value = data[day] || 0;
+                const height = (value / maxValue) * 100;
+                return `
+                    <div class="day-bar-wrapper">
+                        <div class="day-bar" style="height: ${height}%">
+                            <span class="day-value">${value}</span>
+                        </div>
+                        <span class="day-label">${day}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderHourChart(data) {
+            const container = document.getElementById('hour-chart');
+            if (!data) {
+                container.innerHTML = '<p class="no-data">Chưa có dữ liệu</p>';
+                return;
+            }
+
+            const maxValue = Math.max(...Object.values(data), 1);
+            
+            // Group hours into 4-hour blocks for better visualization
+            const blocks = [];
+            for (let i = 0; i < 24; i += 4) {
+                let sum = 0;
+                for (let j = i; j < i + 4; j++) {
+                    sum += data[j] || 0;
+                }
+                blocks.push({ label: `${i}-${i+4}h`, value: sum });
+            }
+
+            const blockMax = Math.max(...blocks.map(b => b.value), 1);
+
+            container.innerHTML = blocks.map(block => {
+                const height = (block.value / blockMax) * 100;
+                return `
+                    <div class="hour-bar-wrapper">
+                        <div class="hour-bar" style="height: ${height}%">
+                            <span class="hour-value">${block.value}</span>
+                        </div>
+                        <span class="hour-label">${block.label}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+    })();
+</script>

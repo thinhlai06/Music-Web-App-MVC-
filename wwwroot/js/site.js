@@ -2327,6 +2327,11 @@
                 if (targetContent) {
                     targetContent.classList.add('active');
                 }
+
+                // Load stats when clicking on stats tab (index 3)
+                if (index === 3 && typeof window.loadListeningStats === 'function') {
+                    window.loadListeningStats('all');
+                }
             });
         });
 

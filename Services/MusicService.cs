@@ -136,13 +136,21 @@ public class MusicService : IMusicService
                 .Select(f => f.Song)
                 .ToListAsync();
 
-            recentlyPlayed = await _context.PlayHistories
+            // Get recently played with DISTINCT songs (latest play per song)
+            var allRecentHistory = await _context.PlayHistories
                 .Where(h => h.UserId == userId)
                 .OrderByDescending(h => h.PlayedAt)
+                .Take(50) // Get more to ensure we have enough unique songs
                 .Include(h => h.Song)
                 .ThenInclude(s => s.Artist)
-                .Take(12)
                 .ToListAsync();
+
+            // Deduplicate: keep only first occurrence of each song (latest play)
+            recentlyPlayed = allRecentHistory
+                .GroupBy(h => h.SongId)
+                .Select(g => g.First())
+                .Take(12)
+                .ToList();
 
             // Fetch songs uploaded by this user (via Artist relationship)
             uploadedSongs = await _context.Songs
@@ -519,16 +527,9 @@ public class MusicService : IMusicService
         }
 
         // 2. Record History (Only if logged in)
+        // Each play creates a new record to accumulate play counts for stats
         if (!string.IsNullOrEmpty(userId))
         {
-            var existingHistory = await _context.PlayHistories
-                .FirstOrDefaultAsync(h => h.SongId == songId && h.UserId == userId);
-
-            if (existingHistory is not null)
-            {
-                _context.PlayHistories.Remove(existingHistory);
-            }
-
             _context.PlayHistories.Add(new PlayHistory
             {
                 SongId = songId,

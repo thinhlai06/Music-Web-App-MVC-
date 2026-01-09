@@ -13,15 +13,18 @@ public class HomeController : Controller
     private readonly ILogger<HomeController> _logger;
     private readonly IMusicService _musicService;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IListeningStatsService _statsService;
 
     public HomeController(
         ILogger<HomeController> logger,
         IMusicService musicService,
-        UserManager<ApplicationUser> userManager)
+        UserManager<ApplicationUser> userManager,
+        IListeningStatsService statsService)
     {
         _logger = logger;
         _musicService = musicService;
         _userManager = userManager;
+        _statsService = statsService;
     }
 
     public async Task<IActionResult> Index()
@@ -121,6 +124,15 @@ public class HomeController : Controller
         var artist = await _musicService.GetArtistDetailAsync(id, userId);
         if (artist == null) return NotFound();
         return PartialView("_ArtistDetailSection", artist);
+    }
+
+    [Authorize]
+    [HttpGet("/stats")]
+    public async Task<IActionResult> GetUserStats([FromQuery] string period = "all")
+    {
+        var userId = _userManager.GetUserId(User)!;
+        var stats = await _statsService.GetUserStatsAsync(userId, period);
+        return Json(stats);
     }
 }
 
