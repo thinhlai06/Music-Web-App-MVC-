@@ -1754,7 +1754,9 @@
                 container.innerHTML = '';
                 data.data.lyrics.forEach((line, idx) => {
                     const p = document.createElement('p');
-                    p.textContent = line;
+                    // Handle both object format (new) and string format (legacy fallback)
+                    const text = line.text || line.Text || line;
+                    p.textContent = text === "" ? "\u00A0" : text; // Handle empty lines
                     if (idx === 0) p.classList.add('active'); // Dummy active first line
                     container.appendChild(p);
                 });
