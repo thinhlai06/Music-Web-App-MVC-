@@ -1752,15 +1752,73 @@
             .then(data => {
                 if (!data.success) return;
                 container.innerHTML = '';
-                data.data.lyrics.forEach((line, idx) => {
+
+                const lyrics = data.data.lyrics || [];
+
+                if (lyrics.length === 0) {
+                    container.innerHTML = '<p>Chưa có lời bài hát.</p>';
+                    return;
+                }
+
+                lyrics.forEach((line, idx) => {
                     const p = document.createElement('p');
                     // Handle both object format (new) and string format (legacy fallback)
                     const text = line.text || line.Text || line;
+                    const time = line.time || line.Time || 0;
+
                     p.textContent = text === "" ? "\u00A0" : text; // Handle empty lines
-                    if (idx === 0) p.classList.add('active'); // Dummy active first line
+                    p.dataset.time = time; // Store timestamp for sync
+                    p.className = 'fp-lyric-line';
+
+                    // Allow clicking to seek
+                    p.addEventListener('click', () => {
+                        if (els.audio) {
+                            els.audio.currentTime = time;
+                            els.audio.play();
+                        }
+                    });
+
                     container.appendChild(p);
                 });
+
+                // Start syncing lyrics with audio
+                els.audio.addEventListener('timeupdate', syncLyricsToFP);
+                syncLyricsToFP(); // Initial sync
             });
+    }
+
+    function syncLyricsToFP() {
+        const container = document.getElementById('fp-lyrics');
+        if (!container || !els.audio) return;
+
+        const currentTime = els.audio.currentTime;
+        const lines = container.querySelectorAll('.fp-lyric-line');
+
+        if (lines.length === 0) return;
+
+        // Find the last line that has time <= currentTime
+        let activeIndex = -1;
+
+        for (let i = 0; i < lines.length; i++) {
+            const lineTime = parseFloat(lines[i].dataset.time);
+            if (lineTime <= currentTime) {
+                activeIndex = i;
+            } else {
+                break; // Lines are sorted by time
+            }
+        }
+
+        lines.forEach((line, index) => {
+            if (index === activeIndex) {
+                if (!line.classList.contains('active')) {
+                    line.classList.add('active');
+                    // Smooth scroll to center
+                    line.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            } else {
+                line.classList.remove('active');
+            }
+        });
     }
 
     // Sync Progress to FP

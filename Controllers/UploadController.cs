@@ -90,12 +90,28 @@ public class UploadController : Controller
             }
         }
 
+        // Handle Lyrics File (.lrc or .txt for Karaoke)
+        string? lyricsUrl = null;
+        if (model.LyricsFile != null)
+        {
+            try 
+            {
+                lyricsUrl = await _storageService.UploadFileAsync(model.LyricsFile.OpenReadStream(), model.LyricsFile.FileName, "lyrics", userFolder);
+            }
+            catch (Exception ex)
+            {
+                // Lyrics is optional, just log and continue
+                Console.WriteLine($"[Upload] Lyrics upload failed: {ex.Message}");
+            }
+        }
+
         var song = new Song
         {
             Title = model.Title,
             ArtistId = artist.Id,
             AudioUrl = audioUrl,
             CoverUrl = coverUrl,
+            LyricsUrl = lyricsUrl,
             Duration = TimeSpan.FromSeconds(180), 
             ReleaseDate = DateTime.UtcNow,
             Description = model.Description,
@@ -173,6 +189,7 @@ public class UploadSongViewModel
     public string? Description { get; set; }
     public IFormFile AudioFile { get; set; } = null!;
     public IFormFile? CoverFile { get; set; }
+    public IFormFile? LyricsFile { get; set; }
     public int GenreId { get; set; }
     public bool IsPublic { get; set; } = true;
 }

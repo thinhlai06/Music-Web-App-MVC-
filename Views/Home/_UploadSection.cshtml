@@ -34,6 +34,18 @@
                             <input type="file" name="CoverFile" accept="image/*" onchange="updateFileName(this, 'cover-upload-box')">
                         </div>
                     </div>
+
+                    <div class="form-group mb-4">
+                        <label class="form-label">File Lyrics - Karaoke (Tùy chọn)</label>
+                        <div class="file-upload-box" id="lyrics-upload-box">
+                            <i class="fa-solid fa-closed-captioning"></i>
+                            <span>Chọn file .lrc hoặc .txt</span>
+                            <input type="file" name="LyricsFile" accept=".lrc,.txt" onchange="updateFileName(this, 'lyrics-upload-box')">
+                        </div>
+                        <small style="color: var(--text-secondary); font-size: 11px;">
+                            File LRC có timestamp sẽ đồng bộ lời theo thời gian (Karaoke)
+                        </small>
+                    </div>
                 </div>
             </div>
 

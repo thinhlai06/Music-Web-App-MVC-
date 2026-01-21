@@ -1256,19 +1256,27 @@ ul {
     padding: 20px;
 }
 
-.fp-lyrics-container p {
+.fp-lyrics-container p,
+.fp-lyric-line {
     font-size: 20px;
     margin-bottom: 20px;
     color: var(--text-secondary);
-    transition: 0.3s;
-    cursor: default;
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
-.fp-lyrics-container p.active {
+.fp-lyrics-container p:hover,
+.fp-lyric-line:hover {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.fp-lyrics-container p.active,
+.fp-lyric-line.active {
     color: #fff;
     font-size: 24px;
     font-weight: bold;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    transform: scale(1.05);
 }
 
 .fp-bottom {
